@@ -1,3 +1,9 @@
+Version 3.5.32: CHANGES since Version 3.5.31
+============================================
+
+* Fixed: Synchronized::wait with timeout fails sometimes with errno 22,
+  which could lead to synchronization errors and/or endless looping.
+
 Version 3.5.31: CHANGES since Version 3.5.30
 ============================================
 

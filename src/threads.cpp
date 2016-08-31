@@ -294,10 +294,14 @@ int Synchronized::wait(unsigned long timeout)
 	boolean timeoutOccurred = FALSE;
 #ifdef POSIX_THREADS
 	struct timespec ts;
-	struct timeval  tv;
-	gettimeofday(&tv, 0);
-	ts.tv_sec  = tv.tv_sec  + (int)timeout/1000;
-	ts.tv_nsec = (tv.tv_usec + (timeout %1000)*1000) * 1000; 
+    struct timeval tv; 
+    gettimeofday(&tv, 0); 
+    ts.tv_sec = tv.tv_sec + (int)timeout/1000; 
+    int millis = tv.tv_usec / 1000 + (timeout % 1000); 
+    if (millis >= 1000) { 
+        ts.tv_sec += 1; 
+    } 
+    ts.tv_nsec = (millis % 1000) * 1000000; 
 
 	int err;
 	if ((err = cond_timed_wait(&ts)) > 0) {
