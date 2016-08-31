@@ -22,10 +22,10 @@
 
 # don't require higher autoconf version for win32 support
 AC_PREREQ([2.64])
-AC_INIT([agent++], [4.0.5], [support@agentpp.com], [agent++])
+AC_INIT([agent++], [4.0.6], [support@agentpp.com], [agent++])
 AGENT_PP_MAJOR_VERSION=4
 AGENT_PP_MINOR_VERSION=0
-AGENT_PP_MICRO_VERSION=5
+AGENT_PP_MICRO_VERSION=6
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])

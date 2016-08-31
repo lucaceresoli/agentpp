@@ -182,14 +182,7 @@ Pix OidxPtrEntryPtrAVLMap::seek_inexact(OidxPtr  key) const
 /*
  The combination of threads and AVL bits make adding & deleting
  interesting, but very awkward.
-
- We use the following statics to avoid passing them around recursively
 */
-
-static bool _need_rebalancing;   // to send back balance info from rec. calls
-static OidxPtr*   _target_item;     // add/del_item target
-static OidxPtrEntryPtrAVLNode* _found_node; // returned added/deleted node
-static int    _already_found;   // for deletion subcases
 
 void OidxPtrEntryPtrAVLMap:: _add(OidxPtrEntryPtrAVLNode*& t)
 {

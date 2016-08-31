@@ -80,6 +80,14 @@ protected:
   void            _add(OidxPtrEntryPtrAVLNode*& t);
   void            _del(OidxPtrEntryPtrAVLNode* p, OidxPtrEntryPtrAVLNode*& t);
 
+  // state information stored per instance to
+  // allow independent use of separate instances in separate threads without 
+  // interference.
+  bool _need_rebalancing;   // to send back balance info from rec. calls 
+  OidxPtr*   _target_item;     // add/del_item target 
+  OidxPtrEntryPtrAVLNode* _found_node; // returned added/deleted node 
+  int    _already_found;   // for deletion subcases 
+
 public:
                 OidxPtrEntryPtrAVLMap(EntryPtr deflt);
                 OidxPtrEntryPtrAVLMap(OidxPtrEntryPtrAVLMap& a);

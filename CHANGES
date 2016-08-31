@@ -1,4 +1,10 @@
 
+Version 4.0.6: CHANGES since Version 4.0.5 (requires SNMP++ 3.3.6 or later)
+===========================================================================
+
+* Fixed [APP-44]: Segmentation fault in avl_map.cpp in 
+  Agentpp::ProxyForwarder::process_single.
+
 Version 4.0.5: CHANGES since Version 4.0.4 (requires SNMP++ 3.3.6 or later)
 ===========================================================================
 
