@@ -1,127 +1,47 @@
 /*_############################################################################
   _## 
-  _##  mib.cpp  
+  _##  AGENT++ 4.0 - mib.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
+#include <libagent.h>
 
-#include <stdlib.h>
-#ifndef WIN32
-#include <unistd.h>
-#endif
 #ifdef _AIX
 #include <rapi.h>
 #endif
-#include <time.h>
 
 #include <agent_pp/mib.h>
-#include <agent_pp/mib_proxy.h>
 #include <agent_pp/system_group.h>
-#include <agent_pp/proxy_forwarder.h>
 #include <agent_pp/snmp_counters.h>
 #include <agent_pp/snmp_group.h>
 #include <agent_pp/notification_originator.h>
 #include <agent_pp/vacm.h>
 #include <snmp_pp/log.h>
 
-#ifdef _THREADS
-#ifndef _WIN32THREADS
-#include <pthread.h>
-#endif
-#endif
-
-#ifdef SNMP_PP_NAMESPACE
-using namespace Snmp_pp;
+#ifdef _USE_PROXY
+#include <agent_pp/mib_proxy.h>
+#include <agent_pp/proxy_forwarder.h>
 #endif
 
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
 
+static const char *loggerModuleName = "agent++.mib";
 
 /*--------------------------------------------------------------------
  *
@@ -352,7 +272,7 @@ void MibLeaf::free_value()
 	validity &= ~LEAF_VALUE_INITIALIZED;
 }
 
-boolean MibLeaf::serialize(char*& buf, int& sz)
+bool MibLeaf::serialize(char*& buf, int& sz)
 {
 	Vbx vb(get_oid());
 	vb.set_value(*value);
@@ -360,7 +280,7 @@ boolean MibLeaf::serialize(char*& buf, int& sz)
 		SNMP_CLASS_SUCCESS) ? TRUE : FALSE;
 }
 
-boolean MibLeaf::deserialize(char* buf, int& sz)
+bool MibLeaf::deserialize(char* buf, int& sz)
 {
 	Vbx* vbs;
 	int size = 0;
@@ -479,6 +399,7 @@ void MibLeaf::cleanup_set_request(Request*, int&)
 	}
 }
 
+#if 0
 Oidx MibLeaf::get_oid() const
 {
 	if ((!my_table) || (!my_row)) {
@@ -491,7 +412,7 @@ Oidx MibLeaf::get_oid() const
 		return o;
 	}
 }
-
+#endif
 
 /*--------------------------------------------------------------------
  *
@@ -541,7 +462,7 @@ int snmpRowStatus::prepare_set_request(Request* req, int& ind)
 }
 
 
-boolean snmpRowStatus::value_ok(const Vbx& v)
+bool snmpRowStatus::value_ok(const Vbx& v)
 {
 	int l;
 	if (v.get_value(l) != SNMP_CLASS_SUCCESS) return FALSE;
@@ -553,7 +474,7 @@ boolean snmpRowStatus::value_ok(const Vbx& v)
 		(l == rowNotInService));
 }
 
-boolean snmpRowStatus::transition_ok(const Vbx& v)
+bool snmpRowStatus::transition_ok(const Vbx& v)
 {
 	int l;
 	if (v.get_value(l) != SNMP_CLASS_SUCCESS) return FALSE;
@@ -573,7 +494,7 @@ boolean snmpRowStatus::transition_ok(const Vbx& v)
 		  return ((l == rowNotInService) ||
 			  (l == rowActive) || (l == rowDestroy));
 		default:
-		  return FALSE;
+		  return (l == rowDestroy);
 		}
 	}
 	else
@@ -588,7 +509,7 @@ boolean snmpRowStatus::transition_ok(const Vbx& v)
  * @return TRUE if the requested state can be set, otherwise FALSE.
  */
 
-boolean snmpRowStatus::check_state_change(const Vbx& v, Request* req)
+bool snmpRowStatus::check_state_change(const Vbx& v, Request* req)
 {
 	int l;
 	if (v.get_value(l) != SNMP_CLASS_SUCCESS) return FALSE;
@@ -611,11 +532,11 @@ boolean snmpRowStatus::check_state_change(const Vbx& v, Request* req)
 				  pvbs[col] = req->get_value(i);
 			  }
 			}
-			boolean ok = my_table->ready(pvbs, my_row->size(),
+			bool ok = my_table->ready(pvbs, my_row->size(),
 						     my_row);
 			delete[] pvbs;
 
-			LOG_BEGIN(DEBUG_LOG | 4);
+			LOG_BEGIN(loggerModuleName, DEBUG_LOG | 4);
 			LOG("snmpRowStatus: row is");
 			LOG(ok ? "READY" : "NOT READY");
 			LOG_END;
@@ -690,6 +611,8 @@ int snmpRowStatus::set(const Vbx& vb)
 
 int snmpRowStatus::unset()
 {
+  if (undo)
+  {
 	int rs;
 	rs = *(SnmpInt32*)undo;
 
@@ -744,7 +667,8 @@ int snmpRowStatus::unset()
 		value = undo;
 		undo = 0;
 	}
-	return SNMP_ERROR_SUCCESS;
+  }
+  return SNMP_ERROR_SUCCESS;
 }
 
 /**
@@ -885,7 +809,7 @@ snmpRowStatus* MibTableRow::add(snmpRowStatus* l)
  *         FALSE otherwise.
  */
 
-boolean MibTableRow::remove(int i)
+bool MibTableRow::remove(int i)
 {
 	MibLeaf* ptr = row.getNth(i);
 	if (!ptr) return FALSE;
@@ -1051,12 +975,12 @@ MibLeaf* MibTableRow::get_element(const Oidx& oid)
  * @return TRUE if the receiver row contains an object with the
  *         given oid, FALSE otherwise.
  */
-boolean MibTableRow::contains(const Oidx& oid) const
+bool MibTableRow::contains(const Oidx& oid) const
 {
 	return (index_of(oid) >= 0);
 }
 
-void MibTableRow::get_vblist(Vbx* vbs, int sz, boolean returnVolatileAsNull)
+void MibTableRow::get_vblist(Vbx* vbs, int sz, bool returnVolatileAsNull)
 {
 #ifndef USE_ARRAY_TEMPLATE
 	OrderedListCursor<MibLeaf> cur;
@@ -1178,7 +1102,7 @@ MibTable::MibTable(const Oidx& o): MibEntry(o, NOACCESS)
  *            the oid of the the SMI table entry object (table.1).
  * @param ilen - The length of the index meassured in subidentifiers.
  */
-MibTable::MibTable(const Oidx& o, unsigned int ilen): MibEntry(o, NOACCESS)
+MibTable::MibTable(const Oidx& o, int ilen): MibEntry(o, NOACCESS)
 {
 	index_info* istruc = new index_info[1];
 	istruc[0].type = sNMP_SYNTAX_OID;
@@ -1207,11 +1131,11 @@ MibTable::MibTable(const Oidx& o, unsigned int ilen): MibEntry(o, NOACCESS)
  *
  * @param o - The object identifier of the table, which has to be
  *            the oid of the the SMI table entry object (table.1).
- * @param ilen - The length of the index meassured in subidentifiers.
+ * @param ilen - The length of the index measured in subidentifiers.
  * @param a - If TRUE the automatic index object initialization is
  *            activated.
  */
-MibTable::MibTable(const Oidx& o, unsigned int ilen, boolean a):
+MibTable::MibTable(const Oidx& o, int ilen, bool a):
   MibEntry(o, NOACCESS)
 {
 	index_info* istruc = new index_info[1];
@@ -1290,7 +1214,7 @@ MibTableRow* MibTable::get_columns()
 	return &generator;
 }
 
-boolean MibTable::serialize(char*& buf, int& sz)
+bool MibTable::serialize(char*& buf, int& sz)
 {
 	OctetStr stream; // reserve two bytes for the sequence header
 	OidListCursor<MibTableRow> cur;
@@ -1329,18 +1253,18 @@ boolean MibTable::serialize(char*& buf, int& sz)
 }
 
 
-boolean MibTable::deserialize(char* buf, int& sz)
+bool MibTable::deserialize(char* buf, int& sz)
 {
 	unsigned char type = 0;
 	int size = sz;
 	buf = (char*) asn_parse_header((unsigned char*)buf, &size, &type);
-	LOG_BEGIN(DEBUG_LOG | 4);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 4);
 	LOG("MibTable: deserialize: reading table (table)(size)");
 	LOG(key()->get_printable());
 	LOG(size);
 	LOG_END;
 	if (!buf) {
-		LOG_BEGIN(ERROR_LOG | 4);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 4);
 		LOG("MibTable: deserialize: failed reading table header (table)");
 		LOG(key()->get_printable());
 		LOG_END;
@@ -1348,7 +1272,7 @@ boolean MibTable::deserialize(char* buf, int& sz)
 		return FALSE;
 	}
 	if (type != (unsigned char)(ASN_SEQUENCE | ASN_CONSTRUCTOR)) {
-		LOG_BEGIN(ERROR_LOG | 1);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		LOG("MibTable: deserialize: wrong header - no sequence (table)");
 		LOG(key()->get_printable());
 		LOG_END;
@@ -1356,15 +1280,16 @@ boolean MibTable::deserialize(char* buf, int& sz)
 		return FALSE;
 	}
 	while(size > 0) {
+		unsigned char *data = (unsigned char *)buf;
 		Vbx* vbs = 0;
 		int vbsz = 0;
-		int status = Vbx::from_asn1(vbs, vbsz,
-					    (unsigned char*&)buf, size);
+		int status = Vbx::from_asn1(vbs, vbsz, data, size);
+                buf = (char *)data;
 		if ((status != SNMP_CLASS_SUCCESS) ||
 		    (vbsz == 0) ||
 		    (vbsz != generator.size())) {
 
-			LOG_BEGIN(ERROR_LOG | 1);
+			LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 			LOG("MibTable: deserialize: decoding error (table)(col count)(size)(status)");
 			LOG(key()->get_printable());
 			LOG(vbsz);
@@ -1378,7 +1303,7 @@ boolean MibTable::deserialize(char* buf, int& sz)
 
 		Oidx ind(index(vbs[0].get_oid()));
 
-		LOG_BEGIN(EVENT_LOG | 4);
+		LOG_BEGIN(loggerModuleName, EVENT_LOG | 4);
 		LOG("MibTable: deserialize: loading row (table)(index)(bytes remaining)");
 		LOG(key()->get_printable());
 		LOG(ind.get_printable());
@@ -1390,7 +1315,7 @@ boolean MibTable::deserialize(char* buf, int& sz)
 			init_row(ind, vbs);
 		}
 		else {
-			LOG_BEGIN(INFO_LOG | 3);
+			LOG_BEGIN(loggerModuleName, INFO_LOG | 3);
 			LOG("MibTable: deserialize: row exists -> not loaded (index)");
 			LOG(ind.get_printable());
 			LOG_END;
@@ -1474,7 +1399,7 @@ int MibTable::set_value(Request* req, int reqind)
 		int rowStatusReq = -1;
 		// for new rows collect all sets for the row and commit
 		// them before the row_status is set
-		boolean ok = TRUE;
+		bool ok = TRUE;
 		for (int i=0; i<req->subrequests(); i++) {
 
 			Oidx id(req->get_oid(i));
@@ -1654,6 +1579,9 @@ void MibTable::fire_row_changed(int event, MibTableRow* row, const Oidx& ind)
  * Add a row with the given index to the table.
  * by cloning the generator row and setting the oids accordingly.
  * Then call row_added.
+ *
+ * @note If a row with this index already exists, a memory
+ *       leak occurs.
  *
  * @param ind The index of the new row.
  * @return A pointer to the added row.
@@ -1870,7 +1798,7 @@ void MibTable::add_col(snmpRowStatus* rs)
 	row_status = rs;
 }
 
-boolean MibTable::is_index_valid(const Oidx& ind) const
+bool MibTable::is_index_valid(const Oidx& ind) const
 {
 	Oidx o(ind);
 	unsigned long l = 0;
@@ -1913,7 +1841,7 @@ boolean MibTable::is_index_valid(const Oidx& ind) const
 	return ((o.len() == l) && (i >= index_len));
 }
 
-boolean  MibTable::check_index(Oidx& o, unsigned long b, unsigned long e) const
+bool  MibTable::check_index(Oidx& o, unsigned long b, unsigned long e) const
 {
 	for (unsigned long j=b; ((j<o.len()) && (j<e)); j++)
 		if (o[j] > 255) return FALSE;
@@ -1926,7 +1854,7 @@ boolean  MibTable::check_index(Oidx& o, unsigned long b, unsigned long e) const
  * @param o - The oid to be checked.
  * @return TRUE if an object of the given oid could be created.
  */
-boolean MibTable::could_ever_be_managed(const Oidx& o, int& result)
+bool MibTable::could_ever_be_managed(const Oidx& o, int& result)
 {
 	MibLeaf* gen = get_generator(o);
 	if ((!gen) || (gen->get_access() < READCREATE) ||
@@ -1949,7 +1877,7 @@ boolean MibTable::could_ever_be_managed(const Oidx& o, int& result)
  * @param sz - The size of the array.
  * @return TRUE if the specified row is ready to set for service.
  */
-boolean	MibTable::ready_for_service(Vbx* pvbs, int sz)
+bool	MibTable::ready_for_service(Vbx* pvbs, int sz)
 {
 	return TRUE;
 }
@@ -1971,10 +1899,10 @@ boolean	MibTable::ready_for_service(Vbx* pvbs, int sz)
  *    new values, but is not inserted into the table.
  * @return TRUE if the specified row is ready to set for service.
  */
-boolean MibTable::ready(Vbx* pvbs, int sz, MibTableRow* row)
+bool MibTable::ready(Vbx* pvbs, int sz, MibTableRow* row)
 {
 	// sz must be size of a complete row!
-	int* required = new int[sz];
+	bool* required = new bool[sz];
 	get_required_columns(required, 0);
 
 	for (int i=0; i<sz; i++) {
@@ -1987,7 +1915,7 @@ boolean MibTable::ready(Vbx* pvbs, int sz, MibTableRow* row)
 		      (!c->value_ok(pvbs[i]))) {  // check if set value is ok
 		    delete[] required;
 
-		    LOG_BEGIN(DEBUG_LOG | 3);
+		    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 3);
 		    LOG("MibTable: ready_for_service: failed on (col)(value)");
 		    LOG(c->get_oid().get_printable());
 		    LOG(pvbs[i].get_printable_value());
@@ -2093,7 +2021,7 @@ int MibTable::commit_set_request(Request* req, int ind)
 }
 
 
-void MibTable::get_required_columns(boolean* required, Vbx* pvbs)
+void MibTable::get_required_columns(bool* required, Vbx* pvbs)
 {
 #ifndef USE_ARRAY_TEMPLATE
 	OrderedListCursor<MibLeaf> cur;
@@ -2125,18 +2053,18 @@ void MibTable::get_required_columns(boolean* required, Vbx* pvbs)
 
 int MibTable::check_creation(Request* req, int& ind)
 {
-	boolean ok = FALSE;
-	boolean wait = FALSE;
-	boolean ignore = FALSE;
+	bool ok = FALSE;
+	bool wait = FALSE;
+	bool ignore = FALSE;
 
 	int rowsize = generator.size();
 
-	boolean* fulfilled = new boolean[rowsize];
-	boolean* required  = new boolean[rowsize];
+	bool* fulfilled = new bool[rowsize];
+	bool* required  = new bool[rowsize];
 	Vbx* pvbs = new Vbx[rowsize];
 
-	memset(fulfilled, FALSE, sizeof(boolean)*rowsize);
-	memset(required,  FALSE, sizeof(boolean)*rowsize);
+	memset(fulfilled, FALSE, sizeof(bool)*rowsize);
+	memset(required,  FALSE, sizeof(bool)*rowsize);
 
 	get_required_columns(required, pvbs);
 
@@ -2230,7 +2158,7 @@ int MibTable::check_creation(Request* req, int& ind)
 			}
 			req->set_ready(i);
 
-			if (ignore) // ignore destroying of non existant row
+			if (ignore) // ignore destroying of non existent row
 				req->finish(i);
 			col = generator.index_of(gen);
 			fulfilled[col] = TRUE;
@@ -2452,7 +2380,7 @@ void MibTable::remove_obsolete_rows(OrderedList<Oidx>& confirmed_rows)
 		// not confirmed -> delete row
 		if ((!con.get()) || (*con.get() > cur.get()->get_index())) {
 
-			LOG_BEGIN(EVENT_LOG | 3);
+			LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 			LOG("MibTable: update: removing row");
 			LOG(cur.get()->get_index().get_printable());
 			LOG_END;
@@ -2483,7 +2411,7 @@ void MibTable::remove_unused_rows()
 		for (cur.init(&notready_rows); cur.get(); ) {
 			snmpRowStatus* status = cur.get()->get_row_status();
 			if (status->get() == rowNotReady) {
-				LOG_BEGIN(EVENT_LOG | 2);
+				LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 				LOG("MibTable: removing row due to timeout");
 				LOG(cur.get()->index.get_printable());
 				LOG_END;
@@ -2513,7 +2441,7 @@ void MibTable::remove_unused_rows()
 		// (used for deferred row deletion)
 		OrderedListCursor<MibTableRow> cur;
 		for (cur.init(&notready_rows); cur.get(); ) {
-			LOG_BEGIN(EVENT_LOG | 2);
+			LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 			LOG("MibTable: removing row (index)");
 			LOG(cur.get()->index.get_printable());
 			LOG_END;
@@ -2555,7 +2483,7 @@ void MibTable::remove_unused_rows()
  *    0 all rows are returned.
  */
 void MibTable::get_contents(Vbx**& contents, int& rows, int& cols,
-			    boolean discriminator)
+							int discriminator)
 {
 	start_synch();
 	if (!contents) {
@@ -2594,7 +2522,7 @@ void MibTable::get_contents(Vbx**& contents, int& rows, int& cols,
  *    means all active rows are returned. If the discriminator is
  *    rowEnmpty(0), all rows are returned.
  */
-List<MibTableRow>* MibTable::get_rows(boolean discriminator)
+List<MibTableRow>* MibTable::get_rows(int discriminator)
 {
 	OidListCursor<MibTableRow> cur;
 	List<MibTableRow>* list = new List<MibTableRow>;
@@ -2625,13 +2553,12 @@ List<MibTableRow>* MibTable::get_rows(boolean discriminator)
  * @return
  *    a pointer to a cloned list of the rows in the receiver.
  */
-List<MibTableRow>* MibTable::get_rows_cloned(boolean discriminator)
+List<MibTableRow>* MibTable::get_rows_cloned(int discriminator)
 {
 	return get_rows_cloned(0, discriminator);
 }
 
-List<MibTableRow>* MibTable::get_rows_cloned(const Oidx* prefix,
-					     boolean discriminator)
+List<MibTableRow>* MibTable::get_rows_cloned(const Oidx* prefix, int discriminator)
 {
 	start_synch();
 	OidListCursor<MibTableRow> cur;
@@ -2674,9 +2601,9 @@ void MibTable::remove_voter(MibTableVoter* v)
 
 /*----------------------- class MibConfigBER ------------------------*/
 
-boolean MibConfigBER::save(MibContext* context, const NS_SNMP OctetStr& path)
+bool MibConfigBER::save(MibContext* context, const NS_SNMP OctetStr& path)
 {
-	LOG_BEGIN(INFO_LOG | 1);
+	LOG_BEGIN(loggerModuleName, INFO_LOG | 1);
 	LOG("Saving MIB context contents BER encoded (context)(path)");
 	LOG(context->get_name().get_printable());
 	LOG(path.get_printable());
@@ -2685,10 +2612,10 @@ boolean MibConfigBER::save(MibContext* context, const NS_SNMP OctetStr& path)
 	return TRUE;
 }
 
-boolean MibConfigBER::load(MibContext* context, const NS_SNMP OctetStr& path)
+bool MibConfigBER::load(MibContext* context, const NS_SNMP OctetStr& path)
 {
 	OctetStr pathPrefix(path);
-	LOG_BEGIN(INFO_LOG | 1);
+	LOG_BEGIN(loggerModuleName, INFO_LOG | 1);
 	LOG("Loading MIB context contents BER encoded (context)(path)");
 	LOG(context->get_name().get_printable());
 	LOG(path.get_printable());
@@ -2730,7 +2657,23 @@ Mib::~Mib()
 {
 #ifdef AGENTPP_USE_THREAD_POOL
 	if (threadPool)
-		delete threadPool;
+	{
+          threadPool->terminate();  
+	  int loops = 0;
+	  while (!threadPool->is_idle())
+	  {
+	    Thread::sleep(500);
+	    loops++;
+	    if (loops > 10)
+	    {
+	      LOG_BEGIN(loggerModuleName, INFO_LOG | 1);
+	      LOG("Mib: Still waiting for active requests to finish");
+	      LOG_END;
+	      loops = 0;
+	    }
+	  }
+	  delete threadPool;
+	}
 #endif
 	lock_mib();
 	contexts.clearAll();
@@ -2858,15 +2801,14 @@ void Mib::remove_context(const OctetStr& context)
 	unlock_mib();
 }
 
-boolean Mib::remove(const Oidx& oid)
+bool Mib::remove(const Oidx& oid)
 {
-	boolean removed = TRUE;
+	bool removed = TRUE;
 	lock_mib();
 	// first look for a group
 	if (!defaultContext->remove_group(oid)) {
-		MibEntryPtr entry = 0;
-		defaultContext->find(oid, entry);
-		if (entry) {
+		MibEntryPtr entry = NULL;
+		if ((defaultContext->find(oid, entry) == SNMP_ERROR_SUCCESS) && (entry)) {
 		  entry->start_synch();
 		  /* ok, this works because:
 		     - we hold the lock for the MIB (lock_mib())
@@ -2888,9 +2830,9 @@ boolean Mib::remove(const Oidx& oid)
 	return removed;
 }
 
-boolean Mib::remove(const OctetStr& context, const Oidx& oid)
+bool Mib::remove(const OctetStr& context, const Oidx& oid)
 {
-	boolean removed = TRUE;
+	bool removed = TRUE;
 	Oidx contextKey(Oidx::from_string(context));
 	lock_mib();
 	MibContext* c = contexts.find(&contextKey);
@@ -2899,10 +2841,9 @@ boolean Mib::remove(const OctetStr& context, const Oidx& oid)
 	  unlock_mib();
 	  return FALSE;
 	}
-	if (!defaultContext->remove_group(oid)) {
-		MibEntryPtr entry;
-		c->find(oid, entry);
-		if (entry) {
+	if (!c->remove_group(oid)) {
+		MibEntryPtr entry = NULL;
+		if ((c->find(oid, entry) == SNMP_ERROR_SUCCESS) && (entry)) {
 		  entry->start_synch();
 		  /* ok, this works because:
 		     - we hold the lock for the MIB (lock_mib())
@@ -2949,7 +2890,7 @@ MibGroup* Mib::find_group_of(const OctetStr& context, const Oidx& oid)
 	return c->find_group_of(oid);
 }
 
-boolean Mib::init()
+bool Mib::init()
 {
 #ifdef AGENTPP_USE_THREAD_POOL
 	if (!threadPool) {
@@ -2979,11 +2920,11 @@ void Mib::save_all()
 	}
 }
 
-boolean Mib::save(unsigned int format, const OctetStr& path)
+bool Mib::save(unsigned int format, const OctetStr& path)
 {
 	MibConfigFormat* f = configFormats.getNth(format-1);
 	if (f) {
-		boolean ok = TRUE;
+		bool ok = TRUE;
 		OidListCursor<MibContext> cur;
 		lock_mib();
 		for (cur.init(&contexts); cur.get(); cur.next()) {
@@ -3006,11 +2947,11 @@ MibConfigFormat* Mib::add_config_format(unsigned int formatID,
 	return old;
 }
 
-boolean Mib::load(unsigned int format, const NS_SNMP OctetStr& path)
+bool Mib::load(unsigned int format, const NS_SNMP OctetStr& path)
 {
 	MibConfigFormat* f = configFormats.getNth(format-1);
 	if (f) {
-		boolean ok = TRUE;
+		bool ok = TRUE;
 		OidListCursor<MibContext> cur;
 		lock_mib();
 		for (cur.init(&contexts); cur.get(); cur.next()) {
@@ -3022,7 +2963,7 @@ boolean Mib::load(unsigned int format, const NS_SNMP OctetStr& path)
 	return FALSE;
 }
 
-boolean Mib::add_agent_caps(const OctetStr& context,
+bool Mib::add_agent_caps(const OctetStr& context,
 			    const Oidx& sysORID,
 			    const OctetStr& sysORDescr)
 {
@@ -3063,7 +3004,7 @@ MibEntryPtr Mib::get(const OctetStr& context, const Oidx& key)
 }
 
 
-boolean Mib::is_complex_node(const MibEntryPtr& entry)
+bool Mib::is_complex_node(const MibEntryPtr& entry)
 {
 	return ((entry->type() == AGENTPP_TABLE) ||
 		(entry->type() == AGENTPP_PROXY) ||
@@ -3106,7 +3047,7 @@ int Mib::find_managing_object(MibContext* context,
 }
 
 int Mib::find_next(MibContext* context, const Oidx& oid, MibEntryPtr& entry,
-		   Request* req, const int)
+		   Request* req, const int, Oidx& nextOid)
 {
 	if (!context) return sNMP_SYNTAX_NOSUCHOBJECT;
 	int err = find_managing_object(context, oid, entry, req);
@@ -3132,7 +3073,7 @@ int Mib::find_next(MibContext* context, const Oidx& oid, MibEntryPtr& entry,
 		}
 	}
 	if ((is_complex_node(entry)) &&
-	    (entry->find_succ(oid, req).len() > 0))
+	    ((nextOid = entry->find_succ(oid, req)).len() > 0))
 		return SNMP_ERROR_SUCCESS;
 	do {
 		MibEntry* e = context->find_next(*entry->key());
@@ -3154,12 +3095,19 @@ int Mib::find_next(MibContext* context, const Oidx& oid, MibEntryPtr& entry,
  * @param req - A pointer to the corresponding GETNEXT/BULK request.
  * @param entry - Returns the entry that is the next accessible in
  *                the current view.
- * @param oid - Returns the oid of the object for that access has
- *              been denied or granted.
+ * @param oid - Returnsnms the oid of the object for that access has
+ *              been denied or granted. If oid is not empty (size != 0), it
+ *              is used to point to the target OID within a table or
+ *              complex entry. Otherwise, the successor OID will be searched
+ *              and returned.
+ * @param nextOid
+ *    Provides the already determined next OID for complex
+ *    mib entries. If nextOid has the zero length, it will be ignored.
  * @return VACM_accessAllowed if access is granted and any other
  *         VACM error code if access is denied.
  */
-int Mib::next_access_control(Request* req, const MibEntryPtr entry, Oidx& oid)
+int Mib::next_access_control(Request* req, const MibEntryPtr entry, Oidx& oid,
+                             const Oidx& nextOid)
 {
 	int vacmErrorCode = VACM_otherError;
 	switch (entry->type()) {
@@ -3182,21 +3130,29 @@ int Mib::next_access_control(Request* req, const MibEntryPtr entry, Oidx& oid)
 	case AGENTPP_TABLE:
 	case AGENTPP_COMPLEX:
 	case AGENTPP_PROXY: {
+                // reuse provided OID for the first iteration (if not empty)
+                if (nextOid.len() > 0) {
+                    oid = nextOid;
+                }
+                else {
+                    oid = entry->find_succ(oid, req);
+                }
 		do {
-		  Oidx tmpoid(entry->find_succ(oid, req));
-		  if (tmpoid.len() <= 0) {
+		  if (oid.len() <= 0) {
 			oid = *entry->max_key();
 			return VACM_notInView;
 		  }
-		  oid = tmpoid;
 		  vacmErrorCode =
 		    requestList->get_vacm()->
 		    isAccessAllowed(req->viewName, oid);
+                  if (vacmErrorCode != VACM_accessAllowed) {
+                    oid = entry->find_succ(oid, req);                      
+                  }
 		} while (vacmErrorCode != VACM_accessAllowed);
 		break;
 	}
 	default: {
-		LOG_BEGIN(ERROR_LOG | 1);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		LOG("Mib::get_next_request: not implemented (entry->type)");
 		LOG(entry->type());
 		LOG_END;
@@ -3206,7 +3162,7 @@ int Mib::next_access_control(Request* req, const MibEntryPtr entry, Oidx& oid)
 }
 #endif
 
-boolean Mib::set_exception_vb(Request* req, int reqind, int err)
+bool Mib::set_exception_vb(Request* req, int reqind, int err)
 {
 	Vbx vb(req->get_oid(reqind));
 	vb.set_syntax(err);
@@ -3221,13 +3177,13 @@ boolean Mib::set_exception_vb(Request* req, int reqind, int err)
 	return FALSE;
 }
 
-boolean Mib::process_request(Request* req, int reqind)
+bool Mib::process_request(Request* req, int reqind)
 {
 	// only GET and GETNEXT subrequest can be performed independently
 	switch (req->get_type()) {
 	case (sNMP_PDU_GET): {
 
-	       	LOG_BEGIN(EVENT_LOG | 3);
+	       	LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 	       	LOG("Mib: process subrequest: get request, oid");
 	       	LOG(req->get_transaction_id());
 		LOG(req->get_oid(reqind).get_printable());
@@ -3274,7 +3230,7 @@ boolean Mib::process_request(Request* req, int reqind)
 	}
 	case (sNMP_PDU_GETNEXT): {
 
-	       	LOG_BEGIN(EVENT_LOG | 3);
+	       	LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 	       	LOG("Mib: process subrequest: getnext request, oid");
 	       	LOG(req->get_transaction_id());
 		LOG(req->get_oid(reqind).get_printable());
@@ -3282,29 +3238,29 @@ boolean Mib::process_request(Request* req, int reqind)
 
 		MibEntryPtr entry;
 		Oidx tmpoid(req->get_oid(reqind));
+                Oidx nextOid;
 		lock_mib();
 #ifdef _SNMPv3
 		int vacmErrorCode = VACM_otherError;
-		do {
+		do {                   
+                  nextOid.clear();
 		  if (find_next(get_context(req->get_context()), tmpoid, entry,
-				req, reqind) != SNMP_ERROR_SUCCESS) {
+				req, reqind, nextOid) != SNMP_ERROR_SUCCESS) {
 #else
 	reprocess:
-		// this goto label is used for complex (i.g., proxy) mib
-		// entries that to not exatcly know their last member
+                // this goto label is used for complex (i.g., proxy) mib
+                // entries that to not exactly know their last member
 		  if (find_next(defaultContext, tmpoid, entry,
-				req, reqind) != SNMP_ERROR_SUCCESS) {
+				req, reqind, nextOid) != SNMP_ERROR_SUCCESS) {
 #endif
 			unlock_mib();
 			return set_exception_vb(req, reqind,
 						sNMP_SYNTAX_ENDOFMIBVIEW);
 		  }
 #ifdef _SNMPv3
-		} while ((vacmErrorCode = next_access_control(req,
-							      entry,
-							      tmpoid)) ==
+		} while ((vacmErrorCode = 
+                          next_access_control(req, entry, tmpoid, nextOid)) ==
 			  VACM_notInView);
-
                 if (vacmErrorCode != VACM_accessAllowed) {
 		  unlock_mib();
                   req->vacmError(reqind, vacmErrorCode);
@@ -3339,7 +3295,7 @@ boolean Mib::process_request(Request* req, int reqind)
 			break;
 		}
 		default: {
-			LOG_BEGIN(ERROR_LOG | 1);
+			LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 			LOG("Mib::get_next_request: not implemented (entry->type)");
 			LOG(entry->type());
 			LOG_END;
@@ -3393,7 +3349,7 @@ void Mib::process_request(Request* req)
 #endif /*AGENTPP_USE_THREAD_POOL*/
 #else
 	do_process_request(req);
-	LOG_BEGIN(DEBUG_LOG | 12);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 12);
 	LOG("Agent: ready to receive request");
 	LOG_END;
 #endif
@@ -3402,7 +3358,7 @@ void Mib::process_request(Request* req)
 #ifdef _SNMPv3
 #ifdef _PROXY_FORWARDER
 
-boolean	Mib::register_proxy(ProxyForwarder* proxy)
+bool	Mib::register_proxy(ProxyForwarder* proxy)
 {
 	if (!proxies.find(proxy->key())) {
 		proxies.add(proxy);
@@ -3425,7 +3381,7 @@ void Mib::proxy_request(Request* req)
 	ProxyForwarder::pdu_type t = ProxyForwarder::ALL;
 	key += t;
 
-	LOG_BEGIN(EVENT_LOG | 2);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	LOG("Agent: Proxy request (contextID)");
 	LOG(key.get_printable());
 	LOG_END;
@@ -3471,6 +3427,7 @@ void Mib::proxy_request(Request* req)
 	}
 	else {
 		requestList->answer(req);
+		delete_request(req);
 	}
 }
 #endif
@@ -3482,7 +3439,7 @@ void Mib::proxy_request(Request* req)
  */
 void Mib::do_process_request(Request* req)
 {
-	LOG_BEGIN(EVENT_LOG | 2);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	LOG("Agent: starting thread execution (pduType)(subrequests)");
 	LOG(req->get_type());
 	LOG(req->subrequests());
@@ -3497,12 +3454,12 @@ void Mib::do_process_request(Request* req)
 	if ((req->get_pdu()->get_context_engine_id().len() > 0) &&
 	    (myEngineID != req->get_pdu()->get_context_engine_id())) {
 		// use requestList directly to avoid processing by sub classes
-		LOG_BEGIN(EVENT_LOG | 2);
+		LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 		LOG("Mib: processing proxy request (contextEngineID)");
 		LOG(req->get_pdu()->get_context_engine_id().get_printable_hex());
 		LOG_END;
 	        proxy_request(req);
-		LOG_BEGIN(EVENT_LOG | 2);
+		LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 		LOG("Agent: finished thread execution");
 		LOG_END;
 		return;
@@ -3515,7 +3472,7 @@ void Mib::do_process_request(Request* req)
 		switch (req->get_type()) {
 		case (sNMP_PDU_GET): {
 
-		  LOG_BEGIN(EVENT_LOG | 2);
+		  LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 		  LOG("Mib: process request: get request, oid");
 		  LOG(req->get_transaction_id());
 		  for (i=0; i<n; i++)
@@ -3530,7 +3487,7 @@ void Mib::do_process_request(Request* req)
 		}
 		case (sNMP_PDU_GETNEXT): {
 
-		  LOG_BEGIN(EVENT_LOG | 2);
+		  LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 		  LOG("Mib: process request: getnext request, oid");
 		  LOG(req->get_transaction_id());
 		  for (i=0; i<n; i++)
@@ -3556,7 +3513,7 @@ void Mib::do_process_request(Request* req)
 	// answer the request
 	finalize(req);
 
-	LOG_BEGIN(EVENT_LOG | 2);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	LOG("Agent: finished thread execution");
 	LOG_END;
 }
@@ -3565,7 +3522,7 @@ void Mib::process_set_request(Request* req)
 {
 	int n = req->subrequests();
 
-	LOG_BEGIN(EVENT_LOG | 2);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	LOG("Mib: process request: set request (tid)(oid)");
 	LOG(req->get_transaction_id());
 
@@ -3580,7 +3537,7 @@ void Mib::process_set_request(Request* req)
 
 			req->phase++;
 
-			LOG_BEGIN(WARNING_LOG | 2);
+			LOG_BEGIN(loggerModuleName, WARNING_LOG | 2);
 			LOG("Mib: commit failed (tid)");
 			LOG(req->get_transaction_id());
 			LOG_END;
@@ -3595,7 +3552,7 @@ void Mib::process_set_request(Request* req)
 
 int Mib::process_prepare_set_request(Request* req)
 {
-	LOG_BEGIN(EVENT_LOG | 3);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 	LOG("Agent: preparing set request");
 	LOG(req->get_transaction_id());
 	LOG_END;
@@ -3657,7 +3614,7 @@ int Mib::process_prepare_set_request(Request* req)
 
 int Mib::process_commit_set_request(Request* req)
 {
-	LOG_BEGIN(EVENT_LOG | 3);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 	LOG("Agent: committing set request");
 	LOG(req->get_transaction_id());
 	LOG_END;
@@ -3698,7 +3655,7 @@ int Mib::process_commit_set_request(Request* req)
 
 int Mib::process_undo_set_request(Request* req)
 {
-	LOG_BEGIN(EVENT_LOG | 3);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 	LOG("Agent: undoing set request");
 	LOG(req->get_transaction_id());
 	LOG_END;
@@ -3732,7 +3689,7 @@ int Mib::process_undo_set_request(Request* req)
 
 void Mib::process_cleanup_set_request(Request* req)
 {
-	LOG_BEGIN(EVENT_LOG | 3);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 	LOG("Agent: cleaning up set request");
 	LOG(req->get_transaction_id());
 	LOG_END;
@@ -3756,14 +3713,14 @@ void Mib::process_cleanup_set_request(Request* req)
 
 void Mib::process_get_bulk_request(Request* req)
 {
-	LOG_BEGIN(EVENT_LOG | 2);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	LOG("Mib: process request: getbulk request, oid");
 	LOG(req->get_transaction_id());
 	for (int i=0; i<req->subrequests(); i++)
 		LOG(req->get_oid(i).get_printable());
 	LOG_END;
 
-	LOG_BEGIN(DEBUG_LOG | 6);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 6);
 	LOG("Mib: getbulk: processing (non repeaters)(max rep)");
 	LOG(req->get_non_rep());
 	LOG(req->get_max_rep());
@@ -3785,17 +3742,19 @@ void Mib::process_get_bulk_request(Request* req)
 		Oidx tmpoid(req->get_oid(id));
 		MibEntryPtr entry;
 		lock_mib();
+                Oidx nextOid;
 #ifdef _SNMPv3
 		int vacmErrorCode = VACM_otherError;
 		do {
+                  nextOid.clear();
 		  if (find_next(get_context(req->get_context()),
-				tmpoid, entry, req, id) != SNMP_ERROR_SUCCESS){
+				tmpoid, entry, req, id, nextOid) != SNMP_ERROR_SUCCESS){
 #else
 	reprocess:
 		// this goto label is used for complex (i.g., proxy) mib
-		// entries that to not exatcly know their last member
+		// entries that to not exactly know their last member
 		  if (find_next(defaultContext, tmpoid, entry,
-				req, id) != SNMP_ERROR_SUCCESS) {
+				req, id, nextOid) != SNMP_ERROR_SUCCESS) {
 #endif
 			unlock_mib();
 			Vbx vb(req->get_oid(id));
@@ -3804,9 +3763,8 @@ void Mib::process_get_bulk_request(Request* req)
 			return;
 		  }
 #ifdef _SNMPv3
-		} while ((vacmErrorCode = next_access_control(req,
-							      entry,
-							      tmpoid)) ==
+		} while ((vacmErrorCode = 
+                          next_access_control(req, entry, tmpoid, nextOid)) ==
 			  VACM_notInView);
 
                 if (vacmErrorCode != VACM_accessAllowed) {
@@ -3843,7 +3801,7 @@ void Mib::process_get_bulk_request(Request* req)
 			break;
 		  }
 		  default: {
-		    LOG_BEGIN(ERROR_LOG | 1);
+		    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		    LOG("Mib::get_next_request: not implemented (entry->type)");
 		    LOG(entry->type());
 		    LOG_END;
@@ -3867,7 +3825,7 @@ void Mib::process_get_bulk_request(Request* req)
 
 		id = nonrep + req->get_rep()*j;
 
-		LOG_BEGIN(DEBUG_LOG | 6);
+		LOG_BEGIN(loggerModuleName, DEBUG_LOG | 6);
 		LOG("Mib: getbulk: processing repeaters");
 		LOG(j);
 		LOG_END;
@@ -3875,7 +3833,7 @@ void Mib::process_get_bulk_request(Request* req)
 		// finish at last repetition
 		if (j == maxrep-1) req->dec_outstanding();
 
-		boolean all_endofview = TRUE;
+		bool all_endofview = TRUE;
 
 		int endofNextRow = nonrep + req->get_rep()*(j+1);
 		for (; (id < req->subrequests()) &&
@@ -3886,7 +3844,7 @@ void Mib::process_get_bulk_request(Request* req)
 			Oidx tmpoid(req->get_oid(id));
 			MibEntryPtr entry;
 
-			LOG_BEGIN(DEBUG_LOG | 6);
+			LOG_BEGIN(loggerModuleName, DEBUG_LOG | 6);
 			LOG("Mib: getbulk: processing (id)(until)(oid)");
 			LOG(id);
 			LOG(endofNextRow);
@@ -3895,20 +3853,22 @@ void Mib::process_get_bulk_request(Request* req)
 			LOG_END;
 
 			lock_mib();
+                        Oidx nextOid;
 #ifdef _SNMPv3
-			boolean contin = FALSE;
+			bool contin = FALSE;
 			int vacmErrorCode = VACM_otherError;
 			do {
+                          nextOid.clear();
 			  if (find_next(get_context(req->get_context()),
-					tmpoid, entry, req, id) !=
+					tmpoid, entry, req, id, nextOid) !=
 #else
        repeating:
 			if (find_next(defaultContext,
-					tmpoid, entry, req, id) !=
+					tmpoid, entry, req, id, nextOid) !=
 #endif
 			      SNMP_ERROR_SUCCESS) {
 
-				LOG_BEGIN(DEBUG_LOG | 6);
+				LOG_BEGIN(loggerModuleName, DEBUG_LOG | 6);
 				LOG("Mib: getbulk: end of mib view (id)(left)");
 				LOG(id);
 				LOG(req->outstanding);
@@ -3934,7 +3894,8 @@ void Mib::process_get_bulk_request(Request* req)
 			  }
 #ifdef _SNMPv3
 			} while ((vacmErrorCode =
-				  next_access_control(req, entry, tmpoid)) ==
+				  next_access_control(req, entry, 
+                                                      tmpoid, nextOid)) ==
 				 VACM_notInView);
 
 			if (contin) { unlock_mib(); continue; }
@@ -3973,7 +3934,7 @@ void Mib::process_get_bulk_request(Request* req)
 				break;
 			}
 			default: {
-			  LOG_BEGIN(ERROR_LOG | 1);
+			  LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 			  LOG("Mib::get_next_request: not implemented (entry->type)");
 			  LOG(entry->type());
 			  LOG_END;

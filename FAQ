@@ -47,7 +47,7 @@ Q: I have build an agent with AGENT++/AgenPro for a MIB containing
    returns "Not Available". The problem occurs only when accessing 
    tables.
 
-A: Tables created via AgentGen are empty by default. You have to add 
+A: Tables created via AgenPro are empty by default. You have to add 
    rows to a table in order to be able to access any instances
    within that table. 
 

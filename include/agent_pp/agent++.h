@@ -1,100 +1,32 @@
 /*_############################################################################
   _## 
-  _##  agent++.h  
+  _##  AGENT++ 4.0 - agent++.h.in  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
 #ifndef _agentpp_h_
 #define _agentpp_h_
 
-#define AGENTPP_VERSION_STRING "3.5.31"
-#define AGENTPP_VERSION 3
-#define AGENTPP_RELEASE 5
-#define AGENTPP_PATCHLEVEL 31
+#define AGENTPP_VERSION_STRING "4.0.2"
+#define AGENTPP_VERSION 4
+#define AGENTPP_RELEASE 0
+#define AGENTPP_PATCHLEVEL 2
+
+#include <libagent.h>
 
 // system dependend witches
 #ifndef NO_NANOSLEEP
@@ -120,9 +52,21 @@
 #include <snmp_pp/snmp_pp.h>
 
 
+#if 1
+#define _USE_PROXY
+#else
+#undef _USE_PROXY
+#endif
+
 // define _PROXY_FORWARDER for v1/v2c/v3 proxy agents
-#ifndef _PROXY_FORWARDER
+#if 1
 #define _PROXY_FORWARDER
+#else
+#undef _PROXY_FORWARDER
+#endif
+
+#ifndef AGENTPP_OPAQUE_PTHREAD_T
+#define AGENTPP_OPAQUE_PTHREAD_T int
 #endif
 
 #include <snmp_pp/smi.h>
@@ -146,8 +90,25 @@
 #define FALSE 0
 #endif
 
-#ifndef boolean
-#define boolean int
+#if 0
+#ifdef bool
+#undef bool
+#endif
+#define bool int
+#ifdef true
+#undef true
+#endif
+#define true TRUE
+#ifdef false
+#undef false
+#endif
+#define false FALSE
+#endif
+
+#if 1
+#define AGENTPP_NAMESPACE
+#else
+#undef AGENTPP_NAMESPACE
 #endif
 
 // internal "snmp" pdu types, used for internal mib updates
@@ -201,7 +162,10 @@ typedef enum { READING, WRITING } access_types;
 
 // Define STATIC_REQUEST_LIST if you need a static RequestList in
 // Mib.
-//#define STATIC_REQUEST_LIST
+#if defined(_USE_PROXY) && !defined(_PROXY_FORWARDER)
+// Old proxy implementation requires STATIC_REQUEST_LIST
+#define STATIC_REQUEST_LIST
+#endif
 
 // ThreadPool may not work on any system so disable it if you encounter
 // problems
@@ -209,8 +173,14 @@ typedef enum { READING, WRITING } access_types;
 #define AGENTPP_USE_THREAD_POOL
 
 // Use NO_FAST_MUTEXES on systems that do not allow a thread to unlock
-// a mutex it does not own. This has to be defined on WIN32 systems!
+// a mutex it does not own. This setting affects set requests only.
+// This has to be defined on WIN32 systems!
 #ifdef WIN32
+#define NO_FAST_MUTEXES
+#endif
+// The Single UNIX ® Specification, Version 2 says:
+// If a thread attempts to unlock a mutex that it has not locked or [...], undefined behaviour results.
+#ifdef HAVE_PTHREAD
 #define NO_FAST_MUTEXES
 #endif
 #endif //_THREADS
@@ -221,19 +191,14 @@ typedef enum { READING, WRITING } access_types;
 // using the listen address of the RequestList.
 #define USE_LISTEN_ADDRESS_FOR_SENDING_TRAPS
 
-
-#ifdef __GNUC__
-#if (__GNUC__ > 2) || ((__GNUC__ == 2) && (__GNUC_MINOR__ >= 91))
-#ifndef AGENTPP_NAMESPACE
-#define AGENTPP_NAMESPACE
-#endif
-#endif
-#endif
-
 #ifdef AGENTPP_NAMESPACE
 #define NS_AGENT Agentpp::
 #else
 #define NS_AGENT
+#endif
+
+#ifndef MAXUINT32
+#define MAXUINT32 4294967295u
 #endif
 
 #define DEFAULT_ENGINE_BOOTS_FILE "snmpv3_boot_counter"

@@ -1,8 +1,81 @@
-Version 3.5.32: CHANGES since Version 3.5.31
-============================================
 
-* Fixed: Synchronized::wait with timeout fails sometimes with errno 22,
-  which could lead to synchronization errors and/or endless looping.
+
+Version 4.0.2: CHANGES since Version 4.0.1
+==========================================
+
+* Fixed: Makefile.am of atm_mib and cmd_exe examples to include
+  their .h files in distribution.
+* Improved: API documentation (e.g., warning in Mib::init() regarding
+  ThreadPool initialization and stack size).
+* Fixed: Compiler issues found in some MIB implementations by the
+  llvm clang compiler.
+
+Version 4.0.1: CHANGES since Version 4.0.0
+==========================================
+
+* Fixed: [APP-25] make distcheck.
+* Fixed: [APP-26] agenpro template support for AgenPro 3.1.4.
+
+Version 4.0: CHANGES since Version 3.5.31
+=========================================
+
+* Released under the Apache 2 Open Source license.
+* Added: Autoconf support.
+* Fixed: bool vs. int issues and WIN32 compilation problems.
+* Fixed: Compilation error regarding pthread_t = long on 64bit mac os.
+* Fixed: [APP-19] Fixed regression regarding thread timeout waits.
+* Fixed: [APP-23] Fixed race condition for an endless loop in 
+  TaskManager.run().
+* Improved: Added definition of MAXUINT32 in agent++.h to it defined 
+  for NO_SNMPv3 too.
+* Fixed: Changed send_snmp_request to accept address as const parameter.
+* Fixed: SocketAddrType usage for _NO_SNMPv3.
+* Fixed [APP-19]: Added clock_gettime usage in Synchronized wait with 
+  improved timeout computation.
+* Fixed [APP-19]: Fixed overflow in clock difference for sysUpTime.
+* Fixed [APP-19]: Improved robustness against clock changes by usage 
+  of clock_gettime(CLOCK_MONOTONIC,..).
+* Fixed [APP-17]: Performance optimization: MibEntry->find_succ was called 
+  more often than needed when processing get_next and get_bulk PDUs.
+* Improved [APP-22]: Sychronized::trylock behavior to support detection of 
+  recursive locking. This feature is needed by AgentX++ to support recursive 
+  Posix Thread locks.
+* Fixed [APP-12]: Removed incorrect _NOTIFICATION_LOG_BY_SENT_NOTIFICATIONS 
+  compiler switch.
+* Fixed [APP-12]: Creation of nlmConfigLogEntry entries.
+* Fixed [APP-12]: nlmConfigRowStatus type; Notification events are logged only
+  once by default.
+* Fixed compilation with g++ 4.7.1 under Opensuse 12.2
+* Fixed seg. fault in static_table example.
+* Fixed: Cast from ‘Agentpp::Synchronized*’ to ‘int’ loses precision.
+* Fixed: Only use undo value in unset() function if it is not null.
+* Fixed [APP-16]: Mib group not removed from non-default context with 
+  Mib::remove.
+* Fixed [APP-10]: In call of passes_filter, the profile name was exchanged 
+  with the notification id resulting in incorrect filtering.
+* Fixed: Compiler warnings regarding empty array creating in List.h Array.
+* Fixed: Two MibTable constructors used unsigned int instead of int
+* Improved: Made init_lock_queue and delete_lock_queue static.
+* Fxed: Prevent memory leaks when calling snmp_community_mib::add_public() 
+  twice or if the rows where loaded from file before.
+* Improved: Allow to set security level for add_v3_trap_destination() function.
+* Fixed: Added missing namespaces in notification_log_mib.h.
+* Improved: Use const char* for static strings.
+* Added: RequestID in request.h to facilitate 
+  background instrumentation processing. The
+  RequestID can be used by a table to associate
+  an operation (request_id) with an Oid.
+* Improved: Replaced all usages of boolean with bool. This fixes some
+  inconsitencies, where boolean was used as int.
+* Fixed: Two MibTable constructors used unsigned int instead of int
+  (found from Stephen Agate)
+* Improved: Added some notes about memory handling; Moved some initializations 
+  out of synchronized area.
+* Improved: Allow to set system contact, system name and system location in 
+  sysGroup constructor.
+* Improved: atm_mib example: Delete objects before exit.
+* Improved: Added VacmContextTable::clear() method.
+
 
 Version 3.5.31: CHANGES since Version 3.5.30
 ============================================
@@ -1737,7 +1810,7 @@ Version 2.1: CHANGES since Version 2.02
 Version 2.02: CHANGES since Version 2.01a
 =========================================
 
-* Fixed: compiling without _THREADS didn�t work.
+* Fixed: compiling without _THREADS didn´t work.
 
 * Added trapDestGroup containing trapDestTable and trapDestIndexNext,
   which support the (de)registration of trap destinations and 
@@ -1787,7 +1860,7 @@ Version 1.01: CHANGES since Version 1.0
 * Makefile supports shared libs.
 
 * Now the returned value if "end of mib" is reached is fully SNMPv1 
-  compatible (if the incoming request�s version has been SNMPv1).
+  compatible (if the incoming request´s version has been SNMPv1).
 
 * Some minor changes of the debugging log messages.
 

@@ -1,109 +1,35 @@
 /*_############################################################################
   _## 
-  _##  vacm.cpp  
+  _##  AGENT++ 4.0 - vacm.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
+#include <libagent.h>
 
-#include <string.h>
-#include <agent_pp/agent++.h>
 #include <agent_pp/tools.h>
 #include <agent_pp/vacm.h>
 #include <agent_pp/snmp_textual_conventions.h>
 #include <snmp_pp/log.h>
 
-#ifdef SNMP_PP_NAMESPACE
-using namespace Snmp_pp;
-#endif
-
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
 
+static const char *loggerModuleName = "agent++.vacm";
 
 const index_info       	iVacmSecurityToGroupTable[2]	=
 { { sNMP_SYNTAX_INT, FALSE, 1, 1 }, { sNMP_SYNTAX_OCTETS, FALSE, 1, 32 } };
@@ -176,7 +102,7 @@ VacmContextTable::~VacmContextTable()
 
 }
 
-boolean VacmContextTable::addNewRow(const OctetStr& context)
+bool VacmContextTable::addNewRow(const OctetStr& context)
 {
   Oidx newIndex = Oidx::from_string(context, TRUE);
 
@@ -194,7 +120,7 @@ void VacmContextTable::deleteRow(const OctetStr& context)
   remove_row(Oidx::from_string(context, TRUE));
 }
 
-boolean VacmContextTable::isContextSupported(const OctetStr& context)
+bool VacmContextTable::isContextSupported(const OctetStr& context)
 {
   OidListCursor<MibTableRow> cur;
   for (cur.init(&content); cur.get(); cur.next()) {
@@ -238,7 +164,7 @@ VacmSecurityToGroupTable::~VacmSecurityToGroupTable()
 {
 }
 
-boolean VacmSecurityToGroupTable::ready_for_service(Vbx* pvbs, int sz)
+bool VacmSecurityToGroupTable::ready_for_service(Vbx* pvbs, int sz)
 {
   // check if GroupName is set
 
@@ -263,7 +189,7 @@ void VacmSecurityToGroupTable::row_added(MibTableRow* new_row,
   ml->set_value(o.as_string());
 }
 
-boolean VacmSecurityToGroupTable::could_ever_be_managed(const Oidx& o,
+bool VacmSecurityToGroupTable::could_ever_be_managed(const Oidx& o,
 							int& result)
 
 {
@@ -283,7 +209,7 @@ boolean VacmSecurityToGroupTable::could_ever_be_managed(const Oidx& o,
   return TRUE;
 }
 
-boolean VacmSecurityToGroupTable::getGroupName(const int& securityModel, const OctetStr& securityName, OctetStr& groupName)
+bool VacmSecurityToGroupTable::getGroupName(const int& securityModel, const OctetStr& securityName, OctetStr& groupName)
 {
 
   Oidx o=oid; // base
@@ -294,7 +220,7 @@ boolean VacmSecurityToGroupTable::getGroupName(const int& securityModel, const O
   for (unsigned int i=0; i<os.len(); i++)
     o+=os[i];
   //int n,m;
-  LOG_BEGIN(DEBUG_LOG | 7);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
   LOG("Vacm: getGroupName: (model) (name)");
   LOG(securityModel);
   LOG(OctetStr(securityName).get_printable());
@@ -308,7 +234,7 @@ boolean VacmSecurityToGroupTable::getGroupName(const int& securityModel, const O
   return TRUE;
 }
 
-boolean VacmSecurityToGroupTable::isGroupNameOK(const OctetStr& os)
+bool VacmSecurityToGroupTable::isGroupNameOK(const OctetStr& os)
 {
   Vbx v("0");
   v.set_value(os);
@@ -317,7 +243,7 @@ boolean VacmSecurityToGroupTable::isGroupNameOK(const OctetStr& os)
   return FALSE;
 }
 
-boolean VacmSecurityToGroupTable::addNewRow(const int securityModel,
+bool VacmSecurityToGroupTable::addNewRow(const int securityModel,
                                             const OctetStr& securityName,
                                             const OctetStr& groupName,
                                             const int storageType)
@@ -328,7 +254,7 @@ boolean VacmSecurityToGroupTable::addNewRow(const int securityModel,
 
   if (find_index(newIndex))
   {
-    LOG_BEGIN(WARNING_LOG | 5);
+    LOG_BEGIN(loggerModuleName, WARNING_LOG | 5);
     LOG("Vacm: Security to group mapping already exists (security name)");
     LOG(securityName.get_printable());
     LOG_END;
@@ -412,7 +338,7 @@ VacmAccessTable::~VacmAccessTable()
 {
 }
 
-boolean VacmAccessTable::ready_for_service(Vbx* pvbs, int sz)
+bool VacmAccessTable::ready_for_service(Vbx* pvbs, int sz)
 {
   // A row is always ready for service
   return TRUE;
@@ -440,7 +366,7 @@ void VacmAccessTable::row_added(MibTableRow* new_row,
   ml->set_value(o[o.len()-1]);
 }
 
-boolean VacmAccessTable::could_ever_be_managed(const Oidx& o, int& result)
+bool VacmAccessTable::could_ever_be_managed(const Oidx& o, int& result)
 {
   if (!MibTable::could_ever_be_managed(o, result)) return FALSE;
   Oidx tmpoid(o);
@@ -466,16 +392,16 @@ boolean VacmAccessTable::could_ever_be_managed(const Oidx& o, int& result)
 }
 
 
-boolean VacmAccessTable::getViewName(const OctetStr& group,
+bool VacmAccessTable::getViewName(const OctetStr& group,
                                      const OctetStr& context,
                                      const int securityModel,
                                      const int securityLevel,
                                      const int viewType,
                                      OctetStr& viewName)
 {
-  boolean found = FALSE; // TODO: use foundRow pointer!
-  boolean foundMatchModel = FALSE;
-  boolean foundMatchContextExact = FALSE;
+  bool found = FALSE; 
+  bool foundMatchModel = FALSE;
+  bool foundMatchContextExact = FALSE;
   unsigned int foundContextPrefixLength = 0;
   unsigned int foundSecurityLevel = 0;
   MibTableRow* foundRow = NULL;
@@ -483,7 +409,7 @@ boolean VacmAccessTable::getViewName(const OctetStr& group,
   unsigned int groupLen = group.len();
   Oidx ind;
 
-  LOG_BEGIN(DEBUG_LOG | 7);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
   LOG("Vacm: getViewName: (group) (context) (model) (level) (type)");
   LOG(OctetStr(group).get_printable());
   LOG(OctetStr(context).get_printable());
@@ -508,7 +434,7 @@ boolean VacmAccessTable::getViewName(const OctetStr& group,
 
       if (ind.cut_right(ind[ind[0]+1]+3).cut_left(1).as_string() == group) {
 
-	LOG_BEGIN(DEBUG_LOG | 7);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
 	LOG("Vacm: getViewName: (matched group)");
 	LOG(OctetStr(ind.cut_right(ind[ind[0]+1]+3).cut_left(1).as_string()).get_printable());
 	LOG_END;
@@ -525,7 +451,7 @@ boolean VacmAccessTable::getViewName(const OctetStr& group,
           int exactMatch;
           cur.get()->get_nth(3)->get_value(exactMatch);
 
-	  LOG_BEGIN(DEBUG_LOG | 8);
+	  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
 	  LOG("Vacm: getViewName: (matching)(prefix)(context)");
 	  LOG(exactMatch);
 	  LOG(pref.get_printable());
@@ -537,13 +463,13 @@ boolean VacmAccessTable::getViewName(const OctetStr& group,
 	       ((pref.len() <= context.len()) &&
 		(pref.nCompare(pref.len(), context) == 0)))) {
 
-	    LOG_BEGIN(DEBUG_LOG | 7);
+	    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
 	    LOG("Vacm: getViewName: (matched context)");
 	    LOG(pref.get_printable());
 	    LOG_END;
 
             if (found) { // found a row before
-              boolean replace = FALSE;
+              bool replace = FALSE;
               if ((!foundMatchModel) && ((int)ind[ind.len() - 2] == securityModel))
                 replace = TRUE;
               else
@@ -594,7 +520,7 @@ boolean VacmAccessTable::getViewName(const OctetStr& group,
   return FALSE;
 }
 
-boolean VacmAccessTable::addNewRow(const OctetStr& groupName,
+bool VacmAccessTable::addNewRow(const OctetStr& groupName,
                                    const OctetStr& prefix,
                                    const int securityModel, const int securityLevel,
                                    const int match, const OctetStr& readView,
@@ -662,7 +588,7 @@ int VacmViewTreeFamilyTableStatus::set(const Vbx& vb)
 	  ViewNameIndex* views =
 	    ((VacmViewTreeFamilyTable*)my_table)->viewsOf(viewName);
 	  if (!views) {
-	    LOG_BEGIN(WARNING_LOG | 1);
+	    LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
 	    LOG("VacmViewTreeFamilyTableStatus: internal error: view name not found (viewName)");
 	    LOG(viewName.get_printable());
 	    LOG_END;
@@ -670,7 +596,7 @@ int VacmViewTreeFamilyTableStatus::set(const Vbx& vb)
 	  else {
 	    views->remove(my_row);
 
-	    LOG_BEGIN(INFO_LOG | 2);
+	    LOG_BEGIN(loggerModuleName, INFO_LOG | 2);
 	    LOG("VacmViewTreeFamilyTable: (sub)view disabled (viewName)");
 	    LOG(viewName.get_printable());
 	    LOG_END;
@@ -686,7 +612,7 @@ int VacmViewTreeFamilyTableStatus::set(const Vbx& vb)
 	    views->add(my_row);
 	    ((VacmViewTreeFamilyTable*)my_table)->viewNameIndex.add(views);
 
-	    LOG_BEGIN(INFO_LOG | 2);
+	    LOG_BEGIN(loggerModuleName, INFO_LOG | 2);
 	    LOG("VacmViewTreeFamilyTable: adding view name (viewName)");
 	    LOG(viewName.get_printable());
 	    LOG_END;
@@ -694,7 +620,7 @@ int VacmViewTreeFamilyTableStatus::set(const Vbx& vb)
 	  else {
 	    views->add(my_row);
 
-	    LOG_BEGIN(INFO_LOG | 2);
+	    LOG_BEGIN(loggerModuleName, INFO_LOG | 2);
 	    LOG("VacmViewTreeFamilyTable: updating view (viewName)");
 	    LOG(viewName.get_printable());
 	    LOG_END;
@@ -742,7 +668,7 @@ VacmViewTreeFamilyTable::~VacmViewTreeFamilyTable()
 {
 }
 
-boolean VacmViewTreeFamilyTable::ready_for_service(Vbx* pvbs, int sz)
+bool VacmViewTreeFamilyTable::ready_for_service(Vbx* pvbs, int sz)
 {
   // Defaultwerte sind ok!
   return TRUE;
@@ -787,7 +713,7 @@ void VacmViewTreeFamilyTable::row_delete(MibTableRow* row,
 	row_deactivated(row, ind, t);
 }
 
-boolean VacmViewTreeFamilyTable::could_ever_be_managed(const Oidx& o,
+bool VacmViewTreeFamilyTable::could_ever_be_managed(const Oidx& o,
 						       int& result)
 
 {
@@ -810,12 +736,12 @@ boolean VacmViewTreeFamilyTable::could_ever_be_managed(const Oidx& o,
 
 int VacmViewTreeFamilyTable::isInMibView(const OctetStr& viewName, const Oidx& subtree)
 {
-  boolean found = FALSE;
+  bool found = FALSE;
   unsigned int foundSubtreeLen = 0;
   MibTableRow* foundRow = NULL;
   Oidx ind;
 
-  LOG_BEGIN(DEBUG_LOG | 7);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
   LOG("Vacm: isInMibView: (viewName) (subtree)");
   LOG(OctetStr(viewName).get_printable());
   LOG(Oid(subtree).get_printable());
@@ -837,7 +763,7 @@ int VacmViewTreeFamilyTable::isInMibView(const OctetStr& viewName, const Oidx& s
     ind = ind.cut_left(1);
     OctetStr mask;
     cur.get()->get_nth(2)->get_value(mask);
-    boolean ok = TRUE;
+    bool ok = TRUE;
     for (unsigned int i=0; i<ind.len(); i++) {
       if ((ind[i] != subtree[i]) && (bit(i, mask))) {
 	ok = FALSE;
@@ -863,7 +789,7 @@ int VacmViewTreeFamilyTable::isInMibView(const OctetStr& viewName, const Oidx& s
     foundRow->get_nth(3)->get_value(tmpval);
     if (tmpval==1) { //included
 
-      LOG_BEGIN(DEBUG_LOG | 9);
+      LOG_BEGIN(loggerModuleName, DEBUG_LOG | 9);
       LOG("Vacm: isInMibView: access allowed");
       LOG_END;
       return VACM_accessAllowed;
@@ -874,12 +800,12 @@ int VacmViewTreeFamilyTable::isInMibView(const OctetStr& viewName, const Oidx& s
   return VACM_notInView;
 }
 
-boolean VacmViewTreeFamilyTable::bit(unsigned int nr, OctetStr& o)
+bool VacmViewTreeFamilyTable::bit(unsigned int nr, OctetStr& o)
 {
   // return TRUE if bit is "1" or o is too short
   if (o.len() <= (nr/8))
     return TRUE;
-  return (o[nr/8] & (0x01 << (7 - (nr % 8))));
+  return (o[nr/8] & (0x01 << (7 - (nr % 8)))) > 0;
 }
 
 /**
@@ -900,7 +826,7 @@ void VacmViewTreeFamilyTable::buildViewNameIndex()
 }
 
 
-boolean VacmViewTreeFamilyTable::addNewRow(const OctetStr& viewName, const Oidx& subtree,
+bool VacmViewTreeFamilyTable::addNewRow(const OctetStr& viewName, const Oidx& subtree,
                                            const OctetStr& mask, const int type,
                                            const int storageType)
 {
@@ -959,7 +885,7 @@ ViewNameIndex* VacmViewTreeFamilyTable::viewsOf(const OctetStr& viewName)
   ListCursor<ViewNameIndex> cur;
   for (cur.init(&viewNameIndex); cur.get(); cur.next()) {
 
-    LOG_BEGIN(DEBUG_LOG | 8);
+    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
     LOG("VacmViewTreeFamilyTable: isInMibView: (viewName) (match)");
     LOG(vName.get_printable());
     LOG(cur.get()->name.get_printable());
@@ -1013,7 +939,7 @@ Vacm::~Vacm(void)
 
 }
 
-boolean Vacm::addNewContext(const OctetStr &newContext)
+bool Vacm::addNewContext(const OctetStr &newContext)
 {
   return vcp.contextTable->addNewRow(newContext);
 }
@@ -1023,7 +949,7 @@ void Vacm::deleteContext(const OctetStr &context)
   vcp.contextTable->deleteRow(context);
 }
 
-boolean Vacm::addNewGroup(const int securityModel, const OctetStr& securityName,
+bool Vacm::addNewGroup(const int securityModel, const OctetStr& securityName,
                           const OctetStr& groupName, const int storageType)
 {
   return vcp.securityToGroupTable->addNewRow(securityModel, securityName, groupName, storageType);
@@ -1034,7 +960,7 @@ void Vacm::deleteGroup(const int securityModel, const OctetStr& securityName)
   vcp.securityToGroupTable->deleteRow(securityModel, securityName);
 }
 
-boolean Vacm::addNewAccessEntry(const OctetStr& groupName, const OctetStr& prefix,
+bool Vacm::addNewAccessEntry(const OctetStr& groupName, const OctetStr& prefix,
                                 const int securityModel, const int securityLevel,
                                 const int match, const OctetStr& readView, const OctetStr& writeView,
                                 const OctetStr& notifyView, const int storageType)
@@ -1044,13 +970,13 @@ boolean Vacm::addNewAccessEntry(const OctetStr& groupName, const OctetStr& prefi
 }
 
 void Vacm::deleteAccessEntry(const OctetStr& groupName, const OctetStr& prefix,
-                                 const int securityModel, const int securityLevel)
+                             const int securityModel, const int securityLevel)
 {
   vcp.accessTable->deleteRow(groupName, prefix, securityModel, securityLevel);
 }
 
-boolean Vacm::addNewView(const OctetStr& viewName, const Oidx& subtree,
-                         const OctetStr& mask, const int type, const int storageType)
+bool Vacm::addNewView(const OctetStr& viewName, const Oidx& subtree,
+                      const OctetStr& mask, const int type, const int storageType)
 {
   return vcp.viewTreeFamilyTable->addNewRow(viewName, subtree, mask, type, storageType);
 }
@@ -1074,7 +1000,7 @@ int Vacm::isAccessAllowed(const int securityModel, const OctetStr &securityName,
                               const int securityLevel, const int viewType,
                               const OctetStr &context, const Oidx &o)
 {
-  LOG_BEGIN(DEBUG_LOG | 7);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
   LOG("Vacm: Access requested for: (model) (name) (level) (type) (context) (oid)");
   LOG(securityModel);
   LOG(securityName.get_printable());
@@ -1106,7 +1032,7 @@ int Vacm::getViewName(const int securityModel, const OctetStr &securityName,
                          const int securityLevel,
                          const int viewType, const OctetStr &context, OctetStr &viewName)
 {
-  LOG_BEGIN(DEBUG_LOG | 7);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
   LOG("Vacm: getViewName for: (model) (name) (level) (type) (context)");
   LOG(securityModel);
   LOG(securityName.get_printable());
@@ -1135,13 +1061,20 @@ int Vacm::getViewName(const int securityModel, const OctetStr &securityName,
 
 int Vacm::isAccessAllowed(const OctetStr &viewName, const Oidx &o)
 {
-  LOG_BEGIN(DEBUG_LOG | 7);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 7);
   LOG("Vacm: Access requested for: (viewName) (oid)");
   LOG(viewName.get_printable());
   LOG(o.get_printable());
   LOG_END;
 
   return (vcp.viewTreeFamilyTable->isInMibView(viewName, o));
+}
+
+void Vacm::clear() {
+   vcp.contextTable->clear();
+   vcp.securityToGroupTable->clear();
+   vcp.accessTable->clear();
+   vcp.viewTreeFamilyTable->clear();    
 }
 
 #ifdef AGENTPP_NAMESPACE

@@ -1,114 +1,30 @@
 /*_############################################################################
   _## 
-  _##  snmp_pp_ext.cpp  
+  _##  AGENT++ 4.0 - snmp_pp_ext.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
-#include <agent_pp/agent++.h>
-#ifndef WIN32
-#include <sys/types.h>
-#include <sys/socket.h>
-#else
-#include "snmp_pp/IPv6Utility.h"
-#endif
-#include <stdio.h>
-#include <string.h>
+#include <libagent.h>
 
-#include <errno.h>
-#ifndef WIN32
-#include <sys/time.h>
-#include <unistd.h>
-#endif
+#include <agent_pp/agent++.h>
+#include <snmp_pp/IPv6Utility.h>
+
 #ifdef _THREADS
 #include <agent_pp/threads.h>
-#endif
-#include <stdlib.h>
-#ifdef HAVE_POLL_SYSCALL
-#include <poll.h>
 #endif
 
 #include <agent_pp/snmp_pp_ext.h>
@@ -126,7 +42,7 @@ using namespace Snmp_pp;
 namespace Snmp_pp {
 #endif
 extern int send_snmp_request(SnmpSocket, unsigned char*,
-			     size_t, NS_SNMP Address&);
+			     size_t, const NS_SNMP Address&);
 #ifdef SNMP_PP_NAMESPACE
 }
 #endif
@@ -134,6 +50,8 @@ extern int send_snmp_request(SnmpSocket, unsigned char*,
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
+
+static const char *loggerModuleName = "agent++.snmp_pp_ext";
 
 /**
   * class Pdux
@@ -173,7 +91,7 @@ Pdux& Pdux::operator+=(const Vb &vb)
   */
 
 
-boolean Vbx::equal(Vbx* avbs, Vbx* bvbs, int sz)
+bool Vbx::equal(Vbx* avbs, Vbx* bvbs, int sz)
 {
 	for (int i=0; i<sz; i++) {
 		if (avbs[i].get_syntax() != bvbs[i].get_syntax())
@@ -216,8 +134,8 @@ int Vbx::to_asn1(Vbx* vbs, int sz, unsigned char*& buf, int& length)
 		snmp_add_var(pdu,
 			     vbs[i].get_oid().oidval()->ptr,
 			     vbs[i].get_oid().oidval()->len,
-			     &smival);	
-		freeSmivalDescriptor(&smival);	
+			     &smival);
+		freeSmivalDescriptor(&smival);
 	}
 	// asn1 encode
 	// cp = packet;
@@ -269,12 +187,12 @@ unsigned char * Vbx::asn_build_long_len_sequence( unsigned char *data,
 	}
 	*data++ = type;
 	(*datalength)--;
-	
+
 	data_with_length = asn_build_long_length( data, datalength, length,
 						  lengthOfLength);
 	if( data_with_length == NULL )
 	{
-	    (*datalength)++; 
+	    (*datalength)++;
 	    /* correct datalength to emulate old behavior of build_sequence */
 	    return NULL;
 	}
@@ -287,14 +205,14 @@ unsigned char* Vbx::asn_build_long_length( unsigned char *data,
 					   int lengthOfLength)
 {
     unsigned char    *start_data = data;
-    
+
     /* no indefinite lengths sent */
     switch (lengthOfLength) {
 	case 1: {
 	    if (*datalength < 1){
 		ASNERROR("build_length");
 		return NULL;
-	    }	
+	    }
 	    *data++ = (unsigned char)length;
 	    break;
 	}
@@ -302,16 +220,16 @@ unsigned char* Vbx::asn_build_long_length( unsigned char *data,
 	    if (*datalength < 2){
 		ASNERROR("build_length");
 		return NULL;
-	    }	
+	    }
 	    *data++ = (unsigned char)(0x01 | ASN_LONG_LEN);
 	    *data++ = (unsigned char)length;
 	    break;
 	}
-	case 3: { 
+	case 3: {
 	    if (*datalength < 3){
 		ASNERROR("build_length");
 		return NULL;
-	    }	
+	    }
 	    *data++ = (unsigned char)(0x02 | ASN_LONG_LEN);
 	    *data++ = (unsigned char)((length >> 8) & 0xFF);
 	    *data++ = (unsigned char)(length & 0xFF);
@@ -321,7 +239,7 @@ unsigned char* Vbx::asn_build_long_length( unsigned char *data,
 	  if (*datalength < 4){
 	      ASNERROR("build_length");
 	      return NULL;
-	  }	
+	  }
 	  *data++ = (unsigned char)(0x03 | ASN_LONG_LEN);
 	  *data++ = (unsigned char)((length >> 16) & 0xFF);
 	  *data++ = (unsigned char)((length >> 8) & 0xFF);
@@ -332,7 +250,7 @@ unsigned char* Vbx::asn_build_long_length( unsigned char *data,
 	    if (*datalength < 5){
 		ASNERROR("build_length");
 		return NULL;
-	    }	
+	    }
 	    *data++ = (unsigned char)(0x04 | ASN_LONG_LEN);
 	    *data++ = (unsigned char)((length >> 24) & 0xFF);
 	    *data++ = (unsigned char)((length >> 16) & 0xFF);
@@ -423,7 +341,7 @@ int Vbx::from_asn1(Vbx*& vbs, int& sz, unsigned char*& data, int& length)
 		  asn_parse_unsigned_int64(var_val, &len, &vp->type,
 					   vp->val.counter64);
 		  break;
-	
+
 		case ASN_OCTET_STR:
 		case SMI_IPADDRESS:
 		case SMI_OPAQUE:
@@ -458,7 +376,7 @@ int Vbx::from_asn1(Vbx*& vbs, int& sz, unsigned char*& data, int& length)
 		  return SNMP_CLASS_ERROR;
 #endif
 		  break;
-		}	
+		}
 	}
 	// build vbs
 	vbs = new Vbx[sz];
@@ -472,7 +390,7 @@ int Vbx::from_asn1(Vbx*& vbs, int& sz, unsigned char*& data, int& length)
 	  vbs[i].set_oid(tempoid);
 	  // extract the value portion
 	  switch(vp->type){
-	
+
 	    // octet string
 	  case sNMP_SYNTAX_OPAQUE:
 	    {
@@ -555,7 +473,7 @@ int Vbx::from_asn1(Vbx*& vbs, int& sz, unsigned char*& data, int& length)
 	  case sNMP_SYNTAX_NULL:
 	    vbs[i].set_null();
 	    break;
-	
+
 	    // v2 vb exceptions
 	  case sNMP_SYNTAX_NOSUCHOBJECT:
 	  case sNMP_SYNTAX_NOSUCHINSTANCE:
@@ -580,6 +498,7 @@ int Vbx::from_asn1(Vbx*& vbs, int& sz, unsigned char*& data, int& length)
 
 /*--------------------------- class Oidx -----------------------------*/
 
+#if 0
 Oidx Oidx::cut_left(const unsigned int index) const
 {
 	return cut_left(*this, index);
@@ -679,6 +598,7 @@ Oidx& Oidx::mask(const OctetStr& mask)
 	}
 	return *this;
 }
+#endif
 
 int Oidx::compare(const Oidx& other, const OctetStr& mask) const
 {
@@ -686,7 +606,7 @@ int Oidx::compare(const Oidx& other, const OctetStr& mask) const
 	Oidx maskedOther(other);
 	maskedOid.mask(mask);
 	maskedOther.mask(mask);
-	LOG_BEGIN(DEBUG_LOG | 10);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 10);
 	LOG("Oidx: compare: (masked oid)(masked other)");
 	LOG(maskedOid.get_printable());
 	LOG(maskedOther.get_printable());
@@ -706,7 +626,7 @@ int Oidx::compare(const Oidx& other, u_int wildcard) const
 		maskedOid[wildcard] = 0;
 		maskedOther[wildcard] = 0;
 	}
-	LOG_BEGIN(DEBUG_LOG | 10);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 10);
 	LOG("Oidx: compare: (masked oid)(masked other)");
 	LOG(maskedOid.get_printable());
 	LOG(maskedOther.get_printable());
@@ -718,25 +638,36 @@ int Oidx::compare(const Oidx& other, u_int wildcard) const
 	return -1;
 }
 
+#if 0
 unsigned long Oidx::last() const
 {
 	// check for len == 0
-	if ((!Oid::valid()) || (smival.value.oid.len<1))
+	if ((!Oid::valid()) || (smival.value.oid.len < 1))
 		return 0;
 
-	return smival.value.oid.ptr[smival.value.oid.len-1];
+	return smival.value.oid.ptr[smival.value.oid.len - 1];
+}
+
+unsigned long Oidx::first() const
+{
+  // check for len == 0
+  if ((!Oid::valid()) || (smival.value.oid.len < 1))
+    return 0;
+
+  return smival.value.oid.ptr[0];
 }
 
 OctetStr Oidx::as_string() const
 {
 	OctetStr str;
+	if (!str.set_len(len())) return str;
 	for (int i=0; i<(int)len(); i++) {
-		str += (unsigned char)(*this)[i];
+		str[i] = (unsigned char)(*this)[i];
 	}
 	return str;
 }
 
-Oidx Oidx::from_string(const OctetStr& str, boolean withLength)
+Oidx Oidx::from_string(const OctetStr& str, bool withLength)
 {
 	Oidx oid;
 	if (withLength)
@@ -788,7 +719,7 @@ Oidx Oidx::next_peer() const
 	o[o.len()-1]++;
 	return o;
 }
-
+#endif
 
 /*****************************************************************
  *
@@ -819,37 +750,37 @@ OidxRange* OidxRange::clone() const
 	return new OidxRange(*this);
 }
 
-int OidxRange::operator==(const OidxRange& other) const
+bool OidxRange::operator==(const OidxRange& other) const
 {
 	return ((lower == other.lower) && (upper == other.upper));
 }
 
-int OidxRange::operator<(const OidxRange& other) const
+bool OidxRange::operator<(const OidxRange& other) const
 {
 	return (upper <= other.lower);
 }
 
-int OidxRange::operator>(const OidxRange& other) const
+bool OidxRange::operator>(const OidxRange& other) const
 {
 	return (lower >= other.upper);
 }
 
-int OidxRange::includes(const Oidx& o) const
+bool OidxRange::includes(const Oidx& o) const
 {
 	return ((lower <= o) && (o <= upper));
 }
 
-int OidxRange::includes_excl(const Oidx& o) const
+bool OidxRange::includes_excl(const Oidx& o) const
 {
 	return ((lower <= o) && (o < upper));
 }
 
-boolean OidxRange::covers(const OidxRange& other) const
+bool OidxRange::covers(const OidxRange& other) const
 {
 	return ((lower <= other.lower) && (upper >= other.upper));
 }
 
-boolean OidxRange::overlaps(const OidxRange& other) const
+bool OidxRange::overlaps(const OidxRange& other) const
 {
 	// assumption: lower is always less than upper
 	return ((lower < other.upper) && (upper > other.lower));
@@ -869,12 +800,8 @@ Oidx OidxRange::get_upper() const { return upper; }
 #ifdef _SNMPv3
 int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UTarget& target)
 {
-#if (defined __GNUC__ || defined __FreeBSD__ || defined _AIX) && ! defined __MINGW32__
-  socklen_t fromlen;
-#else
-  int fromlen;
-#endif
-
+  SocketAddrType from_addr;
+  SocketLengthType fromlen = sizeof(from_addr);
   UdpAddress fromaddr;
   snmp_version version;
   OctetStr community;
@@ -982,7 +909,6 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UTarget& target)
 
     if (can_receive_ipv4)
     {
-	struct sockaddr_in from_addr;
 	fromlen = sizeof(from_addr);
 	do
 	{
@@ -1000,8 +926,8 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UTarget& target)
 	  return SNMP_ERROR_TOO_BIG;
 
 	debugprintf(1, "++ AGENT++: data received from %s port %d.",
-		    IpAddress(inet_ntoa(from_addr.sin_addr)).get_printable(),
-		    ntohs(from_addr.sin_port));
+		    IpAddress(inet_ntoa(((sockaddr_in&)from_addr).sin_addr)).get_printable(),
+		    ntohs(((sockaddr_in&)from_addr).sin_port));
 	debughexprintf(5, receive_buffer, receive_buffer_len);
 
 	OctetStr engine_id;
@@ -1009,11 +935,10 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UTarget& target)
 	long int security_model;
 
 	// copy fromaddress and remote port
-	char* addr = inet_ntoa (from_addr.sin_addr);
+	char* addr = inet_ntoa (((sockaddr_in&)from_addr).sin_addr);
 	fromaddr = addr;
-	fromaddr.set_port(ntohs(from_addr.sin_port));
+	fromaddr.set_port(ntohs(((sockaddr_in&)from_addr).sin_port));
 
-	// Frank: warum nicht Ergebnis pr∆fen?
 	snmpmsg.load(receive_buffer, receive_buffer_len);
 
 	target.set_address(fromaddr);
@@ -1059,14 +984,13 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UTarget& target)
 		      security_name.get_printable(),
 		      security_model, pdu.get_security_level());
 	  debugprintf(2, " Addr = %s, port = %i\n",
-		      inet_ntoa (from_addr.sin_addr),fromaddr.get_port());
+		      inet_ntoa (((sockaddr_in&)from_addr).sin_addr),fromaddr.get_port());
 	}
 	return status;   // Success! return
     }
 #ifdef SNMP_PP_IPv6
     if (can_receive_ipv6)
     {
-	struct sockaddr_in6 from_addr;
 	fromlen = sizeof((from_addr));
 	do
 	{
@@ -1089,9 +1013,9 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UTarget& target)
 	char addr[INET6_ADDRSTRLEN+1];
 
 	// copy fromaddress and remote port
-	inet_ntop(AF_INET6, &from_addr.sin6_addr, addr, INET6_ADDRSTRLEN);
+	inet_ntop(AF_INET6, &((sockaddr_in6&)from_addr).sin6_addr, addr, INET6_ADDRSTRLEN);
 	fromaddr = addr;
-	fromaddr.set_port(ntohs(from_addr.sin6_port));
+	fromaddr.set_port(ntohs(((sockaddr_in6&)from_addr).sin6_port));
 
 	debugprintf(1, "++ AGENT++: ipv6 data received from %s",
 		    fromaddr.get_printable());
@@ -1162,12 +1086,8 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UdpAddress& fromaddr,
 
   long receive_buffer_len; // len of received data
 
-#if (defined __GNUC__ || defined __FreeBSD__ || defined _AIX) && ! defined __MINGW32__
-  socklen_t fromlen;
-#else
-  int fromlen;
-#endif
-
+  SocketAddrType from_addr;
+  SocketLengthType fromlen;
   SnmpMessage snmpmsg;
 
   int nfound = 0;
@@ -1268,7 +1188,6 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UdpAddress& fromaddr,
 
     if (can_receive_ipv4)
     {
-	struct sockaddr_in from_addr;
 	fromlen = sizeof(from_addr);
 	do
 	{
@@ -1286,9 +1205,9 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UdpAddress& fromaddr,
 	  return SNMP_ERROR_TOO_BIG;
 
 	// copy fromaddress and remote port
-	char* addr = inet_ntoa (from_addr.sin_addr);
+	char* addr = inet_ntoa (((sockaddr_in&)from_addr).sin_addr);
 	fromaddr = addr;
-	fromaddr.set_port(ntohs(from_addr.sin_port));
+	fromaddr.set_port(ntohs(((sockaddr_in&)from_addr).sin_port));
 
 	debugprintf(1, "++ AGENT++: data received from %s.",
 		    fromaddr.get_printable());
@@ -1302,7 +1221,6 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UdpAddress& fromaddr,
 #ifdef SNMP_PP_IPv6
     if (can_receive_ipv6)
     {
-	struct sockaddr_in6 from_addr;
 	fromlen = sizeof(from_addr);
 	do
 	{
@@ -1322,9 +1240,9 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UdpAddress& fromaddr,
 	char addr[INET6_ADDRSTRLEN+1];
 
 	// copy fromaddress and remote port
-	inet_ntop(AF_INET6, &from_addr.sin6_addr, addr, INET6_ADDRSTRLEN);
+	inet_ntop(AF_INET6, &((sockaddr_in6&)from_addr).sin6_addr, addr, INET6_ADDRSTRLEN);
 	fromaddr = addr;
-	fromaddr.set_port(ntohs(from_addr.sin6_port));
+	fromaddr.set_port(ntohs(((sockaddr_in6&)from_addr).sin6_port));
 
 	debugprintf(1, "++ AGENT++: data received from %s.",
 		    fromaddr.get_printable());
@@ -1344,7 +1262,7 @@ int Snmpx::receive(struct timeval *tvptr, Pdux& pdu, UdpAddress& fromaddr,
 
 #ifdef _SNMPv3
 
-int Snmpx::send (Pdux pdu, SnmpTarget* target)
+int Snmpx::send (Pdux const &pdu, SnmpTarget* target)
 {
 #ifdef _THREADS
   static ThreadManager smutex;
@@ -1459,10 +1377,10 @@ int Snmpx::send (Pdux pdu, SnmpTarget* target)
 
 #else  // _SNMPv3 is not defined
 
-int Snmpx::send (Pdux pdu,
-		 UdpAddress udp_address,
+int Snmpx::send (Pdux  const &pdu,
+		 UdpAddress  const &udp_address,
 		 snmp_version version,
-		 OctetStr community)
+		 OctetStr  const &community)
 
 {
 #ifdef _THREADS

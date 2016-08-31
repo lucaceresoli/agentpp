@@ -1,94 +1,24 @@
 /*_############################################################################
   _## 
-  _##  notification_log_mib.cpp  
+  _##  AGENT++ 4.0 - notification_log_mib.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
-
+#include <libagent.h>
 
 //--AgentGen BEGIN=_BEGIN
 #include <agent_pp/agent++.h>
@@ -114,13 +44,11 @@
 #include <agent_pp/vacm.h>
 #include <snmp_pp/log.h>
 
-#ifdef SNMP_PP_NAMESPACE
-using namespace Snmp_pp;
-#endif
-
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
+
+static const char *loggerModuleName = "agent++.notification_log_mib";
 
 nlmConfigLogOperStatus::nlmConfigLogOperStatus(const Oidx& id):
   MibLeaf(id, READONLY, new SnmpInt32(1), VMODE_DEFAULT)
@@ -217,7 +145,7 @@ int nlmConfigGlobalEntryLimit::set(const Vbx& vb)
 	return MibLeaf::set(vb);
 }
 
-boolean nlmConfigGlobalEntryLimit::value_ok(const Vbx& vb)
+bool nlmConfigGlobalEntryLimit::value_ok(const Vbx& vb)
 {
 
 	//--AgentGen BEGIN=nlmConfigGlobalEntryLimit::value_ok
@@ -298,7 +226,7 @@ int nlmConfigGlobalAgeOut::set(const Vbx& vb)
 	return MibLeaf::set(vb);
 }
 
-boolean nlmConfigGlobalAgeOut::value_ok(const Vbx& vb)
+bool nlmConfigGlobalAgeOut::value_ok(const Vbx& vb)
 {
 
 	//--AgentGen BEGIN=nlmConfigGlobalAgeOut::value_ok
@@ -385,7 +313,7 @@ int nlmConfigLogFilterName::set(const Vbx& vb)
 	return MibLeaf::set(vb);
 }
 
-boolean nlmConfigLogFilterName::value_ok(const Vbx& vb)
+bool nlmConfigLogFilterName::value_ok(const Vbx& vb)
 {
 	OctetStr v;
 	if (vb.get_value(v) != SNMP_CLASS_SUCCESS)
@@ -481,7 +409,7 @@ int nlmConfigLogEntryLimit::set(const Vbx& vb)
 	return MibLeaf::set(vb);
 }
 
-boolean nlmConfigLogEntryLimit::value_ok(const Vbx& vb)
+bool nlmConfigLogEntryLimit::value_ok(const Vbx& vb)
 {
 
 	//--AgentGen BEGIN=nlmConfigLogEntryLimit::value_ok
@@ -568,7 +496,7 @@ int nlmConfigLogAdminStatus::set(const Vbx& vb)
 	return MibLeaf::set(vb);
 }
 
-boolean nlmConfigLogAdminStatus::value_ok(const Vbx& vb)
+bool nlmConfigLogAdminStatus::value_ok(const Vbx& vb)
 {
 	long v;
 	if (vb.get_value(v) != SNMP_CLASS_SUCCESS)
@@ -660,7 +588,7 @@ int nlmConfigLogStorageType::set(const Vbx& vb)
 	return MibLeaf::set(vb);
 }
 
-boolean nlmConfigLogStorageType::value_ok(const Vbx& vb)
+bool nlmConfigLogStorageType::value_ok(const Vbx& vb)
 {
 	long v;
 	if (vb.get_value(v) != SNMP_CLASS_SUCCESS)
@@ -753,7 +681,7 @@ int nlmConfigLogEntryStatus::prepare_set_request(Request* req, int& ind)
 
 	//--AgentGen BEGIN=nlmConfigLogEntryStatus::prepare_set_request
 	Vbx vb(req->get_value(ind));
-	unsigned long l = 0;
+	int l = 0;
 	if (vb.get_value(l) != SNMP_CLASS_SUCCESS)
 	    return SNMP_ERROR_WRONG_TYPE;
 	if ((l == rowCreateAndGo) || (l == rowCreateAndWait)) {
@@ -1203,10 +1131,10 @@ void nlmLogEntry::set_row(MibTableRow* r, unsigned long p0, const OctetStr& p1, 
 
 //--AgentGen BEGIN=nlmLogEntry
 
-boolean nlmLogEntry::check_access(const Pdux& pdu, MibTableRow* profile)
+bool nlmLogEntry::check_access(const Vbx* vbs, const int size, 
+				  const Oid& nid,
+				  MibTableRow* profile)
 {
-	Vbx* vbs = new Vbx[pdu.get_vb_count()];
-	pdu.get_vblist(vbs, pdu.get_vb_count());
 	OctetStr viewName;
 
 	profile->get_nth(nNlmConfigLogEntryStatus+1)->
@@ -1214,12 +1142,11 @@ boolean nlmLogEntry::check_access(const Pdux& pdu, MibTableRow* profile)
 	// an empty viewName denotes a system entry
 	// that automatically has access
 	if (viewName.len() == 0) {
-		delete[] vbs;
 		return TRUE;
 	}
 
-	boolean accessAllowed = TRUE;
-	for (int i=0; i<pdu.get_vb_count(); i++) {
+	bool accessAllowed = TRUE;
+	for (int i=0; i<size; i++) {
 
 	    if (Mib::instance->get_request_list()->get_vacm()->
 		isAccessAllowed(viewName,
@@ -1231,60 +1158,57 @@ boolean nlmLogEntry::check_access(const Pdux& pdu, MibTableRow* profile)
 	  }
 
 	  if (accessAllowed) {
-	    Oid id;
-	    pdu.get_notify_id(id);
 	    accessAllowed =
 	      (Mib::instance->get_request_list()->get_vacm()->
-	       isAccessAllowed(viewName, id) == VACM_accessAllowed);
+	       isAccessAllowed(viewName, nid) == VACM_accessAllowed);
 	  }
 	  if (!accessAllowed) {
-	    LOG_BEGIN(EVENT_LOG | 2);
+	    LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	    LOG("Notification not logged (reason)(viewName)");
 	    LOG("no access");
 	    LOG(viewName.get_printable());
 	    LOG_END;
 	  }
-	  delete[] vbs;
 	  return accessAllowed;
 }
 
-void nlmLogEntry::add_notification(const SnmpTarget& target,
-				   const Pdux& pdu,
+void nlmLogEntry::add_notification(const SnmpTarget* target,
+				   const Oid& nid,
+				   const Vbx* vbs,
+				   const int vbcount,
+				   const OctetStr& context,
+				   const OctetStr& ceid,
 				   const OctetStr& engineID)
 {
-	Oid nid;
-	pdu.get_notify_id(nid);
-	switch (target.get_type()) {
-	case SnmpTarget::type_ctarget:
-	case SnmpTarget::type_utarget:
-	  break;
-	case SnmpTarget::type_base:
-	  LOG_BEGIN(ERROR_LOG | 1);
-	  LOG("nlmLogEntry: invalid target given");
-	  LOG_END;
-	  return;
-	}
 	OctetStr address;
-	GenAddress addr;
-	target.get_address(addr);
-	UdpAddress* udpAddress = new UdpAddress(addr);
-	IpAddress ip(*udpAddress);
-	for (int i=0; i<4; i++) {
-		address += (unsigned char)ip[i];
+	if (target) {
+	  switch (target->get_type()) {
+	  case SnmpTarget::type_ctarget:
+	  case SnmpTarget::type_utarget:
+	    break;
+	  case SnmpTarget::type_base:
+	    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
+	    LOG("nlmLogEntry: invalid target given");
+	    LOG_END;
+	    return;
+	  }
+	  GenAddress addr;
+	  target->get_address(addr);
+	  UdpAddress* udpAddress = new UdpAddress(addr);
+	  IpAddress ip(*udpAddress);
+	  for (int i=0; i<ip.get_length(); i++) {
+	    address += (unsigned char)ip[i];
+	  }
+	  address += (udpAddress->get_port() >> 8);
+	  address += (udpAddress->get_port() & 0x00FF);
+	  delete udpAddress;
 	}
-	address += (udpAddress->get_port() >> 8);
-	address += (udpAddress->get_port() & 0x00FF);
-	delete udpAddress;
-
-	LOG_BEGIN(EVENT_LOG | 5);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 5);
 	LOG("NotificationLog: Logging (target)(oid)(vbs)");
 	LOG(address.get_printable_hex());
 	LOG(nid.get_printable());
-	LOG(pdu.get_vb_count());
+	LOG(vbcount);
 	LOG_END;
-
-	Vbx* vbs = new Vbx[pdu.get_vb_count()];
-	pdu.get_vblist(vbs, pdu.get_vb_count());
 
 	start_synch();
 	List<MibTableRow>* logs =
@@ -1301,15 +1225,16 @@ void nlmLogEntry::add_notification(const SnmpTarget& target,
 		  ((nlmConfigLogFilterName*)cur.get()->
 		   get_nth(nNlmConfigLogFilterName))->get_state();
 		// check access
-		if ((profileName.len()>0) && (!check_access(pdu, cur.get())))
+		if ((profileName.len()>0) && (!check_access(vbs, vbcount, 
+							    nid, cur.get())))
 			continue;
 		// check filter
 		if ((profileName.len()==0) ||
 		    (!snmpNotifyFilterEntry::
-		     passes_filter(nid,
-				   Oidx::from_string(profileName, TRUE),
+		     passes_filter(Oidx::from_string(profileName, TRUE),
+				   nid,
 				   vbs,
-				   pdu.get_vb_count())))
+				   vbcount)))
 			continue;
 
 		// OK, now log the notification
@@ -1323,24 +1248,18 @@ void nlmLogEntry::add_notification(const SnmpTarget& target,
 		vb->set_value(l);
 
 		MibTableRow* r = add_row(newIndex);
-		OctetStr ceid;
-		pdu.get_context_engine_id(ceid);
-		OctetStr cn;
-		pdu.get_context_name(cn);
 		set_row(r, sysUpTime::get(),
 			((DateAndTime*)r->get_nth(1))->get_state(),
 			engineID,
 			address,
 			"1.3.6.1.6.1.1",
-			ceid, cn, nid.get_printable());
+			ceid, context, nid.get_printable());
 
 		nlmLogVariableEntry::instance->start_synch();
-		for (int i=0; i<pdu.get_vb_count(); i++) {
-			Vbx vb;
-			pdu.get_vb(vb, i);
+		for (int i=0; i<vbcount; i++) {
 			nlmLogVariableEntry::instance->add_variable(newIndex,
 								    i,
-								    vb);
+								    vbs[i]);
 		}
 		nlmLogVariableEntry::instance->end_synch();
 		MibTableRow* s =
@@ -1355,7 +1274,6 @@ void nlmLogEntry::add_notification(const SnmpTarget& target,
 			nlmStatsGlobalNotificationsLogged::instance->inc();
 		}
 	}
-	delete[] vbs;
 	check_limits(logs);
 	delete logs;
 	nlmStatsLogEntry::instance->end_synch();

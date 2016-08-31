@@ -1,90 +1,20 @@
 /*_############################################################################
   _## 
-  _##  List.h  
+  _##  AGENT++ 4.0 - List.h  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
@@ -526,7 +456,7 @@ public:
 	 *    a value != 0, if the list is empty. A value of 0, if the
 	 *    list is not empty.
 	 */
-	int empty() const {
+	bool empty() const {
 		return (head == 0);
 	}
 
@@ -815,7 +745,7 @@ public:
 		return n;
 	}
 
-	int	empty() const { return content->empty(); }
+	bool	empty() const { return content->empty(); }
 
 	void	clear() { 
 		content->clear();
@@ -905,7 +835,7 @@ public:
 		if (list) {
 			Pix i = list->content->seek_inexact(oidptr);
 			if (!i) return FALSE;
-			T* t;
+			T* t = 0;
 			while ((i) && (t = (T*)list->content->contents(i)) &&
 			       (*t->key() > *oidptr)) {
 				list->content->prev(i);
@@ -932,7 +862,7 @@ protected:
 /**
  * This Array template implements a vector collection class. 
  * 
- * @version 3.4.6
+ * @version 4.0.0
  * @author Frank Fock
  */
 template <class T> class Array {
@@ -950,7 +880,9 @@ public:
 		content = new T*[sz+1];
 		memcpy(content+1, h, sz*sizeof(T*));
 		content[0] = t;
-		delete[] h;
+                if (h) {
+                        delete[] h;
+                }
 		sz++;
 		return t;
 	}
@@ -968,7 +900,9 @@ public:
 		content = new T*[sz+1];
 		memcpy(content, h, sz*sizeof(T*));
 		content[sz++] = t;
-		delete[] h;
+                if (h) {
+                        delete[] h;
+                }
 		return t;
 	}
 
@@ -1002,7 +936,9 @@ public:
 				memcpy(content+i+1, h+i, 
 				       (sz-i)*sizeof(T*)); 
 				content[i] = item;
-				delete[] h;
+                                if (h) {
+                                        delete[] h;
+                                }
 				sz++;
 				return item;			
 			}
@@ -1031,7 +967,9 @@ public:
 					memcpy(content+i+2, h+i+1, 
 					       (sz-i-1)*sizeof(T*)); 
 				content[i+1] = item;
-				delete[] h;
+                                if (h) {
+                                        delete[] h;
+                                }
 				sz++;
 				return item;			
 			}
@@ -1051,7 +989,9 @@ public:
 		T** h = content;
 		content = new T*[--sz];
 		memcpy(content, h+1, sz*sizeof(T*));
-		delete[] h;
+                if (h) {
+                        delete[] h;
+                }
 		return t;
 	}
 
@@ -1076,7 +1016,7 @@ public:
 		}
 		delete[] content;
 		sz = 0;
-		content = new T*[0];
+		content = 0;
 	}
 
 	/**
@@ -1086,7 +1026,7 @@ public:
 	void clear() {
 		delete[] content;
 		sz = 0;
-		content = new T*[0];
+		content = 0;
 	}
 
 	/**
@@ -1136,7 +1076,9 @@ public:
 			memcpy(content, h, i*sizeof(T*));
 		if (i+1 < sz)
 			memcpy(content+i, h+i+1,(sz-i-1)*sizeof(T*));
-		delete[] h;
+                if (h) {
+                        delete[] h;
+                }
 		sz--;
 		return t;
 	}
@@ -1266,7 +1208,6 @@ public:
 	Array<T>& operator=(const Array<T>& o) {
 		if (this == &o) return *this;
 		clearAll();
-		delete[] content;
 		sz = o.sz;
 		content =  new T*[sz];
 		for (unsigned int i=0; i<sz; i++) {
@@ -1278,12 +1219,12 @@ public:
 	/**
 	 * Default constructor.
 	 */
-	Array(): sz(0) { content = new T*[1]; }
+	Array(): sz(0) { content = 0; }
 	
 	/**
 	 * Destructor (deletes all elements of the list)
 	 */
-	~Array()	{ clearAll(); delete[] content; }
+	~Array()	{ clearAll(); }
 
 protected:
 
@@ -1358,7 +1299,7 @@ public:
 		if (!this->empty()) {
 			for (unsigned int i=0; i<this->sz; i++) {
 				if (*item < *(this->content[i]))
-					return insertBefore(item, 
+					return this->insertBefore(item, 
 							    this->content[i]);
 			}
 			return Array<T>::add(item);
@@ -1374,7 +1315,7 @@ public:
 		if (!this->empty()) {
 			for (int i=this->sz-1; i>=0; i--) {
 				if (*item > *(this->content[i]))
-					return insertAfter(item, 
+					return this->insertAfter(item, 
 							   this->content[i]);
 			}
 			return Array<T>::addFirst(item);
@@ -1392,25 +1333,13 @@ public:
 					return 0;
 				}
 				if (*item < *(this->content[i]))
-					return insertBefore(item, 
+					return this->insertBefore(item, 
 							    this->content[i]);
 			}
 			return Array<T>::add(item);
 		}
 		else return Array<T>::add(item);
 	}
-	/*
-	OrderedArray<T>& operator=(const OrderedArray<T>& o) {
-		if (this == &o) return *this;
-		clearAll();
-		delete[] content;
-		sz = o.sz;
-		content =  new T*[sz];
-		for (unsigned int i=0; i<sz; i++) {
-			content[i] = (T*)o.content[i]->clone();
-		}
-		return (*this);		
-		}*/
 
 };
 

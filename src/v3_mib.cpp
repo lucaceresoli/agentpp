@@ -1,100 +1,26 @@
 /*_############################################################################
   _## 
-  _##  v3_mib.cpp  
+  _##  AGENT++ 4.0 - v3_mib.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
-#include <agent_pp/agent++.h>
+#include <libagent.h>
 
 #ifdef _SNMPv3
-
-#ifndef WIN32
-#include <unistd.h>
-#endif
 
 #include <agent_pp/tools.h> 
 #include <agent_pp/v3_mib.h>
@@ -103,15 +29,13 @@
 #include <agent_pp/vacm.h>
 #include <agent_pp/snmp_textual_conventions.h>
 #include <snmp_pp/log.h>
-
-#ifdef SNMP_PP_NAMESPACE
-using namespace Snmp_pp;
-#endif
+#include <agent_pp/threads.h>
 
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
 
+static const char *loggerModuleName = "agent++.v3_mib";
 
 const index_info       	iUsmUserTable[2] = 
 {{ sNMP_SYNTAX_OCTETS, FALSE, 5, 32  },
@@ -189,7 +113,7 @@ V3SnmpEngine::V3SnmpEngine(void): MibGroup(oidV3SnmpEngine)
 	  usm = v3mp->get_usm();
         if ((!v3mp) || (!usm))
         {
-	  LOG_BEGIN(ERROR_LOG | 0);
+	  LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
 	  LOG("V3SnmpEngine: v3MP must be initialized before this MibGroup");
 	  LOG_END;
         }
@@ -260,10 +184,12 @@ int UsmUserTableStatus::set(const Vbx& vb)
 
 int UsmUserTableStatus::unset()
 {
-  long rs;
-  rs = *(SnmpInt32*)undo;
+  if (undo)
+  {
+    long rs;
+    rs = *(SnmpInt32*)undo;
 
-  switch (rs) {
+    switch (rs) {
     case rowEmpty:
       if ((get() == rowActive) || (get() == rowCreateAndGo))
         deleteUsmUser();
@@ -304,6 +230,7 @@ int UsmUserTableStatus::unset()
       if (value) delete value;
       value = undo;
       undo = 0;
+    }
   }
   return SNMP_ERROR_SUCCESS;
 }
@@ -344,8 +271,6 @@ void UsmUserTableStatus::addUsmUser()
 			  authProt, authKey, privProt, privKey);
 }
 
-
-
 MibEntryPtr UsmUserTableStatus::clone()
 {
   snmpRowStatus* other = new UsmUserTableStatus(oid, base_len, usm);
@@ -365,7 +290,7 @@ void usm_callback(const OctetStr &engine_id,
                   const OctetStr &priv_key)
 {
 
-  LOG_BEGIN(DEBUG_LOG | 13);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 13);
   LOG("Callback called from USM (engine_id) (user_name)");
   LOG(engine_id.get_printable());
   LOG(usm_user_name.get_printable());
@@ -391,7 +316,7 @@ UsmUserTable::UsmUserTable(): StorageTable(oidUsmUserEntry, iUsmUserTable,
   v3MP *v3mp = v3MP::I;
   if (!v3mp)
   {
-    LOG_BEGIN(ERROR_LOG | 0);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
     LOG("MPDGroup: v3MP must be initialized before the UsmUserTable");
     LOG_END;
   }
@@ -479,7 +404,7 @@ UsmUserTable::UsmUserTable(): StorageTable(oidUsmUserEntry, iUsmUserTable,
 	hashlength = auth->get_hash_len();
       else
       {
-	LOG_BEGIN(ERROR_LOG | 1);
+	LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 	LOG("BUG: USM has user with unknown auth protocol");
 	LOG(user->usmUserAuthProtocol);
 	LOG_END;
@@ -510,7 +435,7 @@ UsmUserTable::UsmUserTable(): StorageTable(oidUsmUserEntry, iUsmUserTable,
 	hashlength = priv->get_min_key_len();
       else
       {
-	LOG_BEGIN(ERROR_LOG | 1);
+	LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 	LOG("BUG: USM has user with unknown priv protocol");
 	LOG(user->usmUserPrivProtocol);
 	LOG_END;
@@ -541,7 +466,12 @@ UsmUserTable::~UsmUserTable()
 {
 }
 
-boolean UsmUserTable::ready_for_service(Vbx* pvbs, int sz)
+void UsmUserTable::removeAllUsers() {
+    clear();
+    usm->remove_all_users();
+}
+
+bool UsmUserTable::ready_for_service(Vbx* pvbs, int sz)
 {
   // check if cloneFrom ("4") was set:
   Oidx o;
@@ -581,7 +511,7 @@ void UsmUserTable::initialize_key_change(MibTableRow* row)
       hashlength = auth->get_hash_len();
     else
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("Unknown auth protocol");
       LOG(auth_prot);
       LOG_END;
@@ -608,7 +538,7 @@ void UsmUserTable::initialize_key_change(MibTableRow* row)
 	    hashlength = priv->get_min_key_len();
 	else
 	{
-	    LOG_BEGIN(ERROR_LOG | 1);
+	    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 	    LOG("Unknown priv protocol");
 	    LOG(priv_prot);
 	    LOG_END;
@@ -643,7 +573,7 @@ void UsmUserTable::row_init(MibTableRow* new_row, const Oidx& ind, MibTable*)
 
 void UsmUserTable::row_added(MibTableRow* new_row, const Oidx& ind, MibTable*)
 {
-  LOG_BEGIN(DEBUG_LOG | 1);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
   LOG("UsmUserTable: add row with index");
   LOG(ind.get_printable());
   LOG_END;
@@ -707,14 +637,14 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& userName,
   {
     if (res == SNMPv3_USM_UNSUPPORTED_AUTHPROTOCOL)
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("UsmUserTable: Unsupported authProtocol");
       LOG(authProtocol);
       LOG_END;
     }
     else
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("UsmUserTable: Cant add User (Errorcode)");
       LOG(res);
       LOG_END;
@@ -732,14 +662,14 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& userName,
   {
     if (res == SNMPv3_USM_UNSUPPORTED_PRIVPROTOCOL)
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("UsmUserTable: Unsupported privProtocol");
       LOG(privProtocol);
       LOG_END;
     }
     else
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("UsmUserTable: Cant add User (Errorcode)");
       LOG(res);
       LOG_END;
@@ -777,7 +707,7 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& engineID,
 				     const OctetStr& authKey,
 				     int privProtocol,
 				     const OctetStr& privKey,
-				     const boolean add_to_usm)
+				     const bool add_to_usm)
 {
   Oidx newIndex = Oidx::from_string(engineID, TRUE);
   newIndex += Oidx::from_string(userName, TRUE);
@@ -792,7 +722,7 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& engineID,
     }
     else
     {
-      LOG_BEGIN(DEBUG_LOG | 13);
+      LOG_BEGIN(loggerModuleName, DEBUG_LOG | 13);
       LOG("Added user to USM (engine_id) (user_name)");
       LOG(engineID.get_printable());
       LOG(userName.get_printable());
@@ -834,7 +764,7 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& engineID,
       hashlength = auth->get_hash_len();
     else
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("Unknown auth protocol");
       LOG(authProtocol);
       LOG_END;
@@ -863,7 +793,7 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& engineID,
       hashlength = priv->get_min_key_len();
     else
     {
-      LOG_BEGIN(ERROR_LOG | 1);
+      LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
       LOG("Unknown priv protocol");
       LOG(privProtocol);
       LOG_END;
@@ -882,27 +812,30 @@ MibTableRow *UsmUserTable::addNewRow(const OctetStr& engineID,
   return newRow;
 }
 
-boolean UsmUserTable::deleteRow(const OctetStr& engineID,
-                                const OctetStr& userName)
+bool UsmUserTable::deleteRow(const OctetStr& engineID,
+                             const OctetStr& userName)
 {
   Oidx newIndex = Oidx::from_string(engineID, TRUE);
   newIndex += Oidx::from_string(userName, TRUE);
 
-  if (!find_index(newIndex))
-    return FALSE; // no such user
-
+  start_synch();
+  if (!find_index(newIndex)) {
+      end_synch();
+      return FALSE; // no such user
+  }
+  end_synch();
   // ignore possible error, just make sure that there is no entry
   usm->delete_localized_user(engineID, userName);
 
+  start_synch();
   remove_row(newIndex);
+  end_synch();
   return TRUE;
 }
 
 /* Delete all rows from the table and from USM. */
 void UsmUserTable::deleteRows(const OctetStr& userName)
 {
-  return; // NOT TESTED YET!
-
   List<MibTableRow>* allrows = get_rows_cloned();
   if (!allrows)
 	return;
@@ -931,7 +864,7 @@ UsmCloneFrom::UsmCloneFrom(Oidx o)
   v3MP *v3mp = v3MP::I;
   if (!v3mp)
   {
-    LOG_BEGIN(ERROR_LOG | 0);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
     LOG("MPDGroup: v3MP must be initialized before the UsmUserTable");
     LOG_END;
 #ifdef _NO_LOGGING
@@ -965,7 +898,7 @@ int UsmCloneFrom::prepare_set_request(Request* req, int& ind)
 	req->get_value(ind).get_value(o);
 	o = o.cut_left(base.len() + 1);
 
-	LOG_BEGIN(DEBUG_LOG | 1);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
 	LOG("UsmCloneFrom::prepare_set_request: Clone from index ");
 	LOG(o.get_printable());
 	LOG("current value");
@@ -982,7 +915,7 @@ int UsmCloneFrom::prepare_set_request(Request* req, int& ind)
 	      return SNMP_ERROR_SUCCESS;
 	  }
 	
-	LOG_BEGIN(DEBUG_LOG | 1);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
 	LOG("UsmCloneFrom: prepare_set_request: row not found or not active");
 	LOG_END;	
 	return SNMP_ERROR_INCONSIS_NAME;
@@ -998,7 +931,7 @@ int UsmCloneFrom::prepare_set_request(Request* req, int& ind)
 
 int UsmCloneFrom::set(const Vbx& vb)
 {
-  LOG_BEGIN(DEBUG_LOG | 1);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
   LOG("UsmCloneFrom::set called");
   LOG_END;	
 
@@ -1009,7 +942,7 @@ int UsmCloneFrom::set(const Vbx& vb)
       if ((((Oid*)value)->len() != 2) || // CloneFrom was set
 	  ((*(Oid*)value)[0]!=0) ||       // before ==>
 	  ((*(Oid*)value)[1]!=0)) {       // do nothing
-	LOG_BEGIN(DEBUG_LOG | 1);
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
 	LOG("UsmCloneFrom: clonefrom can be called only once");
 	LOG_END;	
 
@@ -1064,7 +997,7 @@ int UsmCloneFrom::set(const Vbx& vb)
 	  hashlength = auth->get_hash_len();
 	else
 	{
-	  LOG_BEGIN(ERROR_LOG | 1);
+	  LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 	  LOG("BUG: have row with unknown auth protocol");
 	  LOG(auth_prot);
 	  LOG_END;
@@ -1091,7 +1024,7 @@ int UsmCloneFrom::set(const Vbx& vb)
 		hashlen = priv->get_min_key_len();
 	    else
 	    {
-		LOG_BEGIN(ERROR_LOG | 1);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		LOG("BUG: have row with unknown priv protocol");
 		LOG(priv_prot);
 		LOG_END;
@@ -1103,7 +1036,7 @@ int UsmCloneFrom::set(const Vbx& vb)
 
       // change value to indicate that leaf was set
 
-      LOG_BEGIN(DEBUG_LOG | 1);
+      LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
       LOG("UsmCloneFrom: set success.");
       LOG_END;
       
@@ -1116,7 +1049,7 @@ int UsmCloneFrom::set(const Vbx& vb)
 }
 
 
-boolean UsmCloneFrom::value_ok(const Vbx& vb)
+bool UsmCloneFrom::value_ok(const Vbx& vb)
 {
   // check if row exists
   Oidx o;
@@ -1130,7 +1063,7 @@ boolean UsmCloneFrom::value_ok(const Vbx& vb)
 
   if ((o.len() < base.len()+ 3 ) ||
       (o.cut_right(o.len()-base.len()) != base)) {
-    LOG_BEGIN(DEBUG_LOG | 1);
+    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
     LOG("UsmCloneFrom::value_ok: wrong length of oid or wrong base");
     LOG(o.get_printable());
     LOG_END;
@@ -1139,7 +1072,7 @@ boolean UsmCloneFrom::value_ok(const Vbx& vb)
   o = o.cut_left(base.len());
   // RowPointer has to point to first accessible object 
   if (o[0] != 3) {
-    LOG_BEGIN(DEBUG_LOG | 1);
+    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
     LOG("UsmCloneFrom: Oid should point to first accessible Object (3), but value is");
     LOG(o[0]);
     LOG_END;
@@ -1149,7 +1082,7 @@ boolean UsmCloneFrom::value_ok(const Vbx& vb)
   /* commented out because of SilverCreek test 4.13.3 
   o = o.cut_left(1);
   if (o.len() != 1 + o[0] + o[ o[0] +1 ] + 1) {
-    LOG_BEGIN(DEBUG_LOG | 1);
+    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
     LOG("UsmCloneFrom::value_ok: wrong length of oid");
     LOG(o.get_printable());
     LOG_END;
@@ -1244,7 +1177,7 @@ int UsmKeyChange::prepare_set_request(Request* req, int& ind)
         if (vb.get_value(os) != SNMP_CLASS_SUCCESS)
           return SNMP_ERROR_WRONG_TYPE;
         if ((int)os.len() != 2*key_len) { // Fixed key_len
-          LOG_BEGIN(DEBUG_LOG | 1);
+          LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
           LOG("Keychange value has wrong length (len) (expected)");
           LOG(os.len());
           LOG(2*key_len);
@@ -1271,21 +1204,21 @@ int UsmKeyChange::set(const Vbx& vb)
 
       OctetStr os;
       vb.get_value(os);
-      LOG_BEGIN(DEBUG_LOG | 1);
+      LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
       LOG("UsmKeyChange: set: (str)");
       LOG(os.get_printable());
       LOG_END;
 
       if (process_key_change(os) == TRUE) {
-	//todo: LOG sollte wieder entfernt werden ;-)
-	LOG_BEGIN(DEBUG_LOG | 2);
+	//CAUTION: Remove this log for higher security
+	LOG_BEGIN(loggerModuleName, DEBUG_LOG | 2);
 	LOG("UsmKeyChange: set new key to ");
 	LOG(value->get_printable());
 	LOG_END;
         int stat;
         my_row->get_nth(12)->get_value().get_value(stat);
         if (stat == rowActive) {
-          LOG_BEGIN(DEBUG_LOG | 1);
+          LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
           LOG("UsmKeyChange: Updating Key in USM");
           LOG_END;
          
@@ -1297,10 +1230,9 @@ int UsmKeyChange::set(const Vbx& vb)
 				 ((OctetStr*)value)->data(),
 				 ((OctetStr*)value)->len(),
 				 type_of_key) != SNMPv3_USM_OK) {
-            LOG_BEGIN( ERROR_LOG | 1 );
+            LOG_BEGIN(loggerModuleName,  ERROR_LOG | 1 );
             LOG("UsmKeyChange: Could not update key in USM!");
             LOG_END;
-            //todo: was gibt man da zurueck?
             return SNMP_ERROR_INCONSIST_VAL;
           }
         }
@@ -1331,7 +1263,7 @@ int UsmKeyChange::unset()
 	int stat;
 	my_row->get_nth(12)->get_value().get_value(stat);
 	if (stat  == rowActive) {
-	    LOG_BEGIN(DEBUG_LOG | 1);
+	    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
 	    LOG("UsmKeyChange: undo key update in USM");
 	    LOG_END;
 	    OctetStr engineID, userName;
@@ -1342,7 +1274,7 @@ int UsmKeyChange::unset()
 				   ((OctetStr*)undo)->data(),
 				   ((OctetStr*)undo)->len(),
 				   type_of_key) != SNMPv3_USM_OK) {
-		LOG_BEGIN( ERROR_LOG | 1 );
+		LOG_BEGIN(loggerModuleName,  ERROR_LOG | 1 );
 		LOG("UsmKeyChange: Could not unset key in USM!");
 		LOG_END;
 		return SNMP_ERROR_UNDO_FAIL;
@@ -1362,13 +1294,13 @@ int UsmKeyChange::unset()
 
 
 
-boolean UsmKeyChange::value_ok(const Vbx& vb)
+bool UsmKeyChange::value_ok(const Vbx& vb)
 {
   OctetStr os;
   if (vb.get_value(os) != SNMP_CLASS_SUCCESS)
     return FALSE;
 
-  LOG_BEGIN(DEBUG_LOG | 1);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
   LOG("UsmKeyChange: value_ok (len) (key_len) ");
   LOG(os.len());
   LOG(key_len);
@@ -1377,11 +1309,11 @@ boolean UsmKeyChange::value_ok(const Vbx& vb)
   return TRUE;
 }
   
-boolean UsmKeyChange::process_key_change(OctetStr& os)
+bool UsmKeyChange::process_key_change(OctetStr& os)
 {
   if (hash_function == SNMP_AUTHPROTOCOL_NONE)
   {
-    LOG_BEGIN(ERROR_LOG | 1);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
     LOG("UsmKeyChange: Key change requested, but user is noAuthNoPriv.");
     LOG_END;
 
@@ -1389,7 +1321,7 @@ boolean UsmKeyChange::process_key_change(OctetStr& os)
   }
   if (hash_function == -1)
   {
-    LOG_BEGIN(ERROR_LOG | 1);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
     LOG("UsmKeyChange: not initialized for key change.");
     LOG_END;
 
@@ -1400,7 +1332,7 @@ boolean UsmKeyChange::process_key_change(OctetStr& os)
 
   if (!auth)
   {
-    LOG_BEGIN(ERROR_LOG | 1);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
     LOG("UsmKeyChange: User has unknown auth protocol");
     LOG(hash_function);
     LOG_END;
@@ -1414,7 +1346,7 @@ boolean UsmKeyChange::process_key_change(OctetStr& os)
   OctetStr old_key;
   old_key.set_data(((OctetStr*)value)->data(), ((OctetStr*)value)->len());
 
-  LOG_BEGIN(DEBUG_LOG | 16);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 16);
   LOG("UsmKeyChange: old key is ");
   LOG(old_key.get_printable());
   LOG_END;
@@ -1497,7 +1429,7 @@ int UsmOwnKeyChange::prepare_set_request(Request* req, int& ind)
 {
   OctetStr security_name;
   req->get_security_name(security_name);
-  LOG_BEGIN(DEBUG_LOG | 1);
+  LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
   LOG("UsmOwnKeyChange: prepare_set_request: (security_name) ");
   LOG(security_name.get_printable());
   LOG_END;
@@ -1631,7 +1563,7 @@ UsmStats::UsmStats(void): MibGroup(oidUsmStats)
   v3MP *v3mp = v3MP::I;
   if (!v3mp)
   {
-    LOG_BEGIN(ERROR_LOG | 0);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
     LOG("MPDGroup: v3MP must be initialized before this MibGroup");
     LOG_END;
 #ifdef _NO_LOGGING
@@ -1687,7 +1619,7 @@ MPDGroup::MPDGroup(void): MibGroup(oidMPDGroup)
   v3MP *v3mp = v3MP::I;
   if (!v3mp)
   {
-    LOG_BEGIN(ERROR_LOG | 0);
+    LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
     LOG("MPDGroup: v3MP must be initialized before this MibGroup");
     LOG_END;
   }
@@ -1703,7 +1635,7 @@ usmUserAuthProtocol::usmUserAuthProtocol(const Oidx& o, USM *u):
 {
 }
 
-boolean usmUserAuthProtocol::value_ok(const Vbx& vb)
+bool usmUserAuthProtocol::value_ok(const Vbx& vb)
 {
 	Oidx o;
 	if (vb.get_value(o) != SNMP_CLASS_SUCCESS)
@@ -1719,7 +1651,7 @@ boolean usmUserAuthProtocol::value_ok(const Vbx& vb)
 	  if (usm->get_auth_priv()->get_auth(o.last()))
 	    return TRUE;
 
-	  LOG_BEGIN(INFO_LOG | 4);
+	  LOG_BEGIN(loggerModuleName, INFO_LOG | 4);
 	  LOG("Unknown auth protocol");
 	  LOG(o.last());
 	  LOG_END;
@@ -1764,7 +1696,7 @@ int usmUserPrivProtocol::prepare_set_request(Request* req, int& ind)
 	return MibLeaf::prepare_set_request(req, ind);
 }
 
-boolean usmUserPrivProtocol::value_ok(const Vbx& vb)
+bool usmUserPrivProtocol::value_ok(const Vbx& vb)
 {
 	Oidx o;
 	if (vb.get_value(o) != SNMP_CLASS_SUCCESS)

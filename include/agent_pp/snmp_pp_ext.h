@@ -1,106 +1,35 @@
 /*_############################################################################
   _## 
-  _##  snmp_pp_ext.h  
+  _##  AGENT++ 4.0 - snmp_pp_ext.h  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
 #ifndef _SNMP_PP_EXT_H_
 #define _SNMP_PP_EXT_H_
 
+#include <libagent.h>
+
 #include <agent_pp/agent++.h>
-#include <snmp_pp/oid.h>
+#include <snmp_pp/smi.h>
 #include <snmp_pp/pdu.h>
 #include <snmp_pp/vb.h>
 #include <snmp_pp/octet.h>
 #include <snmp_pp/oid.h>
 #include <snmp_pp/snmpmsg.h>
-
-
-//#define LENGTH_OF_IPADDRESS	4 not true any more!
 
 #ifndef WIN32
 #include <sys/types.h>
@@ -122,9 +51,9 @@ namespace Agentpp {
 /*--------------------------- class Oidx -----------------------------*/
 
 /**
- * The Oidx class is a sub class of Oid that provides additional 
+ * The Oidx class is a sub class of Oid that provides additional
  * methods for manipulating OID values. AGENT++ uses Oidx instead
- * of Oid. 
+ * of Oid.
  *
  * @version 3.4
  * @author Frank Fock
@@ -135,14 +64,14 @@ public:
 	/**
 	 * Construct an empty Object Identifier.
 	 */
-	Oidx() : Oid() { };
+	Oidx() : Oid() { }
 
 	/**
 	 * Construct an Object Identifier from a string.
 	 *
 	 * @param s - A oid string (e.g., ".x.y.z" or "x.y.z")
 	 */
-	Oidx(const char* s) : Oid(s) { };
+	Oidx(const char* s) : Oid(s) { }
 
 	/**
 	 * Construct an Object Identifier from a long array.
@@ -150,42 +79,48 @@ public:
 	 * @param data - An array of long values.
 	 * @param length - The length of the array.
 	 */
-	Oidx(const unsigned long *data, int length) : Oid(data, length) { };
+	Oidx(const unsigned long *data, int length) : Oid(data, length) { }
 
 	/**
 	 * Copy constructor.
 	 *
 	 * @param oid - Another object identifier.
 	 */
-	Oidx(const Oid& oid) : Oid(oid) { };
+	Oidx(const Oid& oid) : Oid(oid) { }
 
 	/**
 	 * Destructor
 	 */
-	virtual ~Oidx() { };
+	virtual ~Oidx() { }
 
 	/**
-	 * Return a copy of the receiver oid without the n leftmost 
+	 * Return a copy of the receiver oid without the n leftmost
 	 * subidentifiers.
-	 * 
+	 *
 	 * @param n - The number of subidentifiers to cut of from left side.
-	 * @return An Oidx object identifier.  
+	 * @return An Oidx object identifier.
 	 */
-	Oidx		cut_left(const unsigned int) const;
+	Oidx		cut_left(const unsigned int index) const
+	{
+		return cut_left(*this, index);
+	}
 
 	/**
-	 * Return a copy of the receiver oid without the n rightmost 
+	 * Return a copy of the receiver oid without the n rightmost
 	 * subidentifiers.
-	 * 
+	 *
 	 * @param n - The number of subidentifiers to cut of from right side.
-	 * @return An Oidx object identifier.  
+	 * @return An Oidx object identifier.
 	 */
-	Oidx		cut_right(const unsigned int) const;
+	Oidx		cut_right(const unsigned int index) const
+	{
+		return cut_right(*this, index);
+	}
 
 
 	/**
 	 * Mask the receiver, i.e. zero those sub-identifiers for which
-	 * a bit in the mask is set. 
+	 * a bit in the mask is set.
 	 * Each bit of the bit mask corresponds to a sub-identifier,
 	 * with to most significant bit of the i-th octet of the octet
 	 * string value corresponding to the (8*i - 7)-th sub-identifier,
@@ -196,65 +131,144 @@ public:
 	 *    an octet string.
 	 * @return a reference to the receiver.
 	 */
-	Oidx&		mask(const NS_SNMP OctetStr&);
+	Oidx&		mask(const NS_SNMP OctetStr &mask)
+	{
+		for (unsigned int i=0; (i<len()) && (i<mask.len()*8); i++) {
+			char m = 0x80 >> (i%8);
+			if (!(mask[i/8] & m)) {
+				(*this)[i] = 0ul;
+			}
+		}
+		return *this;
+	}
 
 
 	/**
-	 * Return a copy of the given oid without the n leftmost 
+	 * Return a copy of the given oid without the n leftmost
 	 * subidentifiers.
-	 * 
-	 * @param o - An Oidx object identifier. 
+	 *
+	 * @param o - An Oidx object identifier.
 	 * @param n - The number of subidentifiers to cut of from left side.
-	 * @return An Oidx object identifier.  
+	 * @return An Oidx object identifier.
 	 */
-	static Oidx	cut_left(const Oidx&, const unsigned int);
+	static Oidx	cut_left(const Oidx &oid, const unsigned int index)
+	{
+		if (oid.valid()) {
+			Oidx retval( oid.smival.value.oid.ptr + index, oid.smival.value.oid.len - index );
+#if 0
+			unsigned int i;
+			for (i=index; i<oid.smival.value.oid.len; i++)
+				retval += oid.smival.value.oid.ptr[i];
+#endif
+			return retval;
+		}
+		else
+		    return Oidx();
+	}
 
 	/**
-	 * Return a copy of the given oid without the n rightmost 
+	 * Return a copy of the given oid without the n rightmost
 	 * subidentifiers.
-	 * 
-	 * @param o - An Oidx object identifier. 
+	 *
+	 * @param o - An Oidx object identifier.
 	 * @param n - The number of subidentifiers to cut of from right side.
-	 * @return An Oidx object identifier.  
+	 * @return An Oidx object identifier.
 	 */
-	static Oidx	cut_right(const Oidx&, const unsigned int);
+	static Oidx	cut_right(const Oidx &oid, const unsigned int index)
+	{
+		if (oid.valid()) {
+			unsigned int l = oid.smival.value.oid.len >= index ? oid.smival.value.oid.len - index : 0;
+			Oidx retval( oid.smival.value.oid.ptr, l );
+#if 0
+			Oidx retval;
+			unsigned int i;
+			unsigned int s = index;
+			if (s>oid.len())
+				s = oid.len();
+			for (i=0; i<oid.len()-s; i++)
+				retval += oid.smival.value.oid.ptr[i];
+#endif
+			return retval;
+		}
+		else
+		    return Oidx();
+	}
 
 	/**
 	 * Return the last subidentifier of the receiver.
-	 * 
-	 * @return A subidentifier.
+	 *
+	 * @return A subidentifier or 0 if it does not exist.
 	 */
-	unsigned long	last() const;
+	unsigned long	last() const
+	{
+		// check for len == 0
+		if ((!Oid::valid()) || (smival.value.oid.len<1))
+			return 0;
 
-	virtual Oidx&  	operator=(unsigned long l);
+		return smival.value.oid.ptr[smival.value.oid.len-1];
+	}
 
-	Oidx		&operator+=(NS_SNMP IpAddress&); 
-	Oidx		&operator+=(const char *); 
+	using NS_SNMP Oid::operator = ;
+	virtual Oidx&  	operator = (unsigned long l)
+	{
+		// delete the old value
+		if ( smival.value.oid.ptr ) {
+			delete [] smival.value.oid.ptr;
+			smival.value.oid.ptr = NULL;
+		}
+		smival.value.oid.len = 1;
+		smival.value.oid.ptr = (SmiLPUINT32)new unsigned long[1];
+		smival.value.oid.ptr[0] = l;
+		return *this;
+	}
+
+	using NS_SNMP Oid::operator += ;
+	Oidx		&operator+=(NS_SNMP IpAddress const &ip)
+	{
+		for (int i = 0; i < ip.get_length(); i++)
+			*this += (unsigned long)ip[i];
+		return *this;
+	}
+#if 0
+	Oidx		&operator+=(const char *);
 	Oidx		&operator+=(const unsigned long i);
 	Oidx		&operator+=(const Oid &);
+#endif
 
 	/**
 	 * Check if the receiver is in the subtree of a given oid.
 	 *
 	 * @param o - An Oidx object identifier.
-	 * @return TRUE if the receiver is in the subtree of o, 
+	 * @return TRUE if the receiver is in the subtree of o,
 	 *         FALSE otherwise.
 	 */
-	int		in_subtree_of(const Oidx& o) const;
+	bool		in_subtree_of(const Oidx& o) const
+	{
+		if (len() <= o.len()) return FALSE;
+		for (unsigned int i=0; i<o.len(); i++)
+			if ((*this)[i] != o[i]) return FALSE;
+		return TRUE;
+	}
 
 	/**
 	 * Check if the receiver is root of a given oid.
 	 *
 	 * @param o - An Oidx object identifier.
-	 * @return TRUE if the receiver is root of o, 
+	 * @return TRUE if the receiver is root of o,
 	 *         FALSE otherwise.
 	 */
-	int		is_root_of(const Oidx& o) const;
+	bool		is_root_of(const Oidx& o) const
+	{
+		if (len() >= o.len()) return false;
+		for (unsigned int i=0; i<len(); i++)
+			if ((*this)[i] != o[i]) return false;
+		return true;
+	}
 
 	/**
 	 * Compare the receiver with another object identifier
 	 * using a mask which defines to subidentifiers to be compared.
-	 * The mask is used like defined in RFC2273 for the 
+	 * The mask is used like defined in RFC2273 for the
 	 * snmpNotifyFilterMask.
 	 *
 	 * @param other
@@ -263,9 +277,9 @@ public:
 	 *    an octet string containing a mask.
 	 * @return 0 if both (masked) object identifiers are equal,
 	 *    return 1 if the given object identifier is in the subtree
-	 *    of the receiver, and return -1 otherwise. 
+	 *    of the receiver, and return -1 otherwise.
 	 */
-	int		compare(const Oidx&, const NS_SNMP OctetStr&) const; 
+	int		compare(const Oidx&, const NS_SNMP OctetStr&) const;
 
 	/**
 	 * Compare the receiver with another object identifier
@@ -277,22 +291,29 @@ public:
 	 *    the subidentifier position (>=0) that is not compared
 	 * @return 0 if both (masked) object identifiers are equal,
 	 *    return 1 if the given object identifier is in the subtree
-	 *    of the receiver, and return -1 otherwise. 
+	 *    of the receiver, and return -1 otherwise.
 	 */
-	int		compare(const Oidx&, u_int) const; 
+	int		compare(const Oidx&, u_int) const;
 
 	/**
-	 * Return the receiver as an OctetStr. Every subidentifier is 
-	 * interpreted as one char. Thus, all subidentifiers must be 
+	 * Return the receiver as an OctetStr. Every subidentifier is
+	 * interpreted as one char. Thus, all subidentifiers must be
 	 * between 0 and 255.
 	 *
 	 * @return An OctetStr.
 	 */
-	NS_SNMP OctetStr	as_string() const;
+	NS_SNMP OctetStr	as_string() const
+	{
+		OctetStr str;
+		for (int i=0; i<(int)len(); i++) {
+			str += (unsigned char)(*this)[i];
+		}
+		return str;
+	}
 
 	/**
-	 * Return an object identifier from a string. The first 
-	 * subidentifier will contain the length of the string, each 
+	 * Return an object identifier from a string. The first
+	 * subidentifier will contain the length of the string, each
 	 * following subidentifier represents one character.
 	 *
 	 * @param withExplicitLength
@@ -300,7 +321,15 @@ public:
 	 *    the length of the string will be generated.
 	 * @return An Oidx.
 	 */
-	static Oidx	from_string(const NS_SNMP OctetStr&, boolean withLength=TRUE);
+	static Oidx	from_string(const NS_SNMP OctetStr &str, bool withLength = TRUE)
+	{
+		Oidx oid;
+		if (withLength)
+			oid += (long)str.len();
+		for (unsigned int i=0; i<str.len(); i++)
+			oid += (long)str[i];
+		return oid;
+	}
 
 	/**
 	 * Return the immediate lexicographic successor of the receiver.
@@ -308,7 +337,27 @@ public:
 	 * @return
 	 *    an Oidx instance (receiver.0)
 	 */
-	Oidx		successor() const;
+	Oidx		successor() const
+	{
+		Oidx o(*this);
+		if (o.len()==MAX_OID_LEN) {
+			if (o[MAX_OID_LEN-1] == 0xFFFFFFFFul) {
+				int i = MAX_OID_LEN-2;
+				while ((i>=0) && (o[i] == 0xFFFFFFFFul)) {
+					i--;
+				}
+				if (i>=0) {
+					o.trim(MAX_OID_LEN-1-i);
+					o[i]++;
+				}
+			}
+			else
+				o[MAX_OID_LEN-1]++;
+		}
+		else
+			o += 0ul;
+		return o;
+	}
 
 	/**
 	 * Return the immediate lexicographic predecessor of the receiver.
@@ -316,7 +365,19 @@ public:
 	 * @return
 	 *    an Oidx instance immediate preceding the receiver.
 	 */
-	Oidx		predecessor() const;
+	Oidx		predecessor() const
+	{
+		Oidx o(*this);
+		if (o.len()==0) return o;
+		if (o[o.len()-1] == 0) {
+			o.trim();
+			return o;
+		}
+		o[o.len()-1]--;
+		for (int i=o.len(); i<MAX_OID_LEN; i++)
+			o += 0xFFFFFFFFul;
+		return o;
+	}
 
 	/**
 	 * Return the next peer of the receiver. Thus, add one to the
@@ -324,20 +385,25 @@ public:
 	 * Note: If the receiver's last sub-identifier is 0xFFFFFFFFul
 	 * the returned object ID may not be valid.
 	 *
-	 * @return 
+	 * @return
 	 *    an Oidx instance.
 	 */
-	Oidx		next_peer() const;
+	Oidx		next_peer() const
+	{
+		Oidx o(*this);
+		o[o.len()-1]++;
+		return o;
+	}
 };
 
 
 /*--------------------------- class Vbx -----------------------------*/
 
 /**
- * The Vbx class is a sub class of Vb that provides additional 
- * methods for manipulating SNMP variable bindings values. 
+ * The Vbx class is a sub class of Vb that provides additional
+ * methods for manipulating SNMP variable bindings values.
  * AGENT++ uses Vbx instead of Vb. Most of the base methods of Vb
- * are redefined as const methods. 
+ * are redefined as const methods.
  *
  * @version 3.4
  * @author Frank Fock
@@ -353,19 +419,19 @@ public:
 	/**
 	 * Constructor with oid and value.
 	 *
-	 * @param oid 
+	 * @param oid
 	 *    the oid part of the new variable binding.
 	 * @param value
 	 *    the value part of the new variable binding.
 	 */
 	Vbx(const NS_SNMP Oid& oid, const NS_SNMP SnmpSyntax &val): Vb(oid) {
-	  set_value(val); 
+	  set_value(val);
 	}
 
 	/**
 	 * Return the oid value of the receiver.
 	 *
-	 * @return 
+	 * @return
 	 *    a copy of the oid value of the receiver.
 	 */
 	Oidx		get_oid() const { return iv_vb_oid; };
@@ -389,13 +455,13 @@ public:
 	 *    an array of n Vbx variable bindings.
 	 * @param vbxArray2
 	 *    an array of n Vbx variable bindings.
-	 * @param n 
+	 * @param n
 	 *    the number of elements in the above arrays.
-	 * @return 
+	 * @return
 	 *    TRUE if the oids and the values of both variable binding
 	 *    arrays are equal.
-	 */ 
-	static boolean	equal(Vbx*, Vbx*, int);	
+	 */
+	static bool	equal(Vbx*, Vbx*, int);
 
 	/**
 	 * Encode a given array of variable bindings into a octet stream
@@ -418,7 +484,7 @@ public:
 	static int	to_asn1(Vbx*, int, unsigned char*&, int&);
 
 	/**
-	 * Decode a character stream that holds BER encoded 
+	 * Decode a character stream that holds BER encoded
 	 * sequence of variable bindings into an array of variable
 	 * bindings.
 	 *
@@ -428,8 +494,8 @@ public:
 	 * @param size
 	 *    returns the size of the above array.
 	 * @param buf
-	 *    a pointer to a character stream holding a BER encoded 
-	 *    sequence of variable bindings. After execution, this 
+	 *    a pointer to a character stream holding a BER encoded
+	 *    sequence of variable bindings. After execution, this
 	 *    pointer will point to first character in buf after the
 	 *    decoded sequence.
 	 * @param bufsize
@@ -448,7 +514,7 @@ public:
 						    int,
 						    int);
 };
- 
+
 
 /*------------------------- class OidxRange ---------------------------*/
 
@@ -505,7 +571,7 @@ public:
 	 * @return
 	 *    TRUE if lower and upper bounds of both OID ranges are equal
 	 */
-	virtual int	operator==(const OidxRange&) const;
+	virtual bool	operator==(const OidxRange&) const;
 	/**
 	 * Compare the receiver with another OID range
 	 *
@@ -515,7 +581,7 @@ public:
 	 *    TRUE if the upper bound of the receiver is less or equal to the
 	 *    lower bound of other
 	 */
-	virtual int	operator<(const OidxRange&) const;
+	virtual bool	operator<(const OidxRange&) const;
 	/**
 	 * Compare the receiver with another OID range
 	 *
@@ -525,7 +591,7 @@ public:
 	 *    TRUE if the lower bound of the receiver is greater or equal to
 	 *    the upper bound of other
 	 */
-	virtual int	operator>(const OidxRange&) const;
+	virtual bool	operator>(const OidxRange&) const;
 
 	/**
 	 * Check whether an OID is within the receiver's range
@@ -533,10 +599,10 @@ public:
 	 * @param oid
 	 *    an object identifier
 	 * @return
-	 *    TRUE if oid is greater or equal to the receiver's lower 
+	 *    TRUE if oid is greater or equal to the receiver's lower
 	 *    bound and less or equal to its upper bound.
 	 */
-	virtual int	includes(const Oidx&) const;
+	virtual bool	includes(const Oidx&) const;
 
 	/**
 	 * Check whether an OID is within the receiver's range
@@ -544,10 +610,10 @@ public:
 	 * @param oid
 	 *    an object identifier
 	 * @return
-	 *    TRUE if oid is greater or equal the receiver's lower 
+	 *    TRUE if oid is greater or equal the receiver's lower
 	 *    bound and less than its upper bound.
 	 */
-	virtual int	includes_excl(const Oidx&) const;
+	virtual bool	includes_excl(const Oidx&) const;
 
 	/**
 	 * Check whether a range is covered by the receiver's range
@@ -555,11 +621,11 @@ public:
 	 * @param range
 	 *    a OidxRange instance
 	 * @return
-	 *    TRUE if the lower bound of range is greater or equal the 
+	 *    TRUE if the lower bound of range is greater or equal the
 	 *    receiver's lower bound and if the upper bound of range is
 	 *    less or equal the upper bound of the receiver, FALSE otherwise
 	 */
-	virtual boolean	covers(const OidxRange&) const;
+	virtual bool	covers(const OidxRange&) const;
 
 	/**
 	 * Check whether a range overlaps the receiver's range
@@ -569,7 +635,7 @@ public:
 	 * @return
 	 *    TRUE if at least one oid is part of both ranges, FALSE otherwise
 	 */
-	virtual boolean	overlaps(const OidxRange&) const;
+	virtual bool	overlaps(const OidxRange&) const;
 
 	/**
 	 * Get lower bound
@@ -594,10 +660,10 @@ public:
 /*--------------------------- class Pdux -----------------------------*/
 
 /**
- * The Pdux class is a sub class of Pdu that provides additional 
- * methods for manipulating SNMP PDUs. 
+ * The Pdux class is a sub class of Pdu that provides additional
+ * methods for manipulating SNMP PDUs.
  * AGENT++ uses Pdux instead of Pdu, because Pdu does not allow to set
- * error status, error index and request id of a PDU. 
+ * error status, error index and request id of a PDU.
  *
  * @version 3.4
  * @author Frank Fock
@@ -613,7 +679,7 @@ public:
 
 	virtual ~Pdux() { }
 
-	/** 
+	/**
 	 * Clear the Pdu contents (destruct and construct in one go)
 	 */
 	void    clear();
@@ -634,15 +700,14 @@ public:
 /*--------------------------- class Snmpx -----------------------------*/
 
 /**
- * The Snmpx class is a sub class of Snmp that provides additional 
- * methods for sending and receiving SNMP messages. 
+ * The Snmpx class is a sub class of Snmp that provides additional
+ * methods for sending and receiving SNMP messages.
  * AGENT++ uses Snmpx instead of Snmp, because Snmp does not allow to
- * listen on an UDP port for incoming SNMP requests.  
+ * listen on an UDP port for incoming SNMP requests.
  *
  * @version 3.4.4
  * @author Frank Fock
  */
-
 
 class AGENTPP_DECL Snmpx: public NS_SNMP Snmp {
 public:
@@ -650,7 +715,7 @@ public:
 	 * Construct a new SNMP session using the given UDP port.
 	 *
 	 * @param status
-	 *    after creation of the session this parameter will 
+	 *    after creation of the session this parameter will
 	 *    hold the creation status.
 	 * @param port
 	 *    an UDP port to be used for the session
@@ -660,18 +725,18 @@ public:
 #ifdef SNMP_PP_WITH_UDPADDR
 	/**
 	 * Construct a new SNMP session using the given UDP address.
-	 * Thus, binds the session on a specific IP address. 
+	 * Thus, binds the session on a specific IP address.
 	 *
 	 * @param status
-	 *    after creation of the session this parameter will 
+	 *    after creation of the session this parameter will
 	 *    hold the creation status.
 	 * @param address
 	 *    an UDP address to be used for the session
-	 */	
+	 */
 	Snmpx(int& status, const NS_SNMP UdpAddress& addr): Snmp(status, addr) { }
 #endif
 
-#ifdef _SNMPv3		
+#ifdef _SNMPv3
 	/**
 	 * Receive a SNMP PDU
 	 *
@@ -683,12 +748,12 @@ public:
          *    the target (either CTarget or UTarget) will contain
 	 *    - the UDP address of the sender of the received PDU
 	 *    - the SNMP version of the received PDU
-         *    - UTarget: security_model(community), security_name and 
+         *    - UTarget: security_model(community), security_name and
          *               (authoritative) engine_id
-	 * @return 
+	 * @return
 	 *   SNMP_CLASS_SUCCESS on success and SNMP_CLASS_ERROR,
 	 *   SNMP_CLASS_TL_FAILED on failure.
-	 */ 
+	 */
 	int receive(struct timeval*, Pdux&, NS_SNMP UTarget&);
 #else
 	/**
@@ -703,13 +768,13 @@ public:
 	 * @param version
 	 *    will contain the SNMP version of the received PDU
 	 * @param community
-	 *   will conatin the community (in case of SNMPv3 the 
+	 *   will conatin the community (in case of SNMPv3 the
 	 *   security information) of the received PDU
-	 * @return 
+	 * @return
 	 *   SNMP_CLASS_SUCCESS on success and SNMP_CLASS_ERROR,
 	 *   SNMP_CLASS_TL_FAILED on failure.
-	 */ 
-	int receive(struct timeval*, Pdux&, NS_SNMP UdpAddress&, 
+	 */
+	int receive(struct timeval*, Pdux&, NS_SNMP UdpAddress&,
 		    NS_SNMP snmp_version&, NS_SNMP OctetStr&);
 #endif
 #ifdef _SNMPv3
@@ -719,17 +784,17 @@ public:
 	 * @param pdu
 	 *    the SNMP PDU to send
 	 * @param target
-	 *    the target (actually a CTarget or UTarget) that contains 
+	 *    the target (actually a CTarget or UTarget) that contains
          *      - the receiver's UDP address
 	 *      - the SNMP version to be used
          *      - CTarget: the community
-         *      - UTarget: security_model, security_name and 
-         *                 (if known) engine_id 
-	 * @return 
+         *      - UTarget: security_model, security_name and
+         *                 (if known) engine_id
+	 * @return
 	 *   SNMP_CLASS_SUCCESS on success and SNMP_CLASS_ERROR,
 	 *   SNMP_CLASS_TL_FAILED on failure.
 	 */
-        int send (Pdux, NS_SNMP SnmpTarget*);
+        int send (Pdux const &, NS_SNMP SnmpTarget*);
 #else
 	/**
 	 * Send o SNMP PDU
@@ -742,11 +807,11 @@ public:
 	 *    the SNMP version to be used
 	 * @param community
 	 *    the community / security information to be used
-	 * @return 
+	 * @return
 	 *   SNMP_CLASS_SUCCESS on success and SNMP_CLASS_ERROR,
 	 *   SNMP_CLASS_TL_FAILED on failure.
 	 */
-        int send (Pdux, NS_SNMP UdpAddress, NS_SNMP snmp_version, NS_SNMP OctetStr);
+        int send (Pdux const &, NS_SNMP UdpAddress const &, NS_SNMP snmp_version, NS_SNMP OctetStr const &);
 #endif
 	/**
 	 * Get the port the request list is listening on.
@@ -772,7 +837,7 @@ public:
 protected:
 	unsigned long ProcessizedReqId(unsigned short);
 	unsigned long MyMakeReqId();
-};    
+};
 
 #ifdef AGENTPP_NAMESPACE
 }

@@ -1,93 +1,24 @@
 /*_############################################################################
   _## 
-  _##  notification_originator.cpp  
+  _##  AGENT++ 4.0 - notification_originator.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
+#include <libagent.h>
 
 #include <agent_pp/snmp_target_mib.h>
 #include <agent_pp/snmp_notification_mib.h>
@@ -104,13 +35,11 @@
 #define TRAP    1
 #define INFORM  2
 
-#ifdef SNMP_PP_NAMESPACE
-using namespace Snmp_pp;
-#endif
-
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
+
+static const char *loggerModuleName = "agent++.notification_originator";
 
 /*------------------ class NotificationOriginator -----------------------*/
 
@@ -157,7 +86,7 @@ int NotificationOriginator::generate(Vbx* vbs, int size, const Oidx& id,
 				     const Oidx& enterprise,
 				     const OctetStr& contextName)
 {
-	// We have to be careful here about synchronisation because,
+	// We have to be careful here about synchronization because,
 	// we may be called after an interrupt
 	// Therefore synch everything or use synch methods like
 	// MibTable::get_rows_cloned();
@@ -173,7 +102,7 @@ int NotificationOriginator::generate(Vbx* vbs, int size, const Oidx& id,
 #ifdef _SNMPv3
 	if (!localEngineID) {
 		if (!v3MP::I) {
-			LOG_BEGIN(ERROR_LOG | 0);
+			LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
 			LOG("NotificationOriginator: v3MP has to be initialized before notifications can be sent");
 			LOG_END;
 		}
@@ -184,7 +113,14 @@ int NotificationOriginator::generate(Vbx* vbs, int size, const Oidx& id,
 	int totalStatus = SNMP_ERROR_SUCCESS;
 
 	NotificationOriginatorParams nop(vbs, size, id, timestamp, enterprise, contextName);
-
+#ifdef _SNMPv3
+	if (nlmLogEntry::instance) {
+	  nlmLogEntry::instance->
+	    add_notification(NULL, id, vbs, size, contextName,
+			     *localEngineID,
+			     *localEngineID);
+	}
+#endif
 	for (cur.init(list); cur.get(); cur.next()) {
 
 	  int notify = NO_TRAP;
@@ -214,7 +150,7 @@ int NotificationOriginator::generate(Vbx* vbs, int size, const Oidx& id,
 		delete[] tagstr;
 	  }
 	  if (notify == NO_TRAP) {
-		LOG_BEGIN(DEBUG_LOG | 6);
+		LOG_BEGIN(loggerModuleName, DEBUG_LOG | 6);
 		LOG("NotificationOriginator: generate: could not find valid tag");
 		LOG_END;
 		continue;
@@ -230,7 +166,7 @@ int NotificationOriginator::generate(Vbx* vbs, int size, const Oidx& id,
 }
 
 
-boolean NotificationOriginator::check_access(ListCursor<MibTableRow>& cur,
+bool NotificationOriginator::check_access(ListCursor<MibTableRow>& cur,
 		NotificationOriginatorParams& nop)
 {
 	Vbx*& vbs = nop.vbs;
@@ -256,7 +192,7 @@ boolean NotificationOriginator::check_access(ListCursor<MibTableRow>& cur,
 	  Oidx targetOid(Oidx::from_string(paramsStr, FALSE));
 	  if (!snmpNotifyFilterEntry::passes_filter(targetOid, id, vbs, size)){
 
-		LOG_BEGIN(INFO_LOG | 2);
+		LOG_BEGIN(loggerModuleName, INFO_LOG | 2);
 		LOG("NotificationOriginator: generate: event did not pass notification filter (trapoid)(filter)");
 		LOG(Oidx(id).get_printable());
 		LOG(paramsStr.get_printable());
@@ -276,7 +212,7 @@ boolean NotificationOriginator::check_access(ListCursor<MibTableRow>& cur,
 	      (paramsRow->get_row_status()->get() != rowActive)) {
 
 	    snmpTargetParamsEntry::instance->end_synch();
-	    LOG_BEGIN(WARNING_LOG | 3);
+	    LOG_BEGIN(loggerModuleName, WARNING_LOG | 3);
 	    LOG("NotificationOriginator: generate: target addr parameter row not found.");
 	    LOG(paramsStr.get_printable());
 	    LOG((paramsRow) ? "no active row found" : "missing row");
@@ -291,12 +227,12 @@ boolean NotificationOriginator::check_access(ListCursor<MibTableRow>& cur,
 
 	  snmpTargetParamsEntry::instance->end_synch();
 
-	  boolean accessAllowed = TRUE;
+	  bool accessAllowed = TRUE;
 #ifdef _SNMPv3
 	  if ((!Mib::instance) ||
 	      (!Mib::instance->get_request_list()) ||
 	      (!Mib::instance->get_request_list()->get_vacm())) {
-		LOG_BEGIN(ERROR_LOG | 0);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
 		LOG("NotificationOriginator: Mib or its requestList are not initialized, aborting!");
 		LOG_END;
 		return FALSE;
@@ -326,7 +262,7 @@ boolean NotificationOriginator::check_access(ListCursor<MibTableRow>& cur,
 	  }
 #endif
 	  if (!accessAllowed) {
-	    LOG_BEGIN(EVENT_LOG | 2);
+	    LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	    LOG("Notification not sent (reason) (addr) (params)");
 	    LOG("no access");
 	    LOG(targetAddress.get_printable());
@@ -394,7 +330,7 @@ int NotificationOriginator::send_notify(ListCursor<MibTableRow>& cur,
 			target->set_security_name(securityName);
 		}
 		else {
-			LOG_BEGIN(WARNING_LOG | 2);
+			LOG_BEGIN(loggerModuleName, WARNING_LOG | 2);
 			LOG("NotificationOriginator: community lookup failed for (securityName) (context)");
 			LOG(securityName.get_printable());
 			LOG(OctetStr(contextName).get_printable());
@@ -414,8 +350,10 @@ int NotificationOriginator::send_notify(ListCursor<MibTableRow>& cur,
 #ifdef _SNMPv3
 	    status = SnmpRequestV3::send(*target, pdu);
 	    if (nlmLogEntry::instance) {
-		nlmLogEntry::instance->
-		  add_notification(*target, pdu, *localEngineID);
+	      nlmLogEntry::instance->
+		add_notification(target, id, vbs, size, contextName,
+				 *localEngineID,
+				 *localEngineID);
 	    }
 #else
 	    status = SnmpRequest::process_trap(*target, vbs, size,
@@ -426,7 +364,7 @@ int NotificationOriginator::send_notify(ListCursor<MibTableRow>& cur,
 	    GenAddress address;
 	    target->get_address(address);
 
-	    LOG_BEGIN(EVENT_LOG | 1);
+	    LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
 	    LOG("NotificationGenerator: sent v1 trap (id)(tdomain)(addr)(vbs)(community)");
 	    LOG(trapoid.get_printable());
 	    LOG(targetDomain);
@@ -453,8 +391,11 @@ int NotificationOriginator::send_notify(ListCursor<MibTableRow>& cur,
 #ifdef _SNMPv3
 	    status = SnmpRequestV3::send(*target, pdu);
 	    if (nlmLogEntry::instance) {
-		nlmLogEntry::instance->
-		  add_notification(*target, pdu, *localEngineID);
+	      OctetStr ceid;
+	      nlmLogEntry::instance->
+		add_notification(target, trapoid, vbs, size, 
+				 contextName, ceid,
+				 *localEngineID);
 	    }
 #else
 	    status = SnmpRequest::process_trap(*target, vbs, size, id, enterprise,
@@ -464,7 +405,7 @@ int NotificationOriginator::send_notify(ListCursor<MibTableRow>& cur,
 	    GenAddress address;
 	    target->get_address(address);
 
-	    LOG_BEGIN(EVENT_LOG | 1);
+	    LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
 	    if (notify == TRAP)
 		LOG("NotificationGenerator: sent trap (vers)(id)(tdomain)(addr)(vbs)(community/secName)(status)");
 	    else
@@ -482,12 +423,9 @@ int NotificationOriginator::send_notify(ListCursor<MibTableRow>& cur,
 }
 
 
-boolean NotificationOriginator::add_v1_trap_destination(const UdpAddress& addr,
+bool NotificationOriginator::add_v1_trap_destination(const UdpAddress& addr,
     const OctetStr &name, const OctetStr &tag, const OctetStr &community)
 {
-//	OctetStr name("defaultV1Trap");
-//	OctetStr tag("v1trap");
-//      OctetStr community("public");
 	OctetStr address;
 	IpAddress ip(addr);
 	for (int i=0; i<addr.get_length()-2; i++) {
@@ -520,12 +458,9 @@ boolean NotificationOriginator::add_v1_trap_destination(const UdpAddress& addr,
 }
 
 
-boolean NotificationOriginator::add_v2_trap_destination(const UdpAddress& addr,
+bool NotificationOriginator::add_v2_trap_destination(const UdpAddress& addr,
     const OctetStr &name, const OctetStr &tag, const OctetStr &community)
 {
-//	OctetStr name("defaultV2Trap");
-//	OctetStr tag("v2trap");
-//      OctetStr community("public");
 	OctetStr address;
 	IpAddress ip(addr);
 	for (int i=0; i<addr.get_length()-2; i++) {
@@ -557,12 +492,12 @@ boolean NotificationOriginator::add_v2_trap_destination(const UdpAddress& addr,
 	return FALSE;
 }
 
-boolean NotificationOriginator::add_v3_trap_destination(const UdpAddress& addr,
-    const OctetStr &name, const OctetStr &tag, const OctetStr &secName)
+bool NotificationOriginator::add_v3_trap_destination(const UdpAddress& addr,
+                                                     const OctetStr &name,
+                                                     const OctetStr &tag,
+                                                     const OctetStr &secName,
+                                                     const int secLevel)
 {
-//	OctetStr name("defaultV3Trap");
-//	OctetStr tag("v3trap");
-//      OctetStr secName("MD5DES");
 	OctetStr address;
 	IpAddress ip(addr);
 	for (int i=0; i<addr.get_length()-2; i++) {
@@ -578,8 +513,8 @@ boolean NotificationOriginator::add_v3_trap_destination(const UdpAddress& addr,
 	if (snmpTargetParamsEntry::instance->add_entry(name, // row index
 						       mpV3,    // mpModel
 						       SNMP_SECURITY_MODEL_USM,
-						       secName, // secName
-						       1)) { // secLevel
+						       secName,
+						       secLevel)) {
 	    snmpNotifyEntry::instance->add_entry(name, // row index
 						 tag,  // tag
 						 TRAP);   // type (trap)

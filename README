@@ -1,29 +1,28 @@
 
-AGENT++ V3.x README
+AGENT++ V4.x README
 ===================
 
-
-
 Included within this package can be found the source code and examples
-for AGENT++ 3.x for Digital Unix 3.2/4.0, Solaris 2.6/7/8, and Linux 2.x.
+for AGENT++ 4.x for Linux, Solaris, Windows XP/7/8, Mac OS X, cygwin,
+and many other operating systems (included embedded).
 The following represents the directories which are included within the
 compressed tar file and their contents.
 
 For more details on the API, please refer to the API specification.
 
-This library requires SNMP++v3 which can be obtained from
-http://www.agentpp.com. SNMP++ is designed by Peter Mellquist
-(Hewlett Packard Co.) and is freely available from
-http://rosegarden.external.hp.com/snmp++. 
-
-The few interface differences between the "official" version of SNMP++ 
-and SNMP++v3 are described in README.SNMP++.
-
+This library requires SNMP++v3.3 or later which can be obtained from
+http://www.agentpp.com. SNMP++ up to 2.8 was designed by Peter Mellquist
+(Hewlett Packard Co.) and was available from
+http://rosegarden.external.hp.com/snmp++. This link no longer works
+because HP discontinued SNMP++. You can download the patched version 2.8a
+still from http://www.agentpp.com/snmp++v2.8a.tar.gz.
 
 ====================================================================
 
 USAGE:
 
+Note: If you are using autoconf, you can set the following as parameters
+to the configure script. 
 
 The AGENT++ lib (libagent++.[so|a]) should be compiled with 
 
@@ -42,7 +41,8 @@ log by
 
 	DefaultLog::log->set_filter(<logname>_LOG_IND, <level>);
 
-and disable the logging at all by using the compiler switch -D_NO_LOGGING.
+and disable the logging at all by using the compiler switch -D_NO_LOGGING
+which is recommended for best agent performance.
 
 
 --

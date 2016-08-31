@@ -1,90 +1,20 @@
 /*_############################################################################
   _## 
-  _##  mib.h  
+  _##  AGENT++ 4.0 - mib.h  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
@@ -92,11 +22,11 @@
 #ifndef mib_h_
 #define mib_h_
 
-#include <stdio.h>
+#include <libagent.h>
 
 #include <agent_pp/agent++.h>
-#include <agent_pp/threads.h>
 #include <agent_pp/List.h>
+#include <agent_pp/threads.h>
 #include <agent_pp/mib_avl_map.h>
 #include <agent_pp/snmp_pp_ext.h>
 #include <agent_pp/mib_entry.h>
@@ -104,8 +34,10 @@
 #include <agent_pp/tools.h>
 #include <agent_pp/request.h>
 #include <agent_pp/mib_context.h>
-#include <agent_pp/proxy_forwarder.h>
 
+#ifdef _USE_PROXY
+#include <agent_pp/proxy_forwarder.h>
+#endif
 
 #define DEFAULT_PATH_PERSISTENT_MO	"config/"
 #define VARIABLE_INDEX_LENGTH		0
@@ -251,7 +183,7 @@ public:
    *                   scalar or otherwise if the receiver's row has no
    *                   snmpRowStatus.  
    */
-  virtual void        	init(NS_SNMP SnmpSyntax*, boolean);
+  virtual void        	init(NS_SNMP SnmpSyntax*, int);
 
   /**
    * Return the type of the receiver.
@@ -275,7 +207,7 @@ public:
    * @param sz - The size of the buffer returned.
    * @return TRUE if serialization was successful, FALSE otherwise.
    */
-  virtual boolean	serialize(char*&, int&);
+  virtual bool	serialize(char*&, int&);
 
   /**
    * Read the value of the receiver from a byte stream.
@@ -288,7 +220,7 @@ public:
    * @return 
    *    TRUE if deserialization was successful, FALSE otherwise.
    */
-  virtual boolean	deserialize(char*, int&);
+  virtual bool	deserialize(char*, int&);
   
 
   /**
@@ -458,7 +390,7 @@ public:
    * @param v - A new value.
    * @return TRUE if the new value is valid, otherwise FALSE.
    */
-  virtual boolean	value_ok(const Vbx&)	{ return TRUE; }
+  virtual bool	value_ok(const Vbx&)	{ return TRUE; }
 
   /**
    * Set the receiver's value and backup its old value for a later undo. 
@@ -509,14 +441,14 @@ public:
    *
    * @return TRUE if the receiver has a default value, FALSE otherwise.
    */
-  boolean	has_default()	       	{ return (value_mode & VMODE_DEFAULT);}
+  bool	has_default()	       	{ return ((value_mode & VMODE_DEFAULT) > 0);}
 
   /**
    * Return whether the receiver has a default value.
    *
    * @return TRUE if the receiver has a default value, FALSE otherwise.
    */
-  boolean	is_locked()	       	{ return (value_mode & VMODE_LOCKED); }
+  bool	is_locked()	       	{ return ((value_mode & VMODE_LOCKED) > 0); }
 
   /**
    * Set the receiver's reference to its table.
@@ -670,7 +602,7 @@ public:
 	 * @return 
 	 *    TRUE if the new value is valid, otherwise FALSE.
 	 */
-	virtual boolean	       	value_ok(const Vbx&);
+	virtual bool	       	value_ok(const Vbx&);
 
 	/**
 	 * Check whether the a transition to a given new value is
@@ -683,7 +615,7 @@ public:
 	 * @return 
 	 *    TRUE if the new value is valid, otherwise FALSE.
 	 */
-	virtual boolean	       	transition_ok(const Vbx&);
+	virtual bool	       	transition_ok(const Vbx&);
 
 	/**
 	 * Clone the receiver.
@@ -704,7 +636,7 @@ public:
 	 * @return 
 	 *    TRUE if the requested state can be set, otherwise FALSE.
 	 */ 
-	virtual boolean		check_state_change(const Vbx&, Request* req=0);
+	virtual bool		check_state_change(const Vbx&, Request* req=0);
 
 	/**
 	 * Set the receiver's value and backup its old value for a later undo. 
@@ -880,7 +812,7 @@ public:
 	 * @return TRUE if a such a column existed and has been removed, 
 	 *         FALSE otherwise.
 	 */  
-	boolean		remove(int);
+	bool		remove(int);
 
 	/**
 	 * Replace the element at the given column.
@@ -934,7 +866,7 @@ public:
 	 * @return TRUE if the receiver row contains an object with the 
 	 *         given oid, FALSE otherwise.
 	 */
-	boolean		contains(const Oidx&) const;
+	bool		contains(const Oidx&) const;
 
 	/**
 	 * Return the index (counted from 0) of the row's object whose OID 
@@ -965,7 +897,7 @@ public:
 	 *
 	 * @param oid - The object id to search for.
 	 * @return The index (counted from 0) of the found column or -1 if
-	 *         such a column canþt be found.
+	 *         such a column canï¿½t be found.
 	 */
 	int		index_of_upper(const Oidx&) const;
 
@@ -975,15 +907,15 @@ public:
 	 *
 	 * @param oid - The object id to search for.
 	 * @return The index (counted from 0) of the found column or -1 if
-	 *         such a column canþt be found.
+	 *         such a column canï¿½t be found.
 	 */
 	int		index_of_lower(const Oidx&) const;
 
 
 	/**
-	 * Set the index of the receiverþs row. 
+	 * Set the index of the receiverï¿½s row. 
 	 *
-	 * @param ind - The (new) index of the receiverþs row.
+	 * @param ind - The (new) index of the receiverï¿½s row.
 	 * @note Currently only multi-column Integer (scalar) indecies and 
 	 *       single column OID and String indecies are supported for 
 	 *	 automatic index object initialization.
@@ -1019,13 +951,13 @@ public:
 	 * @version 3.5.22
 	 */ 
 	void		get_vblist(Vbx*, int, 
-				   boolean returnVolatileAsNull=FALSE);
+				   bool returnVolatileAsNull=FALSE);
 
 	/**
 	 * Return the row status object of the receiver row, 
 	 * if it has one.
 	 * 
-	 * @return A pointer to the rowþs snmpRowStatus object, or
+	 * @return A pointer to the rowï¿½s snmpRowStatus object, or
 	 *         0 if the row has no row status.
 	 */
 	snmpRowStatus*	get_row_status() { return row_status; }
@@ -1055,7 +987,7 @@ protected:
 	virtual void   	set_base(const Oidx& b) { base = b; }
 
 	/**
-	 * Set a reference to the receiverþs table in all of its columns.
+	 * Set a reference to the receiverï¿½s table in all of its columns.
 	 *
 	 * @param t - The MibTable object the reciever belongs to.
 	 */
@@ -1147,7 +1079,7 @@ class AGENTPP_DECL MibTableVoter {
 
 struct index_info {
   NS_SNMP SmiUINT32 type;
-  boolean   implied;
+  bool   implied;
   unsigned int	    min;
   unsigned int	    max;
 };	
@@ -1181,7 +1113,7 @@ struct index_info {
  * may be of implied length. Thus, the length subidentifier can be 
  * omitted. 
  *
- * In AGENT++ the structure of a table's index is given by an array
+ * In AGENT++, the structure of a table's index is given by an array
  * of index_info structures. Each element represents an object of the
  * index. The type attribute denotes the SNMP type of the sub-index
  * object. The implied flag may be true for the last sub-index object
@@ -1190,7 +1122,7 @@ struct index_info {
  * or OIDs. These objects may have a minimum length which is less than
  * their maximum length. For fixed length sub-index objects the 
  * minimum length equals the maximum length. In either case, the 
- * length is meassured in subidentifiers. 
+ * length is measured in subidentifiers. 
  * 
  * As soon as all columnar objects have been added, rows can be added to
  * the empty table by using the add_row member function. The add_row
@@ -1265,12 +1197,10 @@ public:
 	 *    -1 represents a variable length string or oid index object
 	 *    with implied length. 
 	 */
-	MibTable(const Oidx&, unsigned int);
+	MibTable(const Oidx&, int);
 
 	/**
 	 * Constructor with object identifier and given fixed index length.
-	 * Additionally the automatic index object initialization can be
-	 * activated.  
 	 *
 	 * @deprecated 
 	 *    Use MibTable(const Oidx&, unsigned long[][], unsigned int) 
@@ -1279,10 +1209,9 @@ public:
 	 * @param o - The object identifier of the table, which has to be
 	 *            the oid of the the SMI table entry object (table.1).
 	 * @param ilen - The length of the index meassured in subidentifiers.
-	 * @param a - If TRUE the automatic index object initialization is
-	 *            activated.
+	 * @param a - not used
 	 */
-	MibTable(const Oidx&, unsigned int, boolean);
+	MibTable(const Oidx&, int, bool);
 
 
 	/**
@@ -1292,7 +1221,7 @@ public:
 	 * A value of -1 represents a implied variable length string or oid.
 	 * A value of 0 a variable length string or oid index object.
 	 * A value greater than 0 determines the length of the index object 
-	 * meassured in subidentifiers. 
+	 * measured in subidentifiers. 
 	 * 
 	 * @param o
 	 *    the object identifier of the table, which has to be
@@ -1359,7 +1288,7 @@ public:
 	 * @param sz - The size of the buffer returned.
 	 * @return TRUE if serialization was successful, FALSE otherwise.
 	 */
-	virtual boolean		serialize(char*&, int&);
+	virtual bool		serialize(char*&, int&);
 
 	/**
 	 * Read the value of the receiver from a byte stream.
@@ -1372,7 +1301,7 @@ public:
 	 * @return 
 	 *    TRUE if deserialization was successful, FALSE otherwise.
 	 */
-	virtual boolean		deserialize(char*, int&);
+	virtual bool		deserialize(char*, int&);
 
 	/**
 	 * Return the immediate successor of the greatest object identifier 
@@ -1406,7 +1335,7 @@ public:
 	 *
 	 * @return TRUE if the table is empty, FALSE otherwise.
 	 */
-	virtual boolean is_empty() { return content.empty(); }
+	virtual bool is_empty() { return content.empty(); }
 
 	 /**
 	  * Set a value of column in a row of the receiver table.
@@ -1489,7 +1418,7 @@ public:
 	 * @param sz - The size of the array.
 	 * @return TRUE if the specified row is ready to set for service.
 	 */
-	virtual boolean	ready_for_service(Vbx* pvbs, int sz);
+	virtual bool	ready_for_service(Vbx* pvbs, int sz);
 
 	/**
 	 * Add a row with the given index to the table.
@@ -1538,7 +1467,7 @@ public:
 	 *    event is local.
 	 */
 	virtual void   	row_init(MibTableRow*, const Oidx&, 
-				 MibTable* t=0) { }
+				 MibTable* t=0) { (void)t; }
 
 	/**
 	 * Is called after a new row has been created and automatic index
@@ -1551,7 +1480,7 @@ public:
 	 *    event is local.
 	 */
 	virtual void   	row_added(MibTableRow*, const Oidx&, 
-				  MibTable* t=0) { }
+				  MibTable* t=0) { (void)t; }
 	/**
 	 * Is called before a row is deleted by MibTable
 	 *
@@ -1562,11 +1491,11 @@ public:
 	 *    event is local.
 	 */
 	virtual void   	row_delete(MibTableRow*, const Oidx&, 
-				   MibTable* t=0) { }
+				   MibTable* t=0) { (void)t; }
 
 	/**
 	 * Is called when a row is activated by a SET request setting
-	 * the rowþs snmpRowStatus object to active(1).
+	 * the rowï¿½s snmpRowStatus object to active(1).
 	 *
 	 * @param row - A pointer to MibTableRow that has been activated.
 	 * @param index - The index of the activated row.
@@ -1575,11 +1504,11 @@ public:
 	 *    event is local.
 	 */
 	virtual void	row_activated(MibTableRow*, const Oidx&, 
-				      MibTable* t=0) { } 
+				      MibTable* t=0) { (void)t; } 
 
 	/**
 	 * Is called when a row is deactivated by a SET request setting
-	 * the rowþs snmpRowStatus object to notInService(2).
+	 * the rowï¿½s snmpRowStatus object to notInService(2).
 	 *
 	 * @param row - A pointer to MibTableRow that has been deactivated.
 	 * @param index - The index of the deactivated row.
@@ -1588,13 +1517,13 @@ public:
 	 *    event is local.
 	 */
 	virtual void	row_deactivated(MibTableRow*, const Oidx&, 
-					MibTable* t=0) { } 
+					MibTable* t=0) { (void)t; } 
 
 	/**
 	 * Return the next available index value for the receiver table,
 	 * that can be used be a manager to create a new row.
 	 * @return The next available index value.
-	 * @note Works best if the tableþs index is a single scalar 
+	 * @note Works best if the tableï¿½s index is a single scalar 
 	 *       sub-identifier.
 	 */ 
 	virtual Oidx	get_next_avail_index() const;
@@ -1625,7 +1554,7 @@ public:
 	 * @return 
 	 *    TRUE if the index is valid, FALSE otherwise.
 	 */
-	virtual boolean is_index_valid(const Oidx&) const;
+	virtual bool is_index_valid(const Oidx&) const;
 
 	/**
 	 * Returns the base of an oid.
@@ -1658,7 +1587,7 @@ public:
 	 *    means all active rows are returned. If the discriminator is
 	 *    rowEnmpty(0), all rows are returned.
 	 */
-	virtual void	get_contents(Vbx**&, int&, int&, boolean = rowActive);
+	virtual void	get_contents(Vbx**&, int&, int&, int = rowActive);
 
 	/**
 	 * Return a pointer to the internal list of rows. This list 
@@ -1687,7 +1616,7 @@ public:
 	 *    means all active rows are returned. If the discriminator is
 	 *    rowEmpty(0), all rows are returned.
 	 */
-	virtual List<MibTableRow>* get_rows(boolean = rowActive);
+	virtual List<MibTableRow>* get_rows(int = rowActive);
 
 	/**
 	 * Return all (active) rows as a list of pointers to the
@@ -1708,7 +1637,7 @@ public:
 	 * @return 
 	 *    a pointer to a cloned list of the rows in the receiver.
 	 */
-	virtual List<MibTableRow>* get_rows_cloned(boolean = rowActive);
+	virtual List<MibTableRow>* get_rows_cloned(int = rowActive);
 
 	/**
 	 * Return those (active) rows as a list of pointers to the
@@ -1723,7 +1652,7 @@ public:
 	 * 
 	 * @param prefix
 	 *    a pointer to an oid. If the pointer is 0 this method 
-	 *    behaves like MibTable::get_rows_cloned(boolean).
+	 *    behaves like MibTable::get_rows_cloned(bool).
 	 * @param discriminator
 	 *    if the receiver table has a snmpRowStatus, the discriminator
 	 *    selects the rows to be returned. Default is rowActive, which
@@ -1732,8 +1661,7 @@ public:
 	 * @return 
 	 *    a pointer to a cloned list of the rows in the receiver.
 	 */
-	virtual List<MibTableRow>* get_rows_cloned(const Oidx*,
-						   boolean = rowActive);
+	virtual List<MibTableRow>* get_rows_cloned(const Oidx*, int = rowActive);
 
 	/**
 	 * Return the size of the table meassured in rows.
@@ -1822,7 +1750,7 @@ public:
 	 *	TRUE if there is at least one listener attached to this
 	 *      table via ::add_listener, FALSE otherwise.
 	 */
-	boolean			has_listeners() const 
+	bool			has_listeners() const 
 		{ return (listeners.size() > 0); }
 
 	/**
@@ -1914,7 +1842,7 @@ protected:
 	 *    SNMP_ERROR_NO_CREATION and SNMP_ERROR_NOT_WRITEABLE
 	 * @return TRUE if an object of the given oid could be created.
 	 */ 
-	virtual boolean	could_ever_be_managed(const Oidx&, int&);
+	virtual bool	could_ever_be_managed(const Oidx&, int&);
 
 	/**
 	 * Remove all rows that are not in the given list.
@@ -1981,7 +1909,7 @@ protected:
 	 *    new values, but is not inserted into the table.
 	 * @return TRUE if the specified row is ready to set for service.
 	 */
-	virtual boolean	ready(Vbx* pvbs, int sz, MibTableRow* row);
+	virtual bool	ready(Vbx* pvbs, int sz, MibTableRow* row);
 
 	/**
 	 * Determine the required columns of a row.
@@ -1993,7 +1921,7 @@ protected:
 	 *    It returns the default values of that row. If vbs is 0
 	 *    no default values are returned.
 	 */
-	virtual void   	get_required_columns(boolean*, Vbx* vbs = 0);
+	virtual void   	get_required_columns(bool*, Vbx* vbs = 0);
 
 
 	/**
@@ -2037,7 +1965,7 @@ protected:
 	 * @return 
 	 *    TRUE if no such subid exists.
 	 */
-	boolean		check_index(Oidx&, unsigned long, unsigned long) const;
+	bool		check_index(Oidx&, unsigned long, unsigned long) const;
 
 	/**
 	 * Check whether the given row should be serialized or not.
@@ -2047,7 +1975,7 @@ protected:
 	 * @return
 	 *    TRUE if the row should be stored persistently, FALSE otherwise
 	 */
-	virtual boolean		is_persistent(MibTableRow*) { return TRUE; }
+	virtual bool		is_persistent(MibTableRow*) { return TRUE; }
 
 	/**
 	 * Let all voters vote for or against a row status transition.
@@ -2085,6 +2013,18 @@ protected:
 	List<MibTableVoter>	voters;
 };
 
+inline Oidx MibLeaf::get_oid() const
+{
+  if ((!my_table) || (!my_row)) {
+    return oid;
+  }
+  else {
+    Oidx o(*my_table->key());
+    o += oid;
+    o += my_row->get_index();
+    return o;
+  }
+}
 
 /*--------------------- class NotificationSender --------------------*/
 
@@ -2206,7 +2146,7 @@ class AGENTPP_DECL MibConfigFormat {
      * @return
      *    TRUE if the contents could be saved successfully, FALSE otherwise.
      */
-    virtual boolean	save(MibContext*, const NS_SNMP OctetStr&) = 0;
+    virtual bool	save(MibContext*, const NS_SNMP OctetStr&) = 0;
 
     /**
      * Loads the persistent data in the supplied MibContext from disk.
@@ -2217,7 +2157,7 @@ class AGENTPP_DECL MibConfigFormat {
      * @return
      *    TRUE if the contents could be saved successfully, FALSE otherwise.
      */
-    virtual boolean	load(MibContext*, const NS_SNMP OctetStr&) = 0;
+    virtual bool	load(MibContext*, const NS_SNMP OctetStr&) = 0;
 
     /**
      * Clone this format (needed by ArrayList template).
@@ -2249,7 +2189,7 @@ class AGENTPP_DECL MibConfigBER: public MibConfigFormat {
      * @return
      *    TRUE if the contents could be saved successfully, FALSE otherwise.
      */
-    virtual boolean	save(MibContext*, const NS_SNMP OctetStr&);
+    virtual bool	save(MibContext*, const NS_SNMP OctetStr&);
 
     /**
      * Loads the persistent data in the supplied MibContext from disk.
@@ -2260,7 +2200,7 @@ class AGENTPP_DECL MibConfigBER: public MibConfigFormat {
      * @return
      *    TRUE if the contents could be saved successfully, FALSE otherwise.
      */
-    virtual boolean	load(MibContext*, const NS_SNMP OctetStr&);
+    virtual bool	load(MibContext*, const NS_SNMP OctetStr&);
 
     virtual MibConfigFormat*	clone() { return new MibConfigBER(); } 
 
@@ -2279,8 +2219,8 @@ class AGENTPP_DECL MibConfigBER: public MibConfigFormat {
  * (a) Registration of MIB objects
  *
  * Use the add member functions to add a MIB object (any C++ object
- * derived from MibEntry) to the agentþs MIB. Use the remove
- * member functions to remove a MIB object from the agentþs MIB. Both
+ * derived from MibEntry) to the agentï¿½s MIB. Use the remove
+ * member functions to remove a MIB object from the agentï¿½s MIB. Both
  * functions can be used while the agent is running.
  *
  * (b) Receive and Process SNMP Requests
@@ -2345,7 +2285,9 @@ class AGENTPP_DECL MibConfigBER: public MibConfigFormat {
 #endif
 
 class AGENTPP_DECL Mib {
+#if defined(_USE_PROXY) && !defined(_PROXY_FORWARDER)
 friend class MibProxy;
+#endif
 
 public:
 	/**
@@ -2525,7 +2467,7 @@ public:
 	 *    TRUE if the context could be found and it contains the
 	 *    sysOR MIB objects, FALSE otherwise.
 	 */
-	virtual boolean		add_agent_caps(const NS_SNMP OctetStr&, 
+	virtual bool		add_agent_caps(const NS_SNMP OctetStr&, 
 					       const Oidx&,
 					       const NS_SNMP OctetStr&);
 
@@ -2543,13 +2485,13 @@ public:
 						  const Oidx&);
 
 	/** 
-	 * Unregister a MIB object from the agentþs MIB.
+	 * Unregister a MIB object from the agentï¿½s MIB.
 	 * This method now (>3.3) works for MibGroups, too.
 	 *
 	 * Note: This method is synchronized. It first acquires 
 	 * ::mib_lock(), then searches for the target MIB object and
 	 * then acquires target::start_synch().
-	 * Then it RELEASES the MIB object lock by calling 
+	 * Then it RELEASES the MIB object lock by calldelete_requesting 
 	 * target::end_synch(). The target object is deleted and the
 	 * MIB lock is released.
 	 *
@@ -2568,10 +2510,10 @@ public:
 	 * @return 
 	 *    TRUE if the entry could be removed, FALSE otherwise
 	 */
-	virtual boolean		remove(const Oidx&);
+	virtual bool		remove(const Oidx&);
 
 	/** 
-	 * Unregister a MIB object from the agentþs MIB.
+	 * Unregister a MIB object from the agentï¿½s MIB.
 	 * This method now (>3.3) works for MibGroups, too.
 	 *
 	 * Note: This method is synchronized. It first acquires 
@@ -2591,24 +2533,29 @@ public:
          *   MIB lock
 	 *
 	 * @param context
-	 *    an OctetStr instance specifiying the target context.
+	 *    an OctetStr instance specifying the target context.
 	 * @param oid
 	 *    the Oidx instance pointing to the key of the MibEntry
 	 *    to be removed.
 	 * @return 
 	 *    TRUE if the entry could be removed, FALSE otherwise
 	 */
-	virtual boolean		remove(const NS_SNMP OctetStr&, const Oidx&);
+	virtual bool		remove(const NS_SNMP OctetStr&, const Oidx&);
 
 	/**
 	 * Initialize all contexts. The main purpose of this method
 	 * is to trigger all MIB objects to load their data from 
 	 * persistent storage.
+         * NOTE: If no thread pool has been assigned until calling this
+         * method a default ThreadPool will be created with the default
+         * stack size. The number of threads and the thread stack size
+         * might not match your requirements. To use your own thread pool,
+         * simply call {@link #set_thread_pool()} before calling this method.
 	 *
 	 * @return
 	 *    TRUE if initialization was successful, FALSE otherwise.
 	 */
-	virtual boolean		init(); 
+	virtual bool		init(); 
 
 	/**
 	 * Save all persistent MIB objects to disk.
@@ -2625,7 +2572,7 @@ public:
 	 * @return
 	 *    TRUE if data has been saved successfully, FALSE otherwise.
 	 */
-	virtual boolean		save(unsigned int, const NS_SNMP OctetStr&);
+	virtual bool		save(unsigned int, const NS_SNMP OctetStr&);
 
 	/**
 	 * Load all persistent MIB objects in the supplied format from the
@@ -2637,7 +2584,7 @@ public:
 	 * @return
 	 *    TRUE if data has been saved successfully, FALSE otherwise.
 	 */
-	virtual boolean		load(unsigned int, const NS_SNMP OctetStr&);
+	virtual bool		load(unsigned int, const NS_SNMP OctetStr&);
 
 	/**
 	 * Get the MIB object with a given object id.
@@ -2706,7 +2653,7 @@ public:
 	 * @return
 	 *    TRUE if persistent storage is activated.
 	 */
-	boolean			is_persistency_activated() const
+	bool			is_persistency_activated() const
 	    { return (persistent_objects_path != 0); }
 
 	/**
@@ -2715,7 +2662,7 @@ public:
 	 *
 	 * @param A pointer to a node (MIB object).
 	 */
-	virtual boolean		is_complex_node(const MibEntryPtr&);
+	virtual bool		is_complex_node(const MibEntryPtr&);
 
 	/**
 	 * Check whether a node (a MIB object) is a table.
@@ -2723,7 +2670,7 @@ public:
 	 * @param entry
 	 *    a pointer to a node (MIB object).
 	 */
-	boolean			is_table_node(const MibEntryPtr& e)
+	bool			is_table_node(const MibEntryPtr& e)
 				{ return (e->type() == AGENTPP_TABLE); }
 
 	/**
@@ -2732,7 +2679,7 @@ public:
 	 * @param entry
 	 *    a pointer to a node (MIB object).
 	 */
-	boolean			is_leaf_node(const MibEntryPtr& e)
+	bool			is_leaf_node(const MibEntryPtr& e)
 				{ return (e->type() == AGENTPP_LEAF); }
 
 	// Pointer to the singleton instance of the Mib class.
@@ -2795,7 +2742,8 @@ public:
 	 * @param context
 	 *    the target context.
 	 * @param oid
-	 *    an object identifier.
+	 *    the OID for which a successor OID and managing MibEntry is
+         *    searched. 
 	 * @param entry 
 	 *    will be changed to a pointer to the found entry or remain 
 	 *    unchanged if the return value is different from 
@@ -2805,16 +2753,20 @@ public:
 	 *    find_next is issued.
 	 * @param subrequest
 	 *    the subrequest number being processed (starting from 0)
+         * @param nextOid
+         *    returns the successor OID (if found) or a zero length OID 
+         *    (if not found) for objects where the successor could be 
+         *    determined. Otherwise, the oid will be returned unchanged.
 	 * @return 
 	 *    SNMP_ERROR_SUCCESS if an entry has been found and 
 	 *    sNMP_SYNTAX_NOSUCHOBJECT otherwise.
 	 */
-	virtual int    	find_next(MibContext*, const Oidx&, MibEntryPtr&, 
-				  Request* req, const int);
+	virtual int    	find_next(MibContext*, const Oidx& oid, MibEntryPtr&, 
+				  Request* req, const int, Oidx& nextOid);
 
 	/**
 	 * Find the MIB object (i.e., MibTable, MibLeaf, etc.) that is 
-	 * responsible for the managed object indentified by a given oid
+	 * responsible for the managed object identified by a given oid
 	 * within a given context.
 	 *
 	 * @param context
@@ -2848,7 +2800,7 @@ public:
 	 *    a proxy with the same contextEngineID and PDU types is
 	 *    already registered, FALSE will be returned. 
 	 */
-	boolean		register_proxy(ProxyForwarder*); 
+	bool		register_proxy(ProxyForwarder*); 
 
 	/**
 	 * Unregister and delete a proxy forwarder.
@@ -3038,14 +2990,14 @@ protected:
 	 *    not necessarily finished yet) or FALSE if the it has to
 	 *    be finished.
 	 */
-	static boolean	set_exception_vb(Request*, int, int);
+	static bool	set_exception_vb(Request*, int, int);
 
 	/**
 	 * Process a subrequest
 	 * @param req A pointer to the request
 	 * @return FALSE if an error occured and the whole request finished
 	 */
-	virtual boolean process_request(Request*, int); 
+	virtual bool process_request(Request*, int); 
 
 	// (only GET and GETNEXT subrequests can be processed independently)
 
@@ -3079,11 +3031,14 @@ protected:
 	 *                the current view.
 	 * @param oid - Returns the oid of the object for that access has 
 	 *              been denied or granted.
+         * @param nextOid - Provides the already determined next OID for complex
+         *    mib entries. If nextOid has the zero length, it will be ignored.
 	 * @return VACM_accessAllowed if access is granted and any other
 	 *         VACM error code if access is denied.
 	 */
 	virtual int	next_access_control(Request*, 
-					    const MibEntryPtr, Oidx&); 
+					    const MibEntryPtr, Oidx&, 
+                                            const Oidx&); 
 
 #ifdef _PROXY_FORWARDER
 	virtual void	proxy_request(Request*);

@@ -1,5 +1,11 @@
 INSTALL
-======
+=======
+
+The following installation instructions only apply if you do not want
+to use autoconf. For autoconf usage, see the file READMNE.autoconf.
+
+INSTALL without "autoconf"
+--------------------------
 
 It is recommended to unpack all source code packages needed for AGENT++
 wihtin the same directory. 
@@ -41,29 +47,23 @@ To build one of the example agents:
 cd agent++/examples/<example_dir>/src
 make -f Makefile.<platform>
 
+AGENPRO TEMPLATES
+=================
 
-To setup your own build environment for an AgentGen Pro generated (simulation)
+To setup your own build environment for an AgenPro generated (simulation)
 agent:
 
-1. Copy AgentGen templates to your own project directory
-cd agent++/agentgen
-cp -rp agent myagent
-(instead of "agent" in the above you may also use "simagent" if you want to 
-build a simulation agent and if you have set the "simulation" property
-to "yes" in the AgenPro project)
+1. Generate the source files into the agenpro/agent/src directory and the header
+files into the agenpro/agent/include directory using AgenPro. 
 
-2. Now generate the source files into the myagent/src directory and the header
-files into the myagent/include directory using AgenPro. 
-
-3. Build the agent
-cd agent++/myagent/src
-make -f Makefile.<platform>
-
+2. Build the agent. Run in the agent++ directory:
+./configure --with-agenpro
+make
 
 To enable persistent storage for an agent, create an empty folder
- "config" in the "src" directory of your agent, for example:
+"config" in the "src" directory of your agent, for example:
 
-mkdir agent++/myagent/src/config
+mkdir agent++/agenpro/agent/src/config
 
 
 

@@ -1,99 +1,24 @@
 /*_############################################################################
   _## 
-  _##  request.cpp  
+  _##  AGENT++ 4.0 - request.cpp  
   _## 
-  _##
-  _##  AGENT++ API Version 3.5.31
-  _##  -----------------------------------------------
-  _##  Copyright (C) 2000-2010 Frank Fock, Jochen Katz
+  _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
   _##  
-  _##  LICENSE AGREEMENT
-  _##
-  _##  WHEREAS,  Frank  Fock  and  Jochen  Katz  are  the  owners of valuable
-  _##  intellectual  property rights relating to  the AGENT++ API and wish to
-  _##  license AGENT++ subject to the  terms and conditions set forth  below;
-  _##  and
-  _##
-  _##  WHEREAS, you ("Licensee") acknowledge  that Frank Fock and Jochen Katz
-  _##  have the right  to grant licenses  to the intellectual property rights
-  _##  relating to  AGENT++, and that you desire  to obtain a license  to use
-  _##  AGENT++ subject to the terms and conditions set forth below;
-  _##
-  _##  Frank  Fock    and Jochen   Katz   grants  Licensee  a  non-exclusive,
-  _##  non-transferable, royalty-free  license  to use   AGENT++ and  related
-  _##  materials without  charge provided the Licensee  adheres to all of the
-  _##  terms and conditions of this Agreement.
-  _##
-  _##  By downloading, using, or  copying  AGENT++  or any  portion  thereof,
-  _##  Licensee  agrees to abide  by  the intellectual property  laws and all
-  _##  other   applicable laws  of  Germany,  and  to all of   the  terms and
-  _##  conditions  of this Agreement, and agrees  to take all necessary steps
-  _##  to  ensure that the  terms and  conditions of  this Agreement are  not
-  _##  violated  by any person  or entity under the  Licensee's control or in
-  _##  the Licensee's service.
-  _##
-  _##  Licensee shall maintain  the  copyright and trademark  notices  on the
-  _##  materials  within or otherwise  related   to AGENT++, and  not  alter,
-  _##  erase, deface or overprint any such notice.
-  _##
-  _##  Except  as specifically   provided in  this  Agreement,   Licensee  is
-  _##  expressly   prohibited  from  copying,   merging,  selling,   leasing,
-  _##  assigning,  or  transferring  in  any manner,  AGENT++ or  any portion
-  _##  thereof.
-  _##
-  _##  Licensee may copy materials   within or otherwise related   to AGENT++
-  _##  that bear the author's copyright only  as required for backup purposes
-  _##  or for use solely by the Licensee.
-  _##
-  _##  Licensee may  not distribute  in any  form  of electronic  or  printed
-  _##  communication the  materials  within or  otherwise  related to AGENT++
-  _##  that  bear the author's  copyright, including  but  not limited to the
-  _##  source   code, documentation,  help  files, examples,  and benchmarks,
-  _##  without prior written consent from the authors.  Send any requests for
-  _##  limited distribution rights to fock@agentpp.com.
-  _##
-  _##  Licensee  hereby  grants  a  royalty-free  license  to  any  and   all 
-  _##  derivatives  based  upon this software  code base,  that  may  be used
-  _##  as a SNMP  agent development  environment or a  SNMP agent development 
-  _##  tool.
-  _##
-  _##  Licensee may  modify  the sources  of AGENT++ for  the Licensee's  own
-  _##  purposes.  Thus, Licensee  may  not  distribute  modified  sources  of
-  _##  AGENT++ without prior written consent from the authors. 
-  _##
-  _##  The Licensee may distribute  binaries derived from or contained within
-  _##  AGENT++ provided that:
-  _##
-  _##  1) The Binaries are  not integrated,  bundled,  combined, or otherwise
-  _##     associated with a SNMP agent development environment or  SNMP agent
-  _##     development tool; and
-  _##
-  _##  2) The Binaries are not a documented part of any distribution material. 
-  _##
-  _##
-  _##  THIS  SOFTWARE  IS  PROVIDED ``AS  IS''  AND  ANY  EXPRESS OR  IMPLIED
-  _##  WARRANTIES, INCLUDING, BUT NOT LIMITED  TO, THE IMPLIED WARRANTIES  OF
-  _##  MERCHANTABILITY AND FITNESS FOR  A PARTICULAR PURPOSE  ARE DISCLAIMED.
-  _##  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  _##  INDIRECT,   INCIDENTAL,  SPECIAL, EXEMPLARY,  OR CONSEQUENTIAL DAMAGES
-  _##  (INCLUDING,  BUT NOT LIMITED  TO,  PROCUREMENT OF SUBSTITUTE  GOODS OR
-  _##  SERVICES; LOSS OF  USE,  DATA, OR PROFITS; OR  BUSINESS  INTERRUPTION)
-  _##  HOWEVER CAUSED  AND ON ANY THEORY  OF  LIABILITY, WHETHER IN CONTRACT,
-  _##  STRICT LIABILITY, OR TORT  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
-  _##  IN  ANY WAY OUT OF  THE USE OF THIS  SOFTWARE,  EVEN IF ADVISED OF THE
-  _##  POSSIBILITY OF SUCH DAMAGE. 
-  _##
-  _##
-  _##  Stuttgart, Germany, Thu Sep  2 00:07:56 CEST 2010 
+  _##  Licensed under the Apache License, Version 2.0 (the "License");
+  _##  you may not use this file except in compliance with the License.
+  _##  You may obtain a copy of the License at
+  _##  
+  _##      http://www.apache.org/licenses/LICENSE-2.0
+  _##  
+  _##  Unless required by applicable law or agreed to in writing, software
+  _##  distributed under the License is distributed on an "AS IS" BASIS,
+  _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  _##  See the License for the specific language governing permissions and
+  _##  limitations under the License.
   _##  
   _##########################################################################*/
 
-#ifndef WIN32
-#include <sys/time.h>
-#include <sys/types.h>
-#include <unistd.h>
-#endif
-#include <string.h>
+#include <libagent.h>
 
 #include <agent_pp/request.h>
 #include <agent_pp/snmp_counters.h>
@@ -110,14 +35,11 @@
 #include <agent_pp/snmp_target_mib.h>
 #include <snmp_pp/log.h>
 
-#ifdef SNMP_PP_NAMESPACE
-using namespace Snmp_pp;
-#endif
-
 #ifdef AGENTPP_NAMESPACE
 namespace Agentpp {
 #endif
 
+static const char *loggerModuleName = "agent++.request";
 
 /*--------------------------- class Request --------------------------*/
 
@@ -126,19 +48,59 @@ LockQueue* Request::lockQueue = 0;
 #endif
 
 Request::Request()
+    :
+#ifdef _THREADS
+      Synchronized(),
+#endif
+      pdu(0)
+    , originalVbs(0)
+    , originalSize(0)
+    , from()
+    , done(0)
+    , ready(0)
+    , outstanding(0)
+    , size(0)
+    , non_rep(0)
+    , max_rep(0)
+    , repeater(0)
+    , version()
+    , transaction_id(0)
+    , locks()
+#ifdef _SNMPv3
+    , viewName()
+    , vacm(0)
+#endif
+    , target()
 {
 #ifdef NO_FAST_MUTEXES
 	init_lock_queue();    
 #endif
 }
 
-Request::Request(const Pdux& p,
+Request::Request(const Pdux& p, const TargetType &t)
+    : 
+#ifdef _THREADS
+      Synchronized(),
+#endif
+      pdu(0)
+    , originalVbs(0)
+    , originalSize(0)
+    , from()
+    , done(0)
+    , ready(0)
+    , outstanding(0)
+    , size(0)
+    , non_rep(0)
+    , max_rep(0)
+    , repeater(0)
+    , version()
+    , transaction_id(0)
+    , locks()
 #ifdef _SNMPv3 
-		 const UTarget& t): 
-#else
-		 const CTarget& t):
+    , viewName()
+    , vacm(0)
 #endif 
-  target(t)
+    , target(t)
 {
 #ifdef NO_FAST_MUTEXES
 	init_lock_queue();    
@@ -155,17 +117,17 @@ Request::Request(const Pdux& p,
 void Request::init_from_pdu() 
 {
 	size		= pdu->get_vb_count();
-	done		= new boolean[size];
-	ready		= new boolean[size];
+	done		= new bool[size];
+	ready		= new bool[size];
 	originalVbs     = new Vbx[size];
 	pdu->get_vblist(originalVbs, size);
 
 	for (int i=0; i<size; i++) { 
-		done[i] = FALSE; 
-		ready[i] = FALSE; 
+		done[i] = false; 
+		ready[i] = false; 
 	}
-	//memset(done, FALSE, sizeof(boolean)*size);
-	//memset(ready, FALSE, sizeof(boolean)*size);
+	//memset(done, FALSE, sizeof(bool)*size);
+	//memset(ready, FALSE, sizeof(bool)*size);
 
 	if (pdu->get_type() == sNMP_PDU_GETBULK) {
 		non_rep = pdu->get_error_status();
@@ -204,8 +166,8 @@ Request::Request(const Request& other)
 		originalVbs[i] = other.originalVbs[i];
 	}
 	from = other.from;
-	done = new boolean[other.size];
-	ready = new boolean[other.size];
+	done = new bool[other.size];
+	ready = new bool[other.size];
 	for (int j=0; j<other.size; j++) {
 		done[j] = other.done[j];
 		ready[j] = other.ready[j];
@@ -241,9 +203,19 @@ Request::~Request()
 	// acquired locks through the lock queue. So we notify
 	// the queue here to be sure that the other thread 
 	// may proceed.
-	lockQueue->lock();
-	lockQueue->notify();
-	lockQueue->unlock();
+        TryLockResult lockState;
+	if ((lockState = lockQueue->trylock()) != BUSY) {
+            lockQueue->notify();
+            if (lockState == LOCKED) {
+                lockQueue->unlock();
+            }
+        }
+        else {
+            LOG_BEGIN(loggerModuleName, WARNING_LOG | 2);
+            LOG("Request: Destroyed although lockQueue locked by other thread (tid)");
+            LOG(transaction_id);
+            LOG_END;            
+        }
 #endif
 }
 
@@ -286,7 +258,7 @@ int Request::first_pending() const
  * 
  * @param vb - A variable binding.
  */
-boolean Request::contains(const Vbx& vb)
+bool Request::contains(const Vbx& vb)
 {
 	return (position(vb)>=0);
 }
@@ -297,7 +269,7 @@ boolean Request::contains(const Vbx& vb)
  *
  * @return TRUE if the request is complete, FALSE otherwise.
  */ 
-boolean Request::finished() const
+bool Request::finished() const
 {
 	return (outstanding <= 0);
 }
@@ -310,7 +282,7 @@ boolean Request::finished() const
  *            to check.
  * @return TRUE if the sub-request is done, FALSE otherwise.
  */   
-boolean Request::is_done(int i) const
+bool Request::is_done(int i) const
 {
 	if ((i>=0) && (i<size)) 
 		return done[i];
@@ -325,7 +297,7 @@ boolean Request::is_done(int i) const
  *            to check.
  * @return TRUE if the sub-request is ready, FALSE otherwise.
  */   
-boolean Request::is_ready(int i) const
+bool Request::is_ready(int i) const
 {
 	if ((i>=0) && (i<size)) 
 		return ready[i];
@@ -346,7 +318,11 @@ void Request::check_exception(int i, Vbx& vbl)
 {
 	if (vbl.get_exception_status() != 0) {
 		if (pdu->get_type() == sNMP_PDU_GETBULK) {
-			if ((i < non_rep) || (i < originalSize))
+					LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
+		LOG("RequestList: finished subrequest (ind)");
+		LOG(i);
+		LOG_END;
+if ((i < non_rep) || (i < originalSize))
 				vbl.set_oid(originalVbs[i].get_oid());
 			/*			else {
 				vbl.set_oid(originalVbs[((i-non_rep)%repeater)+
@@ -367,7 +343,7 @@ void Request::finish(int i)
 	if ((i>=0) && (i<size)) {
 		if (!done[i]) outstanding--;
 		done[i] = TRUE;
-		LOG_BEGIN(EVENT_LOG | 3);
+		LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 		LOG("RequestList: finished subrequest (ind)");
 		LOG(i);
 		LOG_END;
@@ -384,7 +360,7 @@ void Request::finish(int i, const Vbx& vb)
 		done[i] = TRUE;
 		pdu->set_vb(vbl, i);
 
-		LOG_BEGIN(EVENT_LOG | 3);
+		LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 		LOG("RequestList: finished subrequest (ind)(oid)(val)(syn)");
 		LOG(i);
 		LOG(vbl.get_printable_oid());
@@ -408,7 +384,6 @@ void Request::error(int index, int error)
 	  if (((index>=0) && (index<size)) && (index<originalSize)) {	
 		// restore original variable binding
 		pdu->set_vb(originalVbs[index], index);
-		// TODO: ?
 	  }
 	}
 }
@@ -430,7 +405,7 @@ void Request::vacmError(int index, int error)
 	  case VACM_noGroupName: {
             pdu->set_error_status(SNMP_ERROR_AUTH_ERR);
 	    pdu->set_error_index(0);
-            LOG_BEGIN(EVENT_LOG | 1);
+            LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
             LOG("Request: SNMPv3 VACM auth failure:");
             LOG(vacm->getErrorMsg(error));
             LOG_END;
@@ -439,7 +414,7 @@ void Request::vacmError(int index, int error)
           case VACM_notInView: {
             pdu->set_error_status(SNMP_ERROR_NO_ACCESS);
 	    pdu->set_error_index(index+1);
-            LOG_BEGIN(EVENT_LOG | 2);
+            LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
             LOG("Request: SNMPv3 VACM no access:");
             LOG(vacm->getErrorMsg(error));
             LOG_END;
@@ -448,7 +423,7 @@ void Request::vacmError(int index, int error)
           case VACM_otherError: {
             pdu->set_error_status(SNMP_ERROR_GENERAL_VB_ERR);
 	    pdu->set_error_index(index+1);
-            LOG_BEGIN(EVENT_LOG | 1);
+            LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
             LOG("Request: SNMPv3 VACM genError:");
             LOG(vacm->getErrorMsg(error));
             LOG_END;
@@ -457,7 +432,7 @@ void Request::vacmError(int index, int error)
           default: {
             pdu->set_error_status(SNMP_ERROR_GENERAL_VB_ERR);
 	    pdu->set_error_index(index+1);
-            LOG_BEGIN(ERROR_LOG | 1);
+            LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
             LOG("Request: SNMPv3 VACM ERROR in Request::vacmError:");
             LOG(vacm->getErrorMsg(error));
             LOG_END;
@@ -555,7 +530,7 @@ void Request::set_oid(const Oidx& o, int i)
  * @return TRUE if there was enough room in the response PDU for
  *         another repetition, FALSE otherwise.
  */ 
-boolean Request::add_rep_row()
+bool Request::add_rep_row()
 {
 	if (repeater == 0) return FALSE;
 	int rows = (pdu->get_vb_count() - non_rep) / repeater;
@@ -581,10 +556,10 @@ boolean Request::add_rep_row()
 
 	size = pdu->get_vb_count();
 	outstanding += repeater;
-	boolean* old_done  = done;
-	boolean* old_ready = ready;
-	done  = new boolean[size];
-	ready = new boolean[size];
+	bool* old_done  = done;
+	bool* old_ready = ready;
+	done  = new bool[size];
+	ready = new bool[size];
 	
 	int j;
 	for (j=0; j<size-repeater; j++) { 
@@ -600,7 +575,7 @@ boolean Request::add_rep_row()
 	return TRUE;
 }
 
-boolean Request::init_rep_row(int row)
+bool Request::init_rep_row(int row)
 {
 	int start = non_rep + row * repeater;
 	int end   = start + repeater;
@@ -792,17 +767,18 @@ int Request::get_max_response_length()
 /*------------------------- class RequestList --------------------------*/
 
 RequestList::RequestList()
-{
-	snmp = 0;
+    : ThreadManager()
+    , requests( new List<Request> )
+    , snmp(0)
 #ifdef _SNMPv3
-	vacm = 0;
-	v3mp = 0;
+    , vacm(0)
+    , v3mp(0)
 #endif
-	requests = new List<Request>;
-	write_community = new OctetStr(DEFAULT_WRITE_COMMUNITY);
-	read_community = new OctetStr(DEFAULT_READ_COMMUNITY);
-	next_transaction_id = 0;
-	sourceAddressValidation = FALSE;
+    , write_community(new OctetStr(DEFAULT_WRITE_COMMUNITY))
+    , read_community(new OctetStr(DEFAULT_READ_COMMUNITY))
+    , next_transaction_id(0)
+    , sourceAddressValidation(false)
+{
 }
 
 RequestList::~RequestList() TS_SYNCHRONIZED(
@@ -814,7 +790,7 @@ RequestList::~RequestList() TS_SYNCHRONIZED(
 		delete read_community;
 })
 
-void RequestList::set_address_validation(boolean srcValidation)
+void RequestList::set_address_validation(bool srcValidation)
 {
 	sourceAddressValidation = srcValidation;
 } 
@@ -853,7 +829,7 @@ unsigned long RequestList::get_request_id(const Vbx& vb) TS_SYNCHRONIZED(
         return 0;
 })
 
-boolean RequestList::done(unsigned long rid, int index, const Vbx& vb) 
+bool RequestList::done(unsigned long rid, int index, const Vbx& vb) 
 TS_SYNCHRONIZED(
 {
 	Request* req = get_request(rid);
@@ -863,7 +839,7 @@ TS_SYNCHRONIZED(
 			return TRUE;
 	}
 	else {
-		LOG_BEGIN(ERROR_LOG | 1);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		LOG("RequestList: done: can't find request id");
 		LOG(rid);
 		LOG_END;
@@ -879,7 +855,7 @@ TS_SYNCHRONIZED(
 		req->error(index, err);
 	}
 	else {
-		LOG_BEGIN(ERROR_LOG | 1);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		LOG("RequestList: done: can't find request id");
 		LOG(rid);
 		LOG_END;
@@ -895,7 +871,7 @@ TS_SYNCHRONIZED(
  * @param community - A v1 or v2c community string.
  * @return TRUE if the given community is ok, FALSE otherwise.
  */ 
-boolean RequestList::community_ok(int pdutype, const OctetStr& community)
+bool RequestList::community_ok(int pdutype, const OctetStr& community)
 {
 #ifdef SNMPv3
 	return TRUE;
@@ -956,7 +932,7 @@ void RequestList::report(Request* req)
 	int status;
 	status = snmp->report(*pdu, req->target);
 
-	LOG_BEGIN(EVENT_LOG | 4);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 4);
 	LOG("RequestList: sent report (rid)(tid)(to)(err)(send)(sz)");
 	LOG(pdu->get_request_id());
 	LOG(req->get_transaction_id());
@@ -1083,7 +1059,7 @@ void RequestList::answer(Request* req)
 	// check message length
 	if (pdu->get_asn1_length() > req->get_max_response_length()) {
 
-		LOG_BEGIN(WARNING_LOG | 2);
+		LOG_BEGIN(loggerModuleName, WARNING_LOG | 2);
 		LOG("RequestList: response tooBig, truncating it (rid)(tid)(to)(size)(limit)");
 		LOG(pdu->get_request_id());
 		LOG(req->get_transaction_id());
@@ -1140,7 +1116,7 @@ void RequestList::answer(Request* req)
 #endif
 	if (status == SNMP_ERROR_TOO_BIG) {
 		
-		LOG_BEGIN(WARNING_LOG | 3);
+		LOG_BEGIN(loggerModuleName, WARNING_LOG | 3);
 		LOG("RequestList: response tooBig (rid)(tid)(to)");
 		LOG(pdu->get_request_id());
 		LOG(req->get_transaction_id());
@@ -1177,7 +1153,7 @@ void RequestList::answer(Request* req)
 	}
 	MibIIsnmpCounters::incOutGetResponses();
 
-	LOG_BEGIN(EVENT_LOG | 2);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 	LOG("RequestList: request answered (rid)(tid)(to)(err)(send)(sz)");
 	LOG(pdu->get_request_id());
 	LOG(req->get_transaction_id());
@@ -1193,13 +1169,13 @@ Request* RequestList::receive(int sec)
 {
 #ifdef _SNMPv3
 	if (vacm == 0) {
-		LOG_BEGIN(ERROR_LOG | 0);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
 		LOG("RequestList: SNMPv3 support enabled, but VACM not initialized: ");
 		LOG_END;
 		return 0; // not executed if logging disabled
 	}
 	if (v3mp == 0) {
-		LOG_BEGIN(ERROR_LOG | 0);
+		LOG_BEGIN(loggerModuleName, ERROR_LOG | 0);
 		LOG("RequestList: SNMPv3 support enabled, but v3MP not initialized: ");
 		LOG_END;
 		return 0; // not executed if logging disabled
@@ -1259,7 +1235,7 @@ Request* RequestList::receive(int sec)
 #else
 		security_name = community;
 #endif		
-		LOG_BEGIN(EVENT_LOG | 2);
+		LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 		LOG("RequestList: request received (id)(siz)(fro)(ver)(com)(type)");
 		LOG(pdu.get_request_id());
 		LOG(pdu.get_vb_count());
@@ -1277,7 +1253,7 @@ Request* RequestList::receive(int sec)
 		LOG_END;
 #ifdef _SNMPv3
 		if (version== version3) {
-		  LOG_BEGIN(EVENT_LOG | 2);
+		  LOG_BEGIN(loggerModuleName, EVENT_LOG | 2);
 		  LOG("RequestList: request received: (secmod)(seclev)(cid)(cname): ");
 		  LOG(security_model);
 		  LOG(security_level);
@@ -1286,7 +1262,7 @@ Request* RequestList::receive(int sec)
                   LOG_END;
                   
 		  if (security_model != 3) {
-		    LOG_BEGIN(ERROR_LOG | 1);
+		    LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 		    LOG("Request: Unknown security model");
 		    LOG(security_model);
 		    LOG_END;
@@ -1300,11 +1276,11 @@ Request* RequestList::receive(int sec)
 		  if (snmpCommunityEntry::instance) {
 
 		    OctetStr transport_tag;
-		    boolean found = snmpCommunityEntry::instance->
+		    bool found = snmpCommunityEntry::instance->
 		      get_v3_info(security_name, context_engine_id, 
 				  context_name, transport_tag);
 		    
-		    LOG_BEGIN(EVENT_LOG | 3);
+		    LOG_BEGIN(loggerModuleName, EVENT_LOG | 3);
 		    LOG("RequestList: received v1/v2c request (FOUND)(community)(cid)(cname)(filter_tag): ");
 		    LOG((found)?"TRUE":"FALSE");
 		    LOG(security_name.get_printable());
@@ -1314,7 +1290,7 @@ Request* RequestList::receive(int sec)
 		    LOG_END;
 		    
 		    if (!found) {
-			LOG_BEGIN(WARNING_LOG | 1);
+			LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
 			LOG("RequestList: v1/v2c bad community (comm)(rid): ");
 			LOG(security_name.get_printable());
 			LOG(pdu.get_request_id());
@@ -1345,7 +1321,7 @@ Request* RequestList::receive(int sec)
 		      if (!snmpTargetAddrExtEntry::instance->
 			  passes_filter(transport_tag, target)) {
 
-			LOG_BEGIN(WARNING_LOG | 1);
+			LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
 			LOG("RequestList: unauthorized v1/v2c request (from)(rid): ");
 			LOG(tmp_addr.get_printable());
 			LOG(pdu.get_request_id());
@@ -1362,12 +1338,12 @@ Request* RequestList::receive(int sec)
 		  
 		} // end version3
 		if (status == SNMP_ERROR_TOO_BIG) {
-//jk #ifdef _SNMPv3
+
 			v3mp->inc_stats_invalid_msgs();
-//jk #endif
+
 			MibIIsnmpCounters::incInTooBigs();
 			
-			LOG_BEGIN(WARNING_LOG | 1);
+			LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
 			LOG("RequestList: too big SNMP PDU received (rid): ");
 			LOG(pdu.get_request_id());
 			LOG_END;
@@ -1389,7 +1365,7 @@ Request* RequestList::receive(int sec)
 		    (pdu.get_context_engine_id() !=
 		     v3mp->get_local_engine_id())) {
 
-			LOG_BEGIN(DEBUG_LOG | 1);
+			LOG_BEGIN(loggerModuleName, DEBUG_LOG | 1);
 			LOG("RequestList: proxy request detected (contextEngineID)(rid): ");
 			LOG(pdu.get_context_engine_id().get_printable());
 			LOG(pdu.get_request_id());
@@ -1413,7 +1389,7 @@ Request* RequestList::receive(int sec)
 			// sNMP_PDU_RESPONSE
 			// sNMP_PDU_INFORM 
 			// sNMP_PDU_TRAP
-			LOG_BEGIN(ERROR_LOG | 1);
+			LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
 			LOG("Request: Don't know, how to handle PduType: ");
 			LOG(pdu.get_type());
 			LOG_END;
@@ -1448,7 +1424,7 @@ Request* RequestList::receive(int sec)
 				pdu.set_error_index(0);
 				pdu.set_type(sNMP_PDU_RESPONSE);
 				
-				LOG_BEGIN(EVENT_LOG | 1);
+				LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
 				LOG("RequestList: SNMPv3 auth failure:");
 				LOG(vacm->getErrorMsg(vacmErrorCode));
 				LOG_END;
@@ -1473,7 +1449,7 @@ Request* RequestList::receive(int sec)
 			pdu.set_error_index(i+1);
 			pdu.set_type(sNMP_PDU_RESPONSE);
 			
-			LOG_BEGIN(EVENT_LOG | 1);
+			LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
 			LOG("RequestList: SNMPv3 general error: (VBindex)");
                         LOG(i+1);
                         LOG(vacmErrorCode);
@@ -1498,7 +1474,7 @@ Request* RequestList::receive(int sec)
 			pdu.set_error_status(0);
 			pdu.set_error_index(0);
                         
-			LOG_BEGIN(EVENT_LOG | 1);
+			LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
 			LOG("RequestList: SNMPv3 (noSuchContext)(from)");
 			LOG(context_name.get_printable());
 			GenAddress genAddr;
@@ -1511,31 +1487,26 @@ Request* RequestList::receive(int sec)
                 }
 		} //switch
 			
-		{
 #else // #ifdef _SNMPv3
                 // access for GETNEXT and GETBULK can�t be checked here
          	// community_ok increments inBadCommunityUses
 		if (!community_ok(pdu.get_type(), security_name)) {
-			LOG_BEGIN(EVENT_LOG | 1);
+			LOG_BEGIN(loggerModuleName, EVENT_LOG | 1);
 			LOG("RequestList: add request: auth failure");
 			LOG(from.get_printable());
 			LOG(security_name.get_printable());
 			LOG_END;
 
-//jk #ifndef _SNMPv3
 			authenticationFailure("",
 					      target.get_address(),
 					      0);
-//jk #else
-//jk			authenticationFailure(context_name,
-//jk					      target.get_address(),
-//jk					      0);
-//jk #endif
+
 			MibIIsnmpCounters::incInBadCommunityNames();
 			return 0;
 		}
-		else {	
+		else
 #endif // _SNMPv3
+		{
 			Request* req = new Request(pdu, target);
 #ifdef _SNMPv3
 			// set vacm and initalize viewName
@@ -1576,6 +1547,7 @@ Request* RequestList::receive(int sec)
 			v3mp->inc_stats_invalid_msgs();
 			authenticationFailure("", target.get_address(),
 					      SNMPv3_MP_NOT_IN_TIME_WINDOW);
+			break;
 		}
 		case SNMPv3_MP_DOUBLED_MESSAGE:
 		case SNMPv3_MP_INVALID_MESSAGE:
@@ -1623,8 +1595,10 @@ TS_SYNCHRONIZED(
 		requests->add(req);
 		return req;
 	}
-	LOG_BEGIN(EVENT_LOG | 4);
+	LOG_BEGIN(loggerModuleName, EVENT_LOG | 4);
 	LOG("RequestList: add request: ignored");
+	LOG(req->from.get_printable());
+	LOG(dupl->from.get_printable());
 	LOG(rid);
 	LOG_END;
 
