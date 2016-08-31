@@ -37,9 +37,6 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 
 #ifndef _OidxPtrMibEntryPtrAVLMap_h
-#ifdef __GNUG__
-#pragma interface
-#endif
 #define _OidxPtrMibEntryPtrAVLMap_h 1
 
 #include <agent_pp/agent++.h>

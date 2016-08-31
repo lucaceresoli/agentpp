@@ -134,7 +134,7 @@ void CmdThread::run()
 			  LOG_END;
 			}
 		}
-		delete buf;
+		delete[] buf;
 	}
 	cmdExecutionOutputEntry::instance->end_synch();
 

@@ -838,10 +838,10 @@ void TaskManager::run() {
 			wait();
 		}
 	}
-        if (task) {
-            delete task;
-            task = 0;
-        }
+    if (task) {
+        delete task;
+        task = 0;
+    }
 	unlock();
 }
 

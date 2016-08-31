@@ -278,7 +278,7 @@ int SnmpTagValue::prepare_set_request(Request* req, int& ind)
 	Vbx vb(req->get_value(ind));
 	if (vb.get_value(ostr) != SNMP_CLASS_SUCCESS) 
 		return SNMP_ERROR_WRONG_TYPE;
-	if ((ostr.len()<= 0) || (ostr.len() > 255))
+	if ((ostr.len()< 0) || (ostr.len() > 255))
 		return SNMP_ERROR_WRONG_LENGTH;
 	return SNMP_ERROR_SUCCESS;
 }

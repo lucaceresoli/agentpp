@@ -40,9 +40,6 @@ Foundation, 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #include <agent_pp/entry.h>
 
 #ifndef _OidxPtrEntryPtrMap_h
-#ifdef __GNUG__
-#pragma interface
-#endif
 #define _OidxPtrEntryPtrMap_h 1
 
 #ifdef AGENTPP_NAMESPACE

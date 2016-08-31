@@ -21,10 +21,17 @@
 #ifndef _agentpp_h_
 #define _agentpp_h_
 
-#define AGENTPP_VERSION_STRING "4.0.3"
+#define AGENTPP_VERSION_STRING "4.0.4"
 #define AGENTPP_VERSION 4
 #define AGENTPP_RELEASE 0
-#define AGENTPP_PATCHLEVEL 3
+#define AGENTPP_PATCHLEVEL 4
+
+// Defines the absolute upper limit for GETBULK repetitions an agent
+// will process. 0 or less disables an upper limit. 
+// Setting a limit can improve the responsiveness of an agent if
+// there are slow instrumented objects or AgentX subrequests involved.
+// If that is the case, the upper limit should be 25 or less.
+#define AGENTPP_MAX_GETBULK_REPETITIONS 0
 
 #include <libagent.h>
 

@@ -855,6 +855,8 @@ void UsmUserTable::deleteRows(const OctetStr& userName)
 
   // Delete user from USM
   usm->delete_usm_user(userName);
+
+  delete allrows;
 }
 
  

@@ -3730,6 +3730,17 @@ void Mib::process_get_bulk_request(Request* req)
 	int subreq = req->subrequests();
 	int nonrep = req->get_non_rep();
 	int maxrep = req->get_max_rep();
+    
+    if ((AGENTPP_MAX_GETBULK_REPETITIONS > 0) && 
+        (maxrep > AGENTPP_MAX_GETBULK_REPETITIONS)) {
+
+        LOG_BEGIN(loggerModuleName, DEBUG_LOG | 6);
+        LOG("Mib: getbulk: limited max rep (orig maxrep)(limited maxrep)");
+        LOG(maxrep);
+        LOG((long)AGENTPP_MAX_GETBULK_REPETITIONS);
+        LOG_END;
+        maxrep = AGENTPP_MAX_GETBULK_REPETITIONS;        
+    }
 
 	// do not finish until max_rep is reached - wait for answer at end
 	req->inc_outstanding();
@@ -3818,7 +3829,7 @@ void Mib::process_get_bulk_request(Request* req)
 		entry->end_synch();
 	}
 
-	// If no repetetions, then do not wait for them
+	// If no repetitions, then do not wait for them
 	if (maxrep == 0) req->dec_outstanding();
 
 	for (int j=0; j<maxrep; j++) {

@@ -1,4 +1,13 @@
+Version 4.0.4: CHANGES since Version 4.0.3
+==========================================
 
+* Fixed: Memory leak in UsmUserTable::deleteRows().
+* Fixed: SnmpTagValue could not be set to an empty string.
+* Improved: Uncommented unused log names.
+* Fixed: Removed deprecated "pragma interface" and "pragma 
+  implementation" pragmas of GCC before 2.7.2.
+* Improved: Introduced optional upper limit for GETBULK requests
+  that can be globally set: AGENTPP_MAX_GETBULK_REPETITIONS.
 
 Version 4.0.3: CHANGES since Version 4.0.2
 ==========================================

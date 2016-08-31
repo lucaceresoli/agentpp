@@ -26,6 +26,13 @@
 #define AGENTPP_RELEASE @AGENT_PP_MINOR_VERSION@
 #define AGENTPP_PATCHLEVEL @AGENT_PP_MICRO_VERSION@
 
+// Defines the absolute upper limit for GETBULK repetitions an agent
+// will process. 0 or less disables an upper limit. 
+// Setting a limit can improve the responsiveness of an agent if
+// there are slow instrumented objects or AgentX subrequests involved.
+// If that is the case, the upper limit should be 25 or less.
+#define AGENTPP_MAX_GETBULK_REPETITIONS 0
+
 #include <libagent.h>
 
 // system dependend witches
