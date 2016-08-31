@@ -18,26 +18,4 @@
   ##  
   ##########################################################################*
 
-if BUILD_EXAMPLES
-example_SUBDIRS = examples tools
-endif
-
-if BUILD_AGENPRO
-agenpro_SUBDIRS = agenpro
-endif
-
-if BUILD_AGENPRO_SIMAGENT
-agenpro_SUBDIRS = agenpro
-endif
-
-AM_CPPFLAGS = -I$(top_srcdir)/include $(PTHREAD_CFLAGS) @CLIBFLAGS@
-SUBDIRS = include src $(example_SUBDIRS) ${agenpro_SUBDIRS}
-ACLOCAL_AMFLAGS = -I m4
-
-EXTRA_DIST = agent++-4.pc.in libagent.h LICENSE-2_0.txt FAQ CHANGES README.autoconf doc_config mibs
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = agent++-4.pc
-
-library_includedir = $(includedir)
-library_include_HEADERS= libagent.h
+SUBDIRS=agent_copy

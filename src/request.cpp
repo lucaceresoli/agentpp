@@ -492,7 +492,7 @@ SnmpInt32 Request::get_syntax(int i)
 }
 	
 /**
- * Return the object identifier of the specified receiver�s 
+ * Return the object identifier of the specified receiver's 
  * sub-request. 
  * 
  * @note This method is not "const" because AgentX++ overwrites

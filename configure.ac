@@ -2,7 +2,7 @@
   ## 
   ##  AGENT++ 4.0 - configure.ac  
   ## 
-  ##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
+  ##  Copyright (C) 2000-2016  Frank Fock and Jochen Katz (agentpp.com)
   ##  
   ##  Licensed under the Apache License, Version 2.0 (the "License");
   ##  you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@
 # Process this file with autoconf to produce a configure script.
 
 # don't require higher autoconf version for win32 support
-AC_PREREQ([2.63])
-AC_INIT([agent++], [4.0.4], [support@agentpp.com], [agent++])
+AC_PREREQ([2.64])
+AC_INIT([agent++], [4.0.5], [support@agentpp.com], [agent++])
 AGENT_PP_MAJOR_VERSION=4
 AGENT_PP_MINOR_VERSION=0
-AGENT_PP_MICRO_VERSION=4
+AGENT_PP_MICRO_VERSION=5
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
@@ -507,6 +507,9 @@ AC_CONFIG_FILES([Makefile
                  examples/proxy_forwarder/src/Makefile
                  examples/static_table/Makefile
                  examples/static_table/src/Makefile
+                 tools/Makefile
+                 tools/agent_copy/Makefile
+                 tools/agent_copy/src/Makefile
                  agenpro/Makefile
                  agenpro/agent/Makefile
                  agenpro/agent/include/Makefile

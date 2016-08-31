@@ -21,10 +21,10 @@
 #ifndef _agentpp_h_
 #define _agentpp_h_
 
-#define AGENTPP_VERSION_STRING "4.0.4"
+#define AGENTPP_VERSION_STRING "4.0.5"
 #define AGENTPP_VERSION 4
 #define AGENTPP_RELEASE 0
-#define AGENTPP_PATCHLEVEL 4
+#define AGENTPP_PATCHLEVEL 5
 
 // Defines the absolute upper limit for GETBULK repetitions an agent
 // will process. 0 or less disables an upper limit. 

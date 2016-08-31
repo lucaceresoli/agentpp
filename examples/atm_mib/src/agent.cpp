@@ -224,6 +224,30 @@ void init(Mib& mib)
 		       "SHAAES256UserAuthPassword",
 		       "SHAAES256UserPrivPassword");
 
+	uut->addNewRow("SHA512AES256",
+		       SNMP_AUTHPROTOCOL_HMAC384SHA512,
+		       SNMP_PRIVPROTOCOL_AES256,
+		       "SHA512AES256UserAuthPassword",
+		       "SHA512AES256UserPrivPassword");
+
+	uut->addNewRow("SHA384AES128",
+		       SNMP_AUTHPROTOCOL_HMAC256SHA384,
+		       SNMP_PRIVPROTOCOL_AES256,
+		       "SHA384AES128UserAuthPassword",
+		       "SHA384AES128UserPrivPassword");
+
+    uut->addNewRow("SHA256AES128",
+		       SNMP_AUTHPROTOCOL_HMAC192SHA256,
+		       SNMP_PRIVPROTOCOL_AES128,
+		       "SHA256AES128UserAuthPassword",
+		       "SHA256AES128UserPrivPassword");
+
+	uut->addNewRow("SHA224AES128",
+		       SNMP_AUTHPROTOCOL_HMAC128SHA224,
+		       SNMP_PRIVPROTOCOL_AES128,
+		       "SHA224AES128UserAuthPassword",
+		       "SHA224AES128UserPrivPassword");
+    
 	// add non persistent USM statistics
 	mib.add(new UsmStats());
 	// add the USM MIB - usm_mib MibGroup is used to
@@ -379,6 +403,14 @@ int main (int argc, char* argv[])
         vacm->addNewGroup(SNMP_SECURITY_MODEL_USM, "MD5AES256",
                          "testGroup", storageType_nonVolatile);
         vacm->addNewGroup(SNMP_SECURITY_MODEL_USM, "SHAAES256", 
+                         "testGroup", storageType_nonVolatile);
+        vacm->addNewGroup(SNMP_SECURITY_MODEL_USM, "SHA512AES256", 
+                         "testGroup", storageType_nonVolatile);
+        vacm->addNewGroup(SNMP_SECURITY_MODEL_USM, "SHA384AES128", 
+                         "testGroup", storageType_nonVolatile);
+        vacm->addNewGroup(SNMP_SECURITY_MODEL_USM, "SHA256AES128", 
+                         "testGroup", storageType_nonVolatile);
+        vacm->addNewGroup(SNMP_SECURITY_MODEL_USM, "SHA224AES128", 
                          "testGroup", storageType_nonVolatile);
 	
         // remove a group with:

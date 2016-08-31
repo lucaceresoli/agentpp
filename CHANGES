@@ -1,3 +1,17 @@
+
+Version 4.0.5: CHANGES since Version 4.0.4 (requires SNMP++ 3.3.6 or later)
+===========================================================================
+
+* Improved: Uncommented unused log names.
+* Fixed: Removed deprecated "pragma interface" and "pragma implementation"
+  pragmas of GCC before 2.7.2.
+* Fixed autoconf minimal version to 2.64.
+* Added missing mibs directory to distribution.
+* Added missing tools code to distribution (is compiled together with 
+  "examples").
+* Added: SHA-2 sample user to atm_mib example agent (requires SNMP++ 3.3.6 
+  or later)
+
 Version 4.0.4: CHANGES since Version 4.0.3
 ==========================================
 

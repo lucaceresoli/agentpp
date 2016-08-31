@@ -2,7 +2,7 @@
 README autoconf
 ===============
 
-To use autoconf with AGENT++, execute the following 
+To use autoconf 2.64 or later with AGENT++, execute the following 
 commands in the "agent++" directory:
 
 autoreconf -i

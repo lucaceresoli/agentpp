@@ -18,26 +18,14 @@
   ##  
   ##########################################################################*
 
-if BUILD_EXAMPLES
-example_SUBDIRS = examples tools
-endif
+DEPS = $(top_builddir)/src/libagent++.la
+LDADDS = $(top_builddir)/src/libagent++.la @LINKFLAGS@
 
-if BUILD_AGENPRO
-agenpro_SUBDIRS = agenpro
-endif
+AM_CPPFLAGS = -I$(top_builddir)/include -I$(top_srcdir)/include -I@srcdir@/../include $(PTHREAD_CFLAGS) @CLIBFLAGS@
 
-if BUILD_AGENPRO_SIMAGENT
-agenpro_SUBDIRS = agenpro
-endif
+noinst_PROGRAMS = agent_copy
 
-AM_CPPFLAGS = -I$(top_srcdir)/include $(PTHREAD_CFLAGS) @CLIBFLAGS@
-SUBDIRS = include src $(example_SUBDIRS) ${agenpro_SUBDIRS}
-ACLOCAL_AMFLAGS = -I m4
-
-EXTRA_DIST = agent++-4.pc.in libagent.h LICENSE-2_0.txt FAQ CHANGES README.autoconf doc_config mibs
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = agent++-4.pc
-
-library_includedir = $(includedir)
-library_include_HEADERS= libagent.h
+agent_copy_SOURCES = 	agent_copy.cpp
+agent_copy_LDFLAGS =
+agent_copy_DEPENDENCIES =	$(DEPS)
+agent_copy_LDADD =		$(LDADDS)
