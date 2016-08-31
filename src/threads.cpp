@@ -243,23 +243,28 @@ bool Synchronized::wait(unsigned long timeout)
         int millis = ts.tv_nsec / 1000000 + (timeout % 1000);
         if (millis >= 1000) {
             ts.tv_sec += 1;
-            ts.tv_nsec += millis % 1000;
         }
-        else {
-            ts.tv_nsec += (timeout % 1000) * 1000000;
-        }
+        ts.tv_nsec = (millis % 1000) * 1000000;
 #else        
 	struct timeval  tv;
 	gettimeofday(&tv, 0);
 	ts.tv_sec  = tv.tv_sec  + (int)timeout/1000;
-	ts.tv_nsec = (tv.tv_usec + (timeout %1000)*1000) * 1000; 
+    int millis = tv.tv_usec / 1000 + (timeout % 1000);
+    if (millis >= 1000) {
+        ts.tv_sec += 1;
+    }
+    ts.tv_nsec = (millis % 1000) * 1000000;
 #endif        
 
 	int err;
 	isLocked = FALSE;
 	if ((err = cond_timed_wait(&ts)) > 0) {
 		switch(err) {
-                case EINVAL:
+        case EINVAL:
+		  LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
+		  LOG("Synchronized: wait with timeout returned (error)");
+		  LOG(err);
+		  LOG_END;
 		case ETIMEDOUT:
 		  timeoutOccurred = TRUE;
 		  break;
@@ -421,23 +426,23 @@ bool Synchronized::unlock() {
 	if ((err = pthread_mutex_unlock(&monitor)) != 0) {            
 		LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
 		LOG("Synchronized: unlock failed (id)(error)(wasLocked)");
-                LOG(id);
-                LOG(err);
-                LOG(wasLocked);
+        LOG(id);
+        LOG(err);
+        LOG(wasLocked);
 		LOG_END;
-                isLocked = wasLocked;
-                return FALSE;
-        }
+        isLocked = wasLocked;
+        return FALSE;
+    }
 #else
 #ifdef WIN32
 	if (!ReleaseMutex(semMutex)) {
 		LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
 		LOG("Synchronized: unlock failed (id)(isLocked)(wasLocked)");
-                LOG(id);
-                LOG(isLocked);
-                LOG(wasLocked);
+        LOG(id);
+        LOG(isLocked);
+        LOG(wasLocked);
 		LOG_END;
-                isLocked = wasLocked;
+        isLocked = wasLocked;
 		return FALSE;
 	}
 #endif
@@ -907,6 +912,21 @@ bool ThreadPool::is_idle()
 	unlock();
 	return TRUE;
 }
+
+bool ThreadPool::is_busy() 
+{
+	lock();
+	ArrayCursor<TaskManager> cur;
+	for (cur.init(&taskList); cur.get(); cur.next()) {
+		if (cur.get()->is_idle()) {
+			unlock();
+			return FALSE;
+		}
+	}
+	unlock();
+	return TRUE;
+}
+
 
 void ThreadPool::terminate() 
 {

@@ -180,6 +180,9 @@ void VacmSecurityToGroupTable::row_added(MibTableRow* new_row,
 					 const Oidx& ind, MibTable*)
 {
   Oidx o = Oidx(ind);
+  if (o.len() == 0) {
+    return;
+  }
   MibLeaf* ml;
   ml = new_row->get_nth(0);
   ml->set_value(o[0]);
@@ -350,6 +353,9 @@ void VacmAccessTable::row_added(MibTableRow* new_row,
   // GroupName (erster Index) muss nicht gesetzt werden.
 
   Oidx o = Oidx(ind);
+  if (o.len() == 0) {
+    return;
+  }
   MibLeaf* ml;
 
   ml = new_row->get_nth(0);
@@ -678,6 +684,9 @@ void VacmViewTreeFamilyTable::row_added(MibTableRow* new_row,
 					const Oidx& ind, MibTable*)
 {
   Oidx o = Oidx(ind);
+  if (o.len() == 0) {
+    return;
+  }    
   MibLeaf* ml;
   ml = new_row->get_nth(0);
   ml->set_value(o.cut_right(o[o[0]+1]+1).cut_left(1).as_string());

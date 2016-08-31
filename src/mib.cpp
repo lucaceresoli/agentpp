@@ -512,7 +512,7 @@ bool snmpRowStatus::transition_ok(const Vbx& v)
 bool snmpRowStatus::check_state_change(const Vbx& v, Request* req)
 {
 	int l;
-	if (v.get_value(l) != SNMP_CLASS_SUCCESS) return FALSE;
+	if (!req || v.get_value(l) != SNMP_CLASS_SUCCESS) return FALSE;
 
 	if (value) {
 		switch (get()) {
@@ -1184,7 +1184,9 @@ void MibTable::init(const Oidx& o, const index_info* istruc,
 	index_struc = new index_info[ilen];
 	memcpy(index_struc, istruc, sizeof(index_info)*ilen);
 	upper = oid;
-	upper[upper.len()-1] += 1;
+    if (upper.len() > 0) {
+        upper[upper.len()-1] += 1;
+    }
 }
 
 
@@ -2074,8 +2076,8 @@ int MibTable::check_creation(Request* req, int& ind)
 
        	for (i=0; i<req->subrequests(); i++) {
 
-	       	if ((get_generator(req->get_oid(i)) == row_status) &&
-		    (new_index == index(req->get_oid(i)))) {
+	       	if (row_status && (get_generator(req->get_oid(i)) == row_status) &&
+		        (new_index == index(req->get_oid(i)))) {
 
 	       		if (req->get_value(i).get_syntax() !=
 	       		    row_status->get_syntax()) {
@@ -2939,12 +2941,10 @@ bool Mib::save(unsigned int format, const OctetStr& path)
 MibConfigFormat* Mib::add_config_format(unsigned int formatID,
 					MibConfigFormat* format)
 {
-	MibConfigFormat* old = configFormats.getNth(formatID-1);
 	while ((unsigned int)configFormats.size() < formatID) {
 	    configFormats.add(0);
 	}
-	configFormats.overwriteNth(formatID-1, format);
-	return old;
+	return configFormats.overwriteNth(formatID-1, format);
 }
 
 bool Mib::load(unsigned int format, const NS_SNMP OctetStr& path)
@@ -3023,7 +3023,7 @@ int Mib::find_managing_object(MibContext* context,
 			      MibEntryPtr& retval,
 			      Request* req)
 {
-	if (!context) return sNMP_SYNTAX_NOSUCHOBJECT;
+	if (!context || oid.len() == 0) return sNMP_SYNTAX_NOSUCHOBJECT;
 	// no match?
 	if (context->find_lower(oid, retval) != SNMP_ERROR_SUCCESS)
 		return sNMP_SYNTAX_NOSUCHOBJECT;
@@ -3427,8 +3427,8 @@ void Mib::proxy_request(Request* req)
 	}
 	else {
 		requestList->answer(req);
-		delete_request(req);
 	}
+    delete_request(req);
 }
 #endif
 #endif
@@ -4007,8 +4007,14 @@ void Mib::finalize(Request* req)
 	// If responding to a BULK request, trim response to N+M*R variables
 	// and make sure we are using right OIDs for ENDOFMIBVIEW vbs.
 	req->trim_bulk_response();
-	requestList->answer(req);
-	delete_request(req);
+    if (requestList) {
+        requestList->answer(req);
+        delete_request(req);
+    }
+    else {
+        delete req;
+        req = 0;
+    }
 }
 
 #ifdef _THREADS

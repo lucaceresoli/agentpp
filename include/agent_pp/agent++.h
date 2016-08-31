@@ -21,10 +21,10 @@
 #ifndef _agentpp_h_
 #define _agentpp_h_
 
-#define AGENTPP_VERSION_STRING "4.0.2"
+#define AGENTPP_VERSION_STRING "4.0.3"
 #define AGENTPP_VERSION 4
 #define AGENTPP_RELEASE 0
-#define AGENTPP_PATCHLEVEL 2
+#define AGENTPP_PATCHLEVEL 3
 
 #include <libagent.h>
 
@@ -203,7 +203,7 @@ typedef enum { READING, WRITING } access_types;
 
 #define DEFAULT_ENGINE_BOOTS_FILE "snmpv3_boot_counter"
 
-#ifdef __APPLE__
+#if defined(__APPLE__) || defined(__clang__)
 // g++ 4.0.1 of MacOS X 10.5.6 does not like the template declarations
 #define AGENTPP_DECL_TEMPL_OIDLIST_MIBSTATICENTRY
 #define AGENTPP_DECL_TEMPL_LIST_MIBENTRY

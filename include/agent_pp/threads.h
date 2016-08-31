@@ -511,6 +511,16 @@ public:
 	bool is_idle();
 
 	/**
+	 * Check whether the ThreadPool is busy (i.e., all threads are 
+         * running a task) or not.
+	 *
+	 * @return
+	 *    TRUE if non of the threads in the pool is currently 
+	 *    idle (not executing any task).
+	 */
+	bool is_busy();
+        
+	/**
 	 * Get the size of the thread pool.
 	 * @return
 	 *    the number of threads in the pool.

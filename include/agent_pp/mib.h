@@ -2546,11 +2546,11 @@ public:
 	 * Initialize all contexts. The main purpose of this method
 	 * is to trigger all MIB objects to load their data from 
 	 * persistent storage.
-         * NOTE: If no thread pool has been assigned until calling this
-         * method a default ThreadPool will be created with the default
-         * stack size. The number of threads and the thread stack size
-         * might not match your requirements. To use your own thread pool,
-         * simply call {@link #set_thread_pool()} before calling this method.
+     * NOTE: If no thread pool has been assigned until calling this
+     * method a default ThreadPool will be created with the default
+     * stack size. The number of threads and the thread stack size
+     * might not match your requirements. To use your own thread pool,
+     * simply call {@link #set_thread_pool()} before calling this method.
 	 *
 	 * @return
 	 *    TRUE if initialization was successful, FALSE otherwise.
@@ -2960,8 +2960,7 @@ public:
 	 * @param format
 	 *    the MibConfigFormat instance implementing the format.
 	 * @return
-	 *    the MibConfigFormat instance that was formerly registered with
-	 *    the supplied formatID, or NULL if no such registration exists.
+	 *    the MibConfigFormat instance pointer provided as format parameter.
 	 */
 	MibConfigFormat* add_config_format(unsigned int format, 
 					   MibConfigFormat*);

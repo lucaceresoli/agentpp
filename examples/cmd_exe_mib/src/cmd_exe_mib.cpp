@@ -523,13 +523,13 @@ bool cmdExecutionCmdConfigEntry::deserialize(char* buf, int& sz)
 	return b;
 }
 
-void cmdExecutionCmdConfigEntry::row_added(MibTableRow* row, const Oidx& index)
+void cmdExecutionCmdConfigEntry::row_added(MibTableRow* row, const Oidx& index, MibTable* t)
 {
 	// The row 'row' with 'index' has been added to the table.
 	// Place any necessary actions here.
 }
 
-void cmdExecutionCmdConfigEntry::row_delete(MibTableRow* row, const Oidx& index)
+void cmdExecutionCmdConfigEntry::row_delete(MibTableRow* row, const Oidx& index, MibTable* t)
 {
 	// The row 'row' with 'index' will be deleted.
 	// Place any necessary actions here.
@@ -605,13 +605,13 @@ cmdExecutionCmdEntry::~cmdExecutionCmdEntry()
 	delete threadPool;
 }
 
-void cmdExecutionCmdEntry::row_added(MibTableRow* row, const Oidx& index)
+void cmdExecutionCmdEntry::row_added(MibTableRow* row, const Oidx& index, MibTable* t)
 {
 	// The row 'row' with 'index' has been added to the table.
 	// Place any necessary actions here.
 }
 
-void cmdExecutionCmdEntry::row_delete(MibTableRow* row, const Oidx& index)
+void cmdExecutionCmdEntry::row_delete(MibTableRow* row, const Oidx& index, MibTable* t)
 {
 	// The row 'row' with 'index' will be deleted.
 	// Place any necessary actions here.
@@ -641,13 +641,13 @@ cmdExecutionOutputEntry::~cmdExecutionOutputEntry()
 {
 }
 
-void cmdExecutionOutputEntry::row_added(MibTableRow* row, const Oidx& index)
+void cmdExecutionOutputEntry::row_added(MibTableRow* row, const Oidx& index, MibTable* t)
 {
 	// The row 'row' with 'index' has been added to the table.
 	// Place any necessary actions here.
 }
 
-void cmdExecutionOutputEntry::row_delete(MibTableRow* row, const Oidx& index)
+void cmdExecutionOutputEntry::row_delete(MibTableRow* row, const Oidx& index, MibTable* t)
 {
 	// The row 'row' with 'index' will be deleted.
 	// Place any necessary actions here.

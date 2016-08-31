@@ -1247,7 +1247,7 @@ public:
 	}
 
 	T* get() {
-		if ((cursor < 0) || (cursor >= list->size())) return 0;	
+		if ((cursor < 0) || !list || (cursor >= list->size())) return 0;
 		return list->getNth(cursor);
 	}
 

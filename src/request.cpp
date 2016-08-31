@@ -941,8 +941,6 @@ void RequestList::report(Request* req)
 	LOG(status);
 	LOG(req->get_pdu()->get_vb_count());
 	LOG_END;
-
-	delete req;
 }
 #endif
 
@@ -1509,7 +1507,7 @@ Request* RequestList::receive(int sec)
 		{
 			Request* req = new Request(pdu, target);
 #ifdef _SNMPv3
-			// set vacm and initalize viewName
+			// set vacm and initialize viewName
 			req->init_vacm(vacm, viewName);
 #endif
 			// if request is to be ignored req will be 

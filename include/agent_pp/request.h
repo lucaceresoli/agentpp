@@ -848,7 +848,8 @@ public:
 	 * of the error counter specifying the report.
 	 *
 	 * @param req
-	 *    a Request instance.
+	 *    a Request instance (will not be deleted but removed 
+     *    from this request list it is present in the list).
 	 */
 	virtual void			report(Request*);
 #endif

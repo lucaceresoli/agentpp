@@ -255,8 +255,8 @@ class cmdExecutionCmdConfigEntry: public StorageTable {
 	static cmdExecutionCmdConfigEntry* instance;
 
 	virtual bool		deserialize(char*, int&);
-	virtual void        	row_added(MibTableRow*, const Oidx&);
-	virtual void        	row_delete(MibTableRow*, const Oidx&);
+	virtual void        	row_added(MibTableRow*, const Oidx&, MibTable* t=0);
+	virtual void        	row_delete(MibTableRow*, const Oidx&, MibTable* t=0);
 	virtual void       	set_row(int index, const char* p0, int p1, int p2);
 	virtual bool		contains(Oidx);
 	virtual NS_SNMP OctetStr	get_command_line(const NS_SNMP OctetStr&);
@@ -283,8 +283,8 @@ friend class cmdExecutionCmdRowStatus;
 
 	static cmdExecutionCmdEntry* instance;
 
-	virtual void        	row_added(MibTableRow*, const Oidx&);
-	virtual void        	row_delete(MibTableRow*, const Oidx&);
+	virtual void        	row_added(MibTableRow*, const Oidx&, MibTable* t=0);
+	virtual void        	row_delete(MibTableRow*, const Oidx&, MibTable* t=0);
  protected:
 	ThreadPool*		threadPool;
 };
@@ -305,8 +305,8 @@ class cmdExecutionOutputEntry: public MibTable {
 
 	static cmdExecutionOutputEntry* instance;
 
-	virtual void        	row_added(MibTableRow*, const Oidx&);
-	virtual void        	row_delete(MibTableRow*, const Oidx&);
+	virtual void        	row_added(MibTableRow*, const Oidx&, MibTable* t=0);
+	virtual void        	row_delete(MibTableRow*, const Oidx&, MibTable* t=0);
 	virtual void       	set_row(int index, char* p0);
 	virtual void		remove_all(const Oidx&);
 };

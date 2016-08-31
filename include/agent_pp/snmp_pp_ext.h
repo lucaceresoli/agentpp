@@ -300,12 +300,20 @@ public:
 	 * interpreted as one char. Thus, all subidentifiers must be
 	 * between 0 and 255.
 	 *
+	 * @param withoutLength
+	 *    if TRUE there will be no preceeding subid containing
+	 *    the length of the string
 	 * @return An OctetStr.
 	 */
-	NS_SNMP OctetStr	as_string() const
+	NS_SNMP OctetStr	as_string(bool withoutLength = false) const
 	{
 		OctetStr str;
-		for (int i=0; i<(int)len(); i++) {
+
+		int i = 0;
+		// check if the len is implied and should be ignored!
+		if (withoutLength && len() > 0 && len() == ((*this)[0] + 1))
+		    i++;    // first oid seems to be the len
+		for (; i<(int)len(); i++) {
 			str += (unsigned char)(*this)[i];
 		}
 		return str;

@@ -1,5 +1,12 @@
 
 
+Version 4.0.3: CHANGES since Version 4.0.2
+==========================================
+
+* Fixed: Synchronized::wait with timeout fails sometimes with errno 22
+  (this error occurred more often on systems without clock_gettime).
+
+
 Version 4.0.2: CHANGES since Version 4.0.1
 ==========================================
 
