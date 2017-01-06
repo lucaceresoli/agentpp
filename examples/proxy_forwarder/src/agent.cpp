@@ -58,7 +58,7 @@ using namespace Agentpp;
 
 static const char* loggerModuleName = "agent++.proxy_forwarder";
 
-u_short port;
+unsigned short port;
 Mib* mib;
 RequestList* reqList;
 bool run = TRUE;

@@ -47,7 +47,7 @@ using namespace Agentpp;
 
 static const char* loggerModuleName = "agent++.static_table";
 
-u_short port;
+unsigned short port;
 Mib* mib;
 RequestList* reqList;
 bool run = TRUE;

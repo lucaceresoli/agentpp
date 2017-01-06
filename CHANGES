@@ -1,3 +1,11 @@
+Version 4.0.7: CHANGES since Version 4.0.6 (requires SNMP++ 3.3.6 or later)
+===========================================================================
+* Fixed: Installed header files no longer need the internal config.h.
+* Added: Synchronized:lock(timeout) to support waiting for lock with
+  timeout.
+* Fixed [APP-45]: Warning "(2)WARNING: Request: Destroyed although lockQueue  
+  locked by other thread" reported on some platforms although lock was not 
+  lost.
 
 Version 4.0.6: CHANGES since Version 4.0.5 (requires SNMP++ 3.3.6 or later)
 ===========================================================================

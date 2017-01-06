@@ -52,7 +52,7 @@ static const char* loggerModuleName = "agent++.snmp_proxy";
 
 // globals:
 
-u_short		port;
+unsigned short	port;
 Mib*		mib;
 RequestList*	requestList;
 bool		run = TRUE;

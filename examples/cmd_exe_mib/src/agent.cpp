@@ -48,7 +48,7 @@ static const char* loggerModuleName = "agent++.cmd_exe_mib";
 
 // globals:
 
-u_short port;
+unsigned short port;
 Mib* mib;
 RequestList* reqList;
 bool run = TRUE;

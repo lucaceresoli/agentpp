@@ -51,7 +51,7 @@ using namespace Agentpp;
 
 static const char* loggerModuleName = "agenpro.simagent";
 
-u_short port;
+unsigned short port;
 Mib* mib;
 RequestList* reqList;
 bool run = TRUE;

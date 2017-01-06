@@ -46,7 +46,7 @@ using namespace Agentpp;
 
 static const char* loggerModuleName = "agenpro.agent";
 
-u_short port;
+unsigned short port;
 Mib* mib;
 RequestList* reqList;
 bool run = TRUE;

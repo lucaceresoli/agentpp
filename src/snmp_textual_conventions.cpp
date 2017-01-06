@@ -601,19 +601,19 @@ void SnmpInt32MinMax::set_state(int i)
 
 OctetStrMinMax::OctetStrMinMax(const Oidx& o, mib_access _access, 
 			       OctetStr* def_val, 
-			       int vmode, u_int _min, u_int _max):
-  MibLeaf(o, _access, def_val, vmode) 
+			       int vmode, unsigned int _min, unsigned int _max):
+  MibLeaf(o, _access, def_val, vmode)
 {
-	min = _min;
-	max = _max;
+  min = _min;
+  max = _max;
 }
 
 OctetStrMinMax::OctetStrMinMax(const Oidx& o, mib_access _access, 
-			       u_int _min, u_int _max):
-  MibLeaf(o, _access, new OctetStr(""), VMODE_NONE) 
+			       unsigned int _min, unsigned int _max):
+  MibLeaf(o, _access, new OctetStr(""), VMODE_NONE)
 {
-	min = _min;
-	max = _max;
+  min = _min;
+  max = _max;
 }
 
 

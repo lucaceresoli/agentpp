@@ -73,14 +73,14 @@ public:
 
 	void		get_request(Request*, int);
 
-	static u_int	get();
+	static unsigned int	get();
 	static time_t	get_currentTime();
 
 	virtual bool is_volatile() { return TRUE; }
 #ifdef HAVE_CLOCK_GETTIME
         static struct timespec start;
 #else        
-	static u_int	start;
+	static unsigned int	start;
 #endif        
 };
 

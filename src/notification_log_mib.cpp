@@ -1103,7 +1103,7 @@ void nlmLogEntry::row_delete(MibTableRow* row, const Oidx& index, MibTable* src)
 
 void nlmLogEntry::row_init(MibTableRow* row, const Oidx& index, MibTable* src)
 {
-	// The row 'row' with 'index' has been intialized.
+	// The row 'row' with 'index' has been initialized.
 
 	//--AgentGen BEGIN=nlmLogEntry::row_init
 	if (src == nlmConfigLogEntry::instance) {

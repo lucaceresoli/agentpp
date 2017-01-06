@@ -203,19 +203,23 @@ Request::~Request()
 	// acquired locks through the lock queue. So we notify
 	// the queue here to be sure that the other thread 
 	// may proceed.
-        TryLockResult lockState;
+    TryLockResult lockState;
 	if ((lockState = lockQueue->trylock()) != BUSY) {
-            lockQueue->notify();
-            if (lockState == LOCKED) {
-                lockQueue->unlock();
-            }
+        lockQueue->notify();
+        if (lockState == LOCKED) {
+            lockQueue->unlock();
         }
-        else {
-            LOG_BEGIN(loggerModuleName, WARNING_LOG | 2);
-            LOG("Request: Destroyed although lockQueue locked by other thread (tid)");
-            LOG(transaction_id);
-            LOG_END;            
-        }
+    }
+    else if (!lockQueue->lock(1000)) {
+        LOG_BEGIN(loggerModuleName, WARNING_LOG | 2);
+        LOG("Request: Destroyed although lockQueue locked by other thread (tid)");
+        LOG(transaction_id);
+        LOG_END;            
+    }
+    else {
+        lockQueue->notify();
+        lockQueue->unlock();
+    }
 #endif
 }
 
@@ -223,8 +227,9 @@ Request::~Request()
 #ifdef NO_FAST_MUTEXES
 void Request::init_lock_queue() 
 {
-	if (!lockQueue)
+	if (!lockQueue) {
 		lockQueue = new LockQueue();
+    }
 }
 #endif
 
@@ -1222,14 +1227,14 @@ Request* RequestList::receive(int sec)
 #endif		
 		version = target.get_version();
 		target.get_address(tmp_addr);
-                UdpAddress from(tmp_addr);
+        UdpAddress from(tmp_addr);
 
 #ifdef _SNMPv3
 		target.get_security_name(security_name);
-                security_model = target.get_security_model();
-                security_level = pdu.get_security_level();
-                pdu.get_context_engine_id(context_engine_id);
-                pdu.get_context_name(context_name);
+        security_model = target.get_security_model();
+        security_level = pdu.get_security_level();
+        pdu.get_context_engine_id(context_engine_id);
+        pdu.get_context_name(context_name);
 #else
 		security_name = community;
 #endif		

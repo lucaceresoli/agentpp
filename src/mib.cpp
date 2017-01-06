@@ -399,20 +399,6 @@ void MibLeaf::cleanup_set_request(Request*, int&)
 	}
 }
 
-#if 0
-Oidx MibLeaf::get_oid() const
-{
-	if ((!my_table) || (!my_row)) {
-		return oid;
-	}
-	else {
-		Oidx o(*my_table->key());
-		o += oid;
-		o += my_row->get_index();
-		return o;
-	}
-}
-#endif
 
 /*--------------------------------------------------------------------
  *
@@ -2878,12 +2864,11 @@ void Mib::set_persistent_objects_path(const OctetStr* str)
 {
     if (persistent_objects_path)
     {
-	delete persistent_objects_path;
-	persistent_objects_path = 0;
+        delete persistent_objects_path;
+        persistent_objects_path = 0;
     }
-
     if (str)
-	persistent_objects_path = (OctetStr*)str->clone();
+        persistent_objects_path = (OctetStr*)str->clone();
 }
 
 MibGroup* Mib::find_group_of(const OctetStr& context, const Oidx& oid)

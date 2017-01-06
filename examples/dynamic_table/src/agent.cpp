@@ -47,7 +47,7 @@ static const char* loggerModuleName = "agent++.dynamic_table";
 
 // globals:
 
-u_short port;
+unsigned short port;
 Mib* mib;
 RequestList* reqList;
 bool run = TRUE;
@@ -301,7 +301,7 @@ int main (int argc, char* argv[])
 
 	// add supported objects
 	init(*mib);
-	// load persitent objects from disk
+	// load persistent objects from disk
 	mib->init();
 
 	reqList->set_snmp(&snmp);

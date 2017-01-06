@@ -22,10 +22,10 @@
 
 # don't require higher autoconf version for win32 support
 AC_PREREQ([2.64])
-AC_INIT([agent++], [4.0.6], [support@agentpp.com], [agent++])
+AC_INIT([agent++], [4.0.7], [support@agentpp.com], [agent++])
 AGENT_PP_MAJOR_VERSION=4
 AGENT_PP_MINOR_VERSION=0
-AGENT_PP_MICRO_VERSION=6
+AGENT_PP_MICRO_VERSION=7
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([foreign -Wall -Werror])
@@ -466,6 +466,185 @@ AS_IF([test "${WITH_PROXY_FORWARDER}" -eq 1],
   [AC_MSG_NOTICE(disable snmp proxy-forwarder)]
 )
 
+
+if test "$ac_cv_header_sys_types_h" = "yes"; then
+	CNF_HAVE_SYS_TYPES_H=1
+else
+	CNF_HAVE_SYS_TYPES_H=0
+fi
+if test "$ac_cv_header_sys_stat_h" = "yes"; then
+	CNF_HAVE_SYS_STAT_H=1
+else
+	CNF_HAVE_SYS_STAT_H=0
+fi
+if test "$ax_cv_cxx_stdcxx_98" = yes; then
+	CNF_STDCXX_98_HEADERS=1
+else
+	CNF_STDCXX_98_HEADERS=0
+fi
+if test "$ac_cv_header_stdc" = "yes"; then
+	CNF_STDC_HEADERS=1
+else
+	CNF_STDC_HEADERS=0
+fi
+if test "$ac_cv_header_stdlib_h" = "yes"; then
+	CNF_HAVE_STDLIB_H=1
+else
+	CNF_HAVE_STDLIB_H=0
+fi
+if test "$ac_cv_header_string_h" = "yes"; then
+	CNF_HAVE_STRING_H=1
+else
+	CNF_HAVE_STRING_H=0
+fi
+if test "$ac_cv_header_strings_h" = "yes"; then
+	CNF_HAVE_STRINGS_H=1
+else
+	CNF_HAVE_STRINGS_H=0
+fi
+if test "$ac_cv_header_memory_h" = "yes"; then
+	CNF_HAVE_MEMORY_H=1
+else
+	CNF_HAVE_MEMORY_H=0
+fi
+if test "$ac_cv_header_inttypes_h" = "yes"; then
+	CNF_HAVE_INTTYPES_H=1
+else
+	CNF_HAVE_INTTYPES_H=0
+fi
+if test "$ac_cv_header_ctype_h" = "yes"; then
+	CNF_HAVE_CTYPE_H=1
+else
+	CNF_HAVE_CTYPE_H=0
+fi
+if test "$ac_cv_header_signal_h" = "yes"; then
+	CNF_HAVE_SIGNAL_H=1
+else
+	CNF_HAVE_SIGNAL_H=0
+fi
+if test "$ac_cv_header_errno_h" = "yes"; then
+	CNF_HAVE_ERRNO_H=1
+else
+	CNF_HAVE_ERRNO_H=0
+fi
+if test "$ac_cv_header_time_h" = "yes"; then
+	CNF_HAVE_TIME_H=1
+else
+	CNF_HAVE_TIME_H=0
+fi
+if test "$ac_cv_header_unistd_h" = "yes"; then
+	CNF_HAVE_UNISTD_H=1
+else
+	CNF_HAVE_UNISTD_H=0
+fi
+if test "$ac_cv_header_sys_unistd_h" = "yes"; then
+	CNF_HAVE_SYS_UNISTD_H=1
+else
+	CNF_HAVE_SYS_UNISTD_H=0
+fi
+if test "$ac_cv_header_stdint_h" = "yes"; then
+	CNF_HAVE_STDINT_H=1
+else
+	CNF_HAVE_STDINT_H=0
+fi
+if test "$ac_cv_header_sys_time_h" = "yes"; then
+	CNF_HAVE_SYS_TIME_H=1
+else
+	CNF_HAVE_SYS_TIME_H=0
+fi
+if test "$ac_cv_header_sys_timeb_h" = "yes"; then
+	CNF_HAVE_SYS_TIMEB_H=1
+else
+	CNF_HAVE_SYS_TIMEB_H=0
+fi
+if test "$ac_cv_header_winsock2_h" = "yes"; then
+	CNF_HAVE_WINSOCK2_H=1
+else
+	CNF_HAVE_WINSOCK2_H=0
+fi
+if test "$ac_cv_header_ws2tcpip_h" = "yes"; then
+	CNF_HAVE_WS2TCPIP_H=1
+else
+	CNF_HAVE_WS2TCPIP_H=0
+fi
+if test "$ac_cv_header_wspiapi_h" = "yes"; then
+	CNF_HAVE_WSPIAPI_H=1
+else
+	CNF_HAVE_WSPIAPI_H=0
+fi
+if test "$ac_cv_header_winsock_h" = "yes"; then
+	CNF_HAVE_WINSOCK_H=1
+else
+	CNF_HAVE_WINSOCK_H=0
+fi
+if test "$ac_cv_header_netdb_h" = "yes"; then
+	CNF_HAVE_NETDB_H=1
+else
+	CNF_HAVE_NETDB_H=0
+fi
+if test "$ac_cv_header_sys_socket_h" = "yes"; then
+	CNF_HAVE_SYS_SOCKET_H=1
+else
+	CNF_HAVE_SYS_SOCKET_H=0
+fi
+if test "$ac_cv_header_arpa_inet_h" = "yes"; then
+	CNF_HAVE_ARPA_INET_H=1
+else
+	CNF_HAVE_ARPA_INET_H=0
+fi
+if test "$ac_cv_header_netinet_in_h" = "yes"; then
+	CNF_HAVE_NETINET_IN_H=1
+else
+	CNF_HAVE_NETINET_IN_H=0
+fi
+if test "$ac_cv_header_poll_h" = "yes"; then
+	CNF_HAVE_POLL_H=1
+else
+	CNF_HAVE_POLL_H=0
+fi
+if test "$ac_cv_header_sys_select_h" = "yes"; then
+	CNF_HAVE_SYS_SELECT_H=1
+else
+	CNF_HAVE_SYS_SELECT_H=0
+fi
+if test "$ac_cv_header_io_h" = "yes"; then
+	CNF_HAVE_IO_H=1
+else
+	CNF_HAVE_IO_H=0
+fi
+if test "$ac_cv_header_process_h" = "yes"; then
+	CNF_HAVE_PROCESS_H=1
+else
+	CNF_HAVE_PROCESS_H=0
+fi
+if test "$ac_cv_func_getpid" = "yes"; then
+	CNF_HAVE_GETPID=1
+else
+	CNF_HAVE_GETPID=0
+fi
+if test "$ac_cv_func__getpid" = "yes"; then
+	CNF_HAVE__GETPID=1
+else
+	CNF_HAVE__GETPID=0
+fi
+if test "$ac_cv_member_struct_sockaddr_storage_ss_family" = "yes"; then
+	CNF_HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY=1
+else
+	CNF_HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY=0
+fi
+if test "$ac_cv_member_struct_sockaddr_storage___ss_family" = "yes"; then
+	CNF_HAVE_STRUCT_SOCKADDR_STORAGE___SS_FAMILY=1
+else
+	CNF_HAVE_STRUCT_SOCKADDR_STORAGE___SS_FAMILY=0
+fi
+if test "$ax_cv_cxx_have_std_namespace" = "yes"; then
+	CNF_HAVE_NAMESPACE_STD=1
+else
+	CNF_HAVE_NAMESPACE_STD=0
+fi
+
+
+
 dnl Libtool setup.
 dnl must be latest to catch rpath compiled in by changes made during checks before
 LT_INIT
@@ -488,6 +667,43 @@ AM_CONDITIONAL(WITH_PROXY_SOURCES, test "${WITH_PROXY}" = "1")
 AM_CONDITIONAL(WITH_PROXY_FORWARDER, test "${WITH_PROXY_FORWARDER}" = "1")
 
 AC_SUBST(NEED_DEFINE_BOOL)
+
+AC_SUBST(CNF_HAVE_SYS_TYPES_H)
+AC_SUBST(CNF_HAVE_SYS_STAT_H)
+AC_SUBST(CNF_STDCXX_98_HEADERS)
+AC_SUBST(CNF_STDC_HEADERS)
+AC_SUBST(CNF_HAVE_STDLIB_H)
+AC_SUBST(CNF_HAVE_STRING_H)
+AC_SUBST(CNF_HAVE_STRINGS_H)
+AC_SUBST(CNF_HAVE_MEMORY_H)
+AC_SUBST(CNF_HAVE_INTTYPES_H)
+AC_SUBST(CNF_HAVE_CTYPE_H)
+AC_SUBST(CNF_HAVE_SIGNAL_H)
+AC_SUBST(CNF_HAVE_ERRNO_H)
+AC_SUBST(CNF_HAVE_TIME_H)
+AC_SUBST(CNF_HAVE_UNISTD_H)
+AC_SUBST(CNF_HAVE_SYS_UNISTD_H)
+AC_SUBST(CNF_HAVE_STDINT_H)
+AC_SUBST(CNF_HAVE_SYS_TIME_H)
+AC_SUBST(CNF_HAVE_SYS_TIMEB_H)
+AC_SUBST(CNF_HAVE_WINSOCK2_H)
+AC_SUBST(CNF_HAVE_WS2TCPIP_H)
+AC_SUBST(CNF_HAVE_WSPIAPI_H)
+AC_SUBST(CNF_HAVE_WINSOCK_H)
+AC_SUBST(CNF_HAVE_NETDB_H)
+AC_SUBST(CNF_HAVE_SYS_SOCKET_H)
+AC_SUBST(CNF_HAVE_ARPA_INET_H)
+AC_SUBST(CNF_HAVE_NETINET_IN_H)
+AC_SUBST(CNF_HAVE_POLL_H)
+AC_SUBST(CNF_HAVE_SYS_SELECT_H)
+AC_SUBST(CNF_HAVE_IO_H)
+AC_SUBST(CNF_HAVE_PROCESS_H)
+AC_SUBST(CNF_HAVE_GETPID)
+AC_SUBST(CNF_HAVE__GETPID)
+AC_SUBST(CNF_HAVE_STRUCT_SOCKADDR_STORAGE_SS_FAMILY)
+AC_SUBST(CNF_HAVE_STRUCT_SOCKADDR_STORAGE___SS_FAMILY)
+AC_SUBST(CNF_HAVE_NAMESPACE_STD)
+
 
 AC_CONFIG_FILES([Makefile
                  include/Makefile
@@ -518,4 +734,4 @@ AC_CONFIG_FILES([Makefile
                  agenpro/simagent/include/Makefile
                  agenpro/simagent/src/Makefile
                  src/Makefile])
-AC_OUTPUT(agent++-4.pc include/agent_pp/agent++.h)
+AC_OUTPUT(agent++-4.pc libagent.h include/agent_pp/agent++.h)

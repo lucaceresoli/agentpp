@@ -113,17 +113,17 @@ int main( int argc, char **argv)
 
 
    //---------[ determine options to use ]-----------------------------------
-   snmp_version srcVersion=version1;                       // default is v1
-   int srcRetries=1;                                       // default retries is 1
-   int srcTimeout=100;                                     // default is 1 second
-   u_short srcPort=161;                                    // default snmp port is 161
-   OctetStr srcCommunity("public");                        // read community
+   snmp_version srcVersion=version1;                 // default is v1
+   int srcRetries=1;                                 // default retries is 1
+   int srcTimeout=100;                               // default is 1 second
+   unsigned short srcPort=161;                       // default snmp port is 161
+   OctetStr srcCommunity("public");                  // read community
 
-   snmp_version destVersion=version1;                       // default is v1
-   int destRetries=1;                                       // default retries is 1
-   int destTimeout=100;                                     // default is 1 second
-   u_short destPort=161;                                    // default snmp port is 161
-   OctetStr destCommunity("public");                        // read community
+   snmp_version destVersion=version1;                // default is v1
+   int destRetries=1;                                // default retries is 1
+   int destTimeout=100;                              // default is 1 second
+   unsigned short destPort=161;                      // default snmp port is 161
+   OctetStr destCommunity("public");                 // read community
    int crossSubtree = 0;
 #ifdef _SNMPv3
    OctetStr srcPrivPassword("");

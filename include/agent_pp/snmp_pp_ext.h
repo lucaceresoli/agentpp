@@ -1,21 +1,21 @@
 /*_############################################################################
-  _## 
-  _##  AGENT++ 4.0 - snmp_pp_ext.h  
-  _## 
+  _##
+  _##  AGENT++ 4.0 - snmp_pp_ext.h
+  _##
   _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
-  _##  
+  _##
   _##  Licensed under the Apache License, Version 2.0 (the "License");
   _##  you may not use this file except in compliance with the License.
   _##  You may obtain a copy of the License at
-  _##  
+  _##
   _##      http://www.apache.org/licenses/LICENSE-2.0
-  _##  
+  _##
   _##  Unless required by applicable law or agreed to in writing, software
   _##  distributed under the License is distributed on an "AS IS" BASIS,
   _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   _##  See the License for the specific language governing permissions and
   _##  limitations under the License.
-  _##  
+  _##
   _##########################################################################*/
 
 #ifndef _SNMP_PP_EXT_H_
@@ -147,19 +147,16 @@ public:
 	 * Return a copy of the given oid without the n leftmost
 	 * subidentifiers.
 	 *
-	 * @param o - An Oidx object identifier.
-	 * @param n - The number of subidentifiers to cut of from left side.
+	 * @param oid - An Oidx object identifier.
+	 * @param index - The number of subidentifiers to cut of from left side.
 	 * @return An Oidx object identifier.
 	 */
 	static Oidx	cut_left(const Oidx &oid, const unsigned int index)
 	{
 		if (oid.valid()) {
-			Oidx retval( oid.smival.value.oid.ptr + index, oid.smival.value.oid.len - index );
-#if 0
-			unsigned int i;
-			for (i=index; i<oid.smival.value.oid.len; i++)
-				retval += oid.smival.value.oid.ptr[i];
-#endif
+			// constructor can handle negative length
+			Oidx retval(oid.smival.value.oid.ptr + index,
+				    oid.smival.value.oid.len - index );
 			return retval;
 		}
 		else
@@ -179,15 +176,6 @@ public:
 		if (oid.valid()) {
 			unsigned int l = oid.smival.value.oid.len >= index ? oid.smival.value.oid.len - index : 0;
 			Oidx retval( oid.smival.value.oid.ptr, l );
-#if 0
-			Oidx retval;
-			unsigned int i;
-			unsigned int s = index;
-			if (s>oid.len())
-				s = oid.len();
-			for (i=0; i<oid.len()-s; i++)
-				retval += oid.smival.value.oid.ptr[i];
-#endif
 			return retval;
 		}
 		else
@@ -229,11 +217,6 @@ public:
 			*this += (unsigned long)ip[i];
 		return *this;
 	}
-#if 0
-	Oidx		&operator+=(const char *);
-	Oidx		&operator+=(const unsigned long i);
-	Oidx		&operator+=(const Oid &);
-#endif
 
 	/**
 	 * Check if the receiver is in the subtree of a given oid.
@@ -293,7 +276,7 @@ public:
 	 *    return 1 if the given object identifier is in the subtree
 	 *    of the receiver, and return -1 otherwise.
 	 */
-	int		compare(const Oidx&, u_int) const;
+	int		compare(const Oidx&, unsigned int) const;
 
 	/**
 	 * Return the receiver as an OctetStr. Every subidentifier is
@@ -692,7 +675,7 @@ public:
 	 */
 	void    clear();
 
-	// const redefinitions of originals: 
+	// const redefinitions of originals:
 	Pdux&   operator+=(const NS_SNMP Vb&);
 
 	/**
@@ -728,7 +711,7 @@ public:
 	 * @param port
 	 *    an UDP port to be used for the session
 	 */
-	Snmpx (int &status , u_short port): Snmp(status, port) {};
+	Snmpx (int &status, unsigned short port): Snmp(status, port) {};
 
 #ifdef SNMP_PP_WITH_UDPADDR
 	/**
@@ -793,7 +776,7 @@ public:
 	 *    the SNMP PDU to send
 	 * @param target
 	 *    the target (actually a CTarget or UTarget) that contains
-         *      - the receiver's UDP address
+     *      - the receiver's UDP address
 	 *      - the SNMP version to be used
          *      - CTarget: the community
          *      - UTarget: security_model, security_name and
@@ -821,13 +804,6 @@ public:
 	 */
         int send (Pdux const &, NS_SNMP UdpAddress const &, NS_SNMP snmp_version, NS_SNMP OctetStr const &);
 #endif
-	/**
-	 * Get the port the request list is listening on.
-	 *
-	 * @return
-	 *    a UDP port.
-	 */
-	u_short get_port();
 
 	/**
 	 * Return the socket descriptor of the socket used for

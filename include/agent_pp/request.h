@@ -496,7 +496,7 @@ public:
 	 */
 	NS_SNMP snmp_version	get_snmp_version() { return version; }
 
-	u_char		phase;
+	unsigned char		phase;
 
 	/**
 	 * Get a pointer to the MibEntry object that has been locked

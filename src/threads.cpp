@@ -140,7 +140,12 @@ int Synchronized::next_id = 0;
 Synchronized::Synchronized()
 {
 #ifndef _NO_LOGGING
-        id = next_id++;
+    id = next_id++;
+    LOG_BEGIN(loggerModuleName, DEBUG_LOG | 9);
+    LOG("Synchronized created (id)(ptr)");
+    LOG(id);
+    LOG((unsigned long)this);
+    LOG_END;
 #endif        
 #ifdef POSIX_THREADS
 	pthread_mutexattr_t attr;
@@ -418,6 +423,93 @@ bool Synchronized::lock() {
 #endif
 }
 
+bool Synchronized::lock(unsigned long timeout) {
+
+#ifdef POSIX_THREADS
+	struct timespec ts;
+#ifdef HAVE_CLOCK_GETTIME
+    clock_gettime(CLOCK_REALTIME, &ts);
+    ts.tv_sec += (int)timeout/1000;
+    int millis = ts.tv_nsec / 1000000 + (timeout % 1000);
+    if (millis >= 1000) {
+        ts.tv_sec += 1;
+    }
+    ts.tv_nsec = (millis % 1000) * 1000000;
+#else        
+	struct timeval  tv;
+	gettimeofday(&tv, 0);
+	ts.tv_sec  = tv.tv_sec  + (int)timeout/1000;
+    int millis = tv.tv_usec / 1000 + (timeout % 1000);
+    if (millis >= 1000) {
+        ts.tv_sec += 1;
+    }
+    ts.tv_nsec = (millis % 1000) * 1000000;
+#endif        
+
+    int error;
+    if ((error = pthread_mutex_timedlock(&monitor, &ts)) == 0) {
+        if (isLocked) {
+            // This thread owns already the lock, but
+            // we do not like recursive locking. Thus
+            // release it immediately and print a warning!
+            if (pthread_mutex_unlock(&monitor) != 0) {
+                LOG_BEGIN(loggerModuleName, WARNING_LOG | 0);
+                LOG("Synchronized: unlock failed on recursive lock (id)");
+                LOG(id);
+                LOG_END;
+            }
+            else {
+                LOG_BEGIN(loggerModuleName, WARNING_LOG | 5);
+                LOG("Synchronized: recursive locking detected (id)!");
+                LOG(id);
+                LOG_END;
+            }
+        }
+        else {
+            isLocked = TRUE;
+            // no logging because otherwise deep (virtual endless) recursion
+        }            
+        return TRUE;
+    }
+    else {
+        LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
+        LOG("Synchronized: lock failed (id)(error)");
+        LOG(id);
+        LOG(error);
+        LOG_END;
+        return FALSE;
+    }
+#else
+#ifdef WIN32
+    if (WaitForSingleObject(semMutex, timeout) != WAIT_OBJECT_0) {
+        LOG_BEGIN(loggerModuleName, ERROR_LOG | 1);
+        LOG("Synchronized: lock failed");
+        LOG_END;
+    	return FALSE;
+    }
+    if (isLocked) {
+        // This thread owns already the lock, but
+        // we do not like recursive locking. Thus
+        // release it immediately and print a warning!
+        if (!ReleaseMutex(semMutex)) {
+            LOG_BEGIN(loggerModuleName, WARNING_LOG | 1);
+            LOG("Synchronized: unlock failed (id)");
+            LOG(id);
+            LOG_END;
+            return FALSE;
+        }      
+        LOG_BEGIN(loggerModuleName, WARNING_LOG | 5);
+        LOG("Synchronized: recursive locking detected (id)!");
+            LOG(id);
+        LOG_END;	
+    }
+    isLocked = TRUE;
+    return TRUE;
+#endif
+#endif
+}
+
+
 bool Synchronized::unlock() {
         bool wasLocked = isLocked;
 	isLocked = FALSE;
@@ -459,14 +551,16 @@ Synchronized::TryLockResult Synchronized::trylock() {
             // release it immediately and print a warning!
             if (pthread_mutex_unlock(&monitor) != 0) {
                 LOG_BEGIN(loggerModuleName, WARNING_LOG | 0);
-                LOG("Synchronized: unlock failed on recursive trylock (id)");
+                LOG("Synchronized: unlock failed on recursive trylock (id)(ptr)");
                 LOG(id);
+                LOG((long)this);
                 LOG_END;
             }
             else {
                 LOG_BEGIN(loggerModuleName, WARNING_LOG | 5);
-                LOG("Synchronized: recursive trylocking detected (id)!");
+                LOG("Synchronized: recursive trylocking detected (id)(ptr)!");
                 LOG(id);
+                LOG((long)this);
                 LOG_END;
             }
             return OWNED;
@@ -474,16 +568,18 @@ Synchronized::TryLockResult Synchronized::trylock() {
         else {
             isLocked = TRUE;
             LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
-            LOG("Synchronized: trylock success (id)");
+            LOG("Synchronized: trylock success (id)(ptr)");
             LOG(id);
+            LOG((long)this);
             LOG_END;
         }            
         return LOCKED;
     }
     else {
             LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
-            LOG("Synchronized: try lock busy (id)");
+            LOG("Synchronized: try lock busy (id)(ptr)");
             LOG(id);
+            LOG((long)this);
             LOG_END;
             return BUSY;
     }
@@ -1087,6 +1183,10 @@ void LockQueue::run()
 	while ((!pendingLock.empty()) || (!pendingRelease.empty()) || (go)) {
 		while (!pendingRelease.empty()) {
 			LockRequest* r = pendingRelease.removeFirst();
+            LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
+            LOG("LockQueue: unlock (ptr)");
+        	LOG((long)r->target);
+            LOG_END;
 			r->target->unlock();
 			r->lock();
 			r->notify();
@@ -1099,6 +1199,11 @@ void LockQueue::run()
                         // Only if target is not locked at all - also not by
                         // this lock queue - then inform requester:
 			if (r->target->trylock() == LOCKED) {
+                LOG_BEGIN(loggerModuleName, DEBUG_LOG | 8);
+                LOG("LockQueue: lock (ptr)(pending)");
+                LOG((long)r->target);
+                LOG(pending);
+                LOG_END;
 				r->lock();
 				r->notify();
 				r->unlock();

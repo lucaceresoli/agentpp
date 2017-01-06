@@ -42,7 +42,7 @@ using namespace Agentpp;
 #if defined(HAVE_CLOCK_GETTIME)
 struct timespec sysUpTime::start = { 0, 0 };
 #else
-u_int sysUpTime::start = 0;
+unsigned int sysUpTime::start = 0;
 #endif
 
 
@@ -62,7 +62,7 @@ time_t sysUpTime::get_currentTime()
 	return now;
 }
 
-u_int sysUpTime::get()
+unsigned int sysUpTime::get()
 {
 #ifdef HAVE_CLOCK_GETTIME
         struct timespec tsp;

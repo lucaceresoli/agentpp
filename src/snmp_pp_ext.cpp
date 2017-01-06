@@ -1,21 +1,21 @@
 /*_############################################################################
-  _## 
-  _##  AGENT++ 4.0 - snmp_pp_ext.cpp  
-  _## 
+  _##
+  _##  AGENT++ 4.0 - snmp_pp_ext.cpp
+  _##
   _##  Copyright (C) 2000-2013  Frank Fock and Jochen Katz (agentpp.com)
-  _##  
+  _##
   _##  Licensed under the Apache License, Version 2.0 (the "License");
   _##  you may not use this file except in compliance with the License.
   _##  You may obtain a copy of the License at
-  _##  
+  _##
   _##      http://www.apache.org/licenses/LICENSE-2.0
-  _##  
+  _##
   _##  Unless required by applicable law or agreed to in writing, software
   _##  distributed under the License is distributed on an "AS IS" BASIS,
   _##  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   _##  See the License for the specific language governing permissions and
   _##  limitations under the License.
-  _##  
+  _##
   _##########################################################################*/
 
 #include <libagent.h>
@@ -498,108 +498,6 @@ int Vbx::from_asn1(Vbx*& vbs, int& sz, unsigned char*& data, int& length)
 
 /*--------------------------- class Oidx -----------------------------*/
 
-#if 0
-Oidx Oidx::cut_left(const unsigned int index) const
-{
-	return cut_left(*this, index);
-}
-
-Oidx Oidx::cut_right(const unsigned int index) const
-{
-	return cut_right(*this, index);
-}
-
-Oidx Oidx::cut_left(const Oidx& oid, const unsigned int index)
-{
-	Oidx retval;
-	if (oid.valid()) {
-		unsigned int i;
-		for (i=index; i<oid.smival.value.oid.len; i++)
-			retval += oid.smival.value.oid.ptr[i];
-	}
-	return retval;
-}
-
-Oidx Oidx::cut_right(const Oidx& oid, const unsigned int index)
-{
-	Oidx retval;
-	if (oid.valid()) {
-		unsigned int i;
-		unsigned int s = index;
-		if (s>oid.len())
-			s = oid.len();
-		for (i=0; i<oid.len()-s; i++)
-			retval += oid.smival.value.oid.ptr[i];
-	}
-	return retval;
-}
-
-Oidx& Oidx::operator=(unsigned long l)
-{
-	// delete the old value
-	if ( smival.value.oid.ptr ) {
-		delete [] smival.value.oid.ptr;
-		smival.value.oid.ptr = NULL;
-	}
-	smival.value.oid.len = 1;
-	smival.value.oid.ptr = (SmiLPUINT32)new unsigned long[1];
-	smival.value.oid.ptr[0] = l;
-	return *this;
-}
-
-Oidx& Oidx::operator+=(IpAddress& ip)
-{
-    for (int i = 0; i < ip.get_length(); i++)
-	*this += (unsigned long)ip[i];
-    return *this;
-}
-
-Oidx& Oidx::operator+=(const unsigned long i)
-{
-	*((Oid*)this)+=i;
-	return *this;
-}
-
-Oidx& Oidx::operator+=(const char* a)
-{
-	*((Oid*)this)+=a;
-	return *this;
-}
-
-Oidx& Oidx::operator+=(const Oid& o)
-{
-	*((Oid*)this)+=o;
-	return *this;
-}
-
-int Oidx::in_subtree_of(const Oidx& o) const
-{
-	if (len() <= o.len()) return FALSE;
-	for (unsigned int i=0; i<o.len(); i++)
-		if ((*this)[i] != o[i]) return FALSE;
-	return TRUE;
-}
-
-int Oidx::is_root_of(const Oidx& o) const
-{
-	if (len() >= o.len()) return FALSE;
-	for (unsigned int i=0; i<len(); i++)
-		if ((*this)[i] != o[i]) return FALSE;
-	return TRUE;
-}
-
-Oidx& Oidx::mask(const OctetStr& mask)
-{
-	for (unsigned int i=0; (i<len()) && (i<mask.len()*8); i++) {
-		char m = 0x80 >> (i%8);
-		if (!(mask[i/8] & m)) {
-			(*this)[i] = 0ul;
-		}
-	}
-	return *this;
-}
-#endif
-
 int Oidx::compare(const Oidx& other, const OctetStr& mask) const
 {
 	Oidx maskedOid(*this);
@@ -618,7 +516,7 @@ int Oidx::compare(const Oidx& other, const OctetStr& mask) const
 	return -1;
 }
 
-int Oidx::compare(const Oidx& other, u_int wildcard) const
+int Oidx::compare(const Oidx& other, unsigned int wildcard) const
 {
 	Oidx maskedOid(*this);
 	Oidx maskedOther(other);
@@ -639,15 +537,6 @@ int Oidx::compare(const Oidx& other, u_int wildcard) const
 }
 
 #if 0
-unsigned long Oidx::last() const
-{
-	// check for len == 0
-	if ((!Oid::valid()) || (smival.value.oid.len < 1))
-		return 0;
-
-	return smival.value.oid.ptr[smival.value.oid.len - 1];
-}
-
 unsigned long Oidx::first() const
 {
   // check for len == 0
@@ -655,69 +544,6 @@ unsigned long Oidx::first() const
     return 0;
 
   return smival.value.oid.ptr[0];
-}
-
-OctetStr Oidx::as_string() const
-{
-	OctetStr str;
-	if (!str.set_len(len())) return str;
-	for (int i=0; i<(int)len(); i++) {
-		str[i] = (unsigned char)(*this)[i];
-	}
-	return str;
-}
-
-Oidx Oidx::from_string(const OctetStr& str, bool withLength)
-{
-	Oidx oid;
-	if (withLength)
-		oid += (long)str.len();
-	for (unsigned int i=0; i<str.len(); i++)
-		oid += (long)str[i];
-	return oid;
-}
-
-Oidx Oidx::successor() const
-{
-	Oidx o(*this);
-	if (o.len()==MAX_OID_LEN) {
-		if (o[MAX_OID_LEN-1] == 0xFFFFFFFFul) {
-			int i = MAX_OID_LEN-2;
-			while ((i>=0) && (o[i] == 0xFFFFFFFFul)) {
-				i--;
-			}
-			if (i>=0) {
-				o.trim(MAX_OID_LEN-1-i);
-				o[i]++;
-			}
-		}
-		else
-			o[MAX_OID_LEN-1]++;
-	}
-	else
-		o += 0ul;
-	return o;
-}
-
-Oidx Oidx::predecessor() const
-{
-	Oidx o(*this);
-	if (o.len()==0) return o;
-	if (o[o.len()-1] == 0) {
-		o.trim();
-		return o;
-	}
-	o[o.len()-1]--;
-	for (int i=o.len(); i<MAX_OID_LEN; i++)
-		o += 0xFFFFFFFFul;
-	return o;
-}
-
-Oidx Oidx::next_peer() const
-{
-	Oidx o(*this);
-	o[o.len()-1]++;
-	return o;
 }
 #endif
 

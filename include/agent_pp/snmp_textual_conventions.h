@@ -741,7 +741,7 @@ class AGENTPP_DECL OctetStrMinMax : public MibLeaf
 	 * @param max
 	 *    the maximum length of the receiver's value.
 	 */
-	OctetStrMinMax(const Oidx&, mib_access, NS_SNMP OctetStr*, int, u_int, u_int);
+	OctetStrMinMax(const Oidx&, mib_access, NS_SNMP OctetStr*, int, unsigned int, unsigned int);
 	/**
 	 * Construct a SnmpIn32MinMax without initial value (will be 0).
 	 * 
@@ -754,7 +754,7 @@ class AGENTPP_DECL OctetStrMinMax : public MibLeaf
 	 * @param max
 	 *    the maximum length of the receiver's value.
 	 */
-	OctetStrMinMax(const Oidx&, mib_access,                 u_int, u_int);
+	OctetStrMinMax(const Oidx&, mib_access, unsigned int, unsigned int);
 	
 	virtual int		prepare_set_request(Request*, int&);
 	MibEntryPtr     clone();

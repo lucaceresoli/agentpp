@@ -141,9 +141,9 @@ void* method_routine_caller(void *);
   */
 class AGENTPP_DECL Synchronized {
 public:
-        enum TryLockResult { LOCKED = 1, BUSY = 0, OWNED = -1 };
+    enum TryLockResult { LOCKED = 1, BUSY = 0, OWNED = -1 };
 
-        Synchronized();
+    Synchronized();
 	~Synchronized();
 
 	/**
@@ -186,6 +186,18 @@ public:
 	 *    TRUE if the attempt was successful, FALSE otherwise.
 	 */
 	bool		lock();
+
+	/**
+	 * Enter a critical section. If this thread owned this
+     * lock already, the call succeeds too (returns TRUE), but there
+     * will not be recursive locking. Unlocking will always free the lock. 
+     *
+	 * @param timeout 
+	 *    timeout in milliseconds. If timeout occurred FALSE is returned.
+	 * @return
+	 *    TRUE if the attempt was successful, FALSE otherwise.
+	 */
+	bool		lock(unsigned long timeout);
 
 	/**
 	 * Try to enter a critical section. If this thread owned this
